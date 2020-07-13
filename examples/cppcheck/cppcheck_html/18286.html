@@ -1,0 +1,251 @@
+<html><head><title>mainwindow.cpp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="sourcestyles.css" />
+</head><body link="blue" vlink="blue">
+<h3>File: /home/crippenre/dev/cpp/cppcheck/tools/triage/mainwindow.cpp</h3>
+<SCRIPT>
+defaultStatus = "File: /home/crippenre/dev/cpp/cppcheck/tools/triage/mainwindow.cpp";
+top.document.title  = "mainwindow.cpp";
+</SCRIPT>
+<pre><span class="default"></span><a name="1"><font size=-1>1     </font></a><span class="default"></span><span class="preproc">#include </span><span class="string">&quot;mainwindow.h&quot;</span>
+<a name="2"><font size=-1>2     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&quot;ui_mainwindow.h&quot;</span>
+<a name="3"><font size=-1>3     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QClipboard&gt;</span>
+<a name="4"><font size=-1>4     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QProcess&gt;</span>
+<a name="5"><font size=-1>5     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QFile&gt;</span>
+<a name="6"><font size=-1>6     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QTextStream&gt;</span>
+<a name="7"><font size=-1>7     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QDir&gt;</span>
+<a name="8"><font size=-1>8     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QFileInfo&gt;</span>
+<a name="9"><font size=-1>9     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QFileDialog&gt;</span>
+<a name="10"><font size=-1>10     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;ctime&gt;</span>
+<a name="11"><font size=-1>11     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;cstdlib&gt;</span>
+<a name="12"><font size=-1>12     </font></a><span class="string"></span>
+<a name="13"><font size=-1>13     </font></a><span class="string"></span><span class="keyword">const </span><span class="default">QString WORK_FOLDER(QDir::homePath() + </span><span class="string">&quot;/triage&quot;</span><span class="default">);</span>
+<a name="14"><font size=-1>14     </font></a><span class="default"></span><span class="keyword">const </span><span class="default">QString DACA2_PACKAGES(QDir::homePath() + </span><span class="string">&quot;/daca2-packages&quot;</span><span class="default">);</span>
+<a name="15"><font size=-1>15     </font></a><span class="default"></span>
+<a name="16"><font size=-1>16     </font></a><span class="default"></span><span class="keyword">const int </span><span class="default">MAX_ERRORS = </span><span class="number">100</span><span class="default">;</span>
+<a name="17"><font size=-1>17     </font></a><span class="default"></span>
+<a name="18"><font size=-1>18     </font></a><span class="default">MainWindow::MainWindow(QWidget *parent) :</span>
+<a name="19"><font size=-1>19     </font></a><span class="default">    QMainWindow(parent),</span>
+<a name="20"><font size=-1>20     </font></a><span class="default">    ui(</span><span class="keyword">new </span><span class="default">Ui::MainWindow)</span>
+<a name="21"><font size=-1>21     </font></a><span class="default">{</span>
+<a name="22"><font size=-1>22     </font></a><span class="default">    ui-&gt;setupUi(</span><span class="keyword">this</span><span class="default">);</span>
+<a name="23"><font size=-1>23     </font></a><span class="default">    std::srand(</span><span class="keyword">static_cast</span><span class="default">&lt;</span><span class="keyword">unsigned int</span><span class="default">&gt;(std::time(Q_NULLPTR)));</span>
+<a name="24"><font size=-1>24     </font></a><span class="default">    QDir workFolder(WORK_FOLDER);</span>
+<a name="25"><font size=-1>25     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(!workFolder.exists()) {</span>
+<a name="26"><font size=-1>26     </font></a><span class="default">        workFolder.mkdir(WORK_FOLDER);</span>
+<a name="27"><font size=-1>27     </font></a><span class="default">    }</span>
+<a name="28"><font size=-1>28     </font></a><span class="default">}</span>
+<a name="29"><font size=-1>29     </font></a><span class="default"></span>
+<a name="30"><font size=-1>30     </font></a><span class="default">MainWindow::~MainWindow()</span>
+<a name="31"><font size=-1>31     </font></a><span class="default">{</span>
+<a name="32"><font size=-1>32     </font></a><span class="default">    </span><span class="keyword">delete </span><span class="default">ui;</span>
+<a name="33"><font size=-1>33     </font></a><span class="default">}</span>
+<a name="34"><font size=-1>34     </font></a><span class="default"></span>
+<a name="35"><font size=-1>35     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">MainWindow::loadFile()</span>
+<a name="36"><font size=-1>36     </font></a><span class="default">{</span>
+<a name="37"><font size=-1>37     </font></a><span class="default">    ui-&gt;statusBar-&gt;clearMessage();</span>
+<a name="38"><font size=-1>38     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString fileName = QFileDialog::getOpenFileName(</span><span class="keyword">this</span><span class="default">, tr(</span><span class="string">&quot;daca results file&quot;</span><span class="default">), WORK_FOLDER, tr(</span><span class="string">&quot;Text files (*.txt);;All (*.*)&quot;</span><span class="default">));</span>
+<a name="39"><font size=-1>39     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(fileName.isEmpty())</span>
+<a name="40"><font size=-1>40     </font></a><span class="default">        </span><span class="keyword">return</span><span class="default">;</span>
+<a name="41"><font size=-1>41     </font></a><span class="default">    QFile file(fileName);</span>
+<a name="42"><font size=-1>42     </font></a><span class="default">    file.open(QIODevice::ReadOnly | QIODevice::Text);</span>
+<a name="43"><font size=-1>43     </font></a><span class="default">    QTextStream textStream(&amp;file);</span>
+<a name="44"><font size=-1>44     </font></a><span class="default">    load(textStream);</span>
+<a name="45"><font size=-1>45     </font></a><span class="default">}</span>
+<a name="46"><font size=-1>46     </font></a><span class="default"></span>
+<a name="47"><font size=-1>47     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">MainWindow::loadFromClipboard()</span>
+<a name="48"><font size=-1>48     </font></a><span class="default">{</span>
+<a name="49"><font size=-1>49     </font></a><span class="default">    ui-&gt;statusBar-&gt;clearMessage();</span>
+<a name="50"><font size=-1>50     </font></a><span class="default">    QString clipboardContent = QApplication::clipboard()-&gt;text();</span>
+<a name="51"><font size=-1>51     </font></a><span class="default">    QTextStream textStream(&amp;clipboardContent);</span>
+<a name="52"><font size=-1>52     </font></a><span class="default">    load(textStream);</span>
+<a name="53"><font size=-1>53     </font></a><span class="default">}</span>
+<a name="54"><font size=-1>54     </font></a><span class="default"></span>
+<a name="55"><font size=-1>55     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">MainWindow::load(QTextStream &amp;textStream)</span>
+<a name="56"><font size=-1>56     </font></a><span class="default">{</span>
+<a name="57"><font size=-1>57     </font></a><span class="default">    QString url;</span>
+<a name="58"><font size=-1>58     </font></a><span class="default">    QString errorMessage;</span>
+<a name="59"><font size=-1>59     </font></a><span class="default">    QStringList versions;</span>
+<a name="60"><font size=-1>60     </font></a><span class="default">    mAllErrors.clear();</span>
+<a name="61"><font size=-1>61     </font></a><span class="default">    </span><span class="keyword">while </span><span class="default">(</span><span class="keyword">true</span><span class="default">) {</span>
+<a name="62"><font size=-1>62     </font></a><span class="default">        QString line = textStream.readLine();</span>
+<a name="63"><font size=-1>63     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(line.isNull())</span>
+<a name="64"><font size=-1>64     </font></a><span class="default">            </span><span class="keyword">break</span><span class="default">;</span>
+<a name="65"><font size=-1>65     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(line.startsWith(</span><span class="string">&quot;ftp://&quot;</span><span class="default">)) {</span>
+<a name="66"><font size=-1>66     </font></a><span class="default">            url = line;</span>
+<a name="67"><font size=-1>67     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(!errorMessage.isEmpty())</span>
+<a name="68"><font size=-1>68     </font></a><span class="default">                mAllErrors &lt;&lt; errorMessage;</span>
+<a name="69"><font size=-1>69     </font></a><span class="default">            errorMessage.clear();</span>
+<a name="70"><font size=-1>70     </font></a><span class="default">        } </span><span class="keyword">else if </span><span class="default">(!url.isEmpty() &amp;&amp; QRegExp(</span><span class="string">&quot;.*: (error|warning|style|note):.*&quot;</span><span class="default">).exactMatch(line)) {</span>
+<a name="71"><font size=-1>71     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(QRegExp(</span><span class="string">&quot;^(head|1.[0-9][0-9]) .*&quot;</span><span class="default">).exactMatch(line)) {</span>
+<a name="72"><font size=-1>72     </font></a><span class="default">                </span><span class="keyword">const </span><span class="default">QString version = line.mid(</span><span class="number">0</span><span class="default">,</span><span class="number">4</span><span class="default">);</span>
+<a name="73"><font size=-1>73     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(versions.indexOf(version) &lt; </span><span class="number">0</span><span class="default">)</span>
+<a name="74"><font size=-1>74     </font></a><span class="default">                    versions &lt;&lt; version;</span>
+<a name="75"><font size=-1>75     </font></a><span class="default">            }</span>
+<a name="76"><font size=-1>76     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(line.indexOf(</span><span class="string">&quot;: note:&quot;</span><span class="default">) &gt; </span><span class="number">0</span><span class="default">)</span>
+<a name="77"><font size=-1>77     </font></a><span class="default">                errorMessage += </span><span class="string">'\n' </span><span class="default">+ line;</span>
+<a name="78"><font size=-1>78     </font></a><span class="default">            </span><span class="keyword">else if </span><span class="default">(errorMessage.isEmpty()) {</span>
+<a name="79"><font size=-1>79     </font></a><span class="default">                errorMessage = url + </span><span class="string">'\n' </span><span class="default">+ line;</span>
+<a name="80"><font size=-1>80     </font></a><span class="default">            } </span><span class="keyword">else </span><span class="default">{</span>
+<a name="81"><font size=-1>81     </font></a><span class="default">                mAllErrors &lt;&lt; errorMessage;</span>
+<a name="82"><font size=-1>82     </font></a><span class="default">                errorMessage = url + </span><span class="string">'\n' </span><span class="default">+ line;</span>
+<a name="83"><font size=-1>83     </font></a><span class="default">            }</span>
+<a name="84"><font size=-1>84     </font></a><span class="default">        }</span>
+<a name="85"><font size=-1>85     </font></a><span class="default">    }</span>
+<a name="86"><font size=-1>86     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(!errorMessage.isEmpty())</span>
+<a name="87"><font size=-1>87     </font></a><span class="default">        mAllErrors &lt;&lt; errorMessage;</span>
+<a name="88"><font size=-1>88     </font></a><span class="default"></span>
+<a name="89"><font size=-1>89     </font></a><span class="default">    ui-&gt;version-&gt;clear();</span>
+<a name="90"><font size=-1>90     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(versions.size() &gt; </span><span class="number">1</span><span class="default">)</span>
+<a name="91"><font size=-1>91     </font></a><span class="default">        ui-&gt;version-&gt;addItem(</span><span class="string">&quot;&quot;</span><span class="default">);</span>
+<a name="92"><font size=-1>92     </font></a><span class="default">    ui-&gt;version-&gt;addItems(versions);</span>
+<a name="93"><font size=-1>93     </font></a><span class="default"></span>
+<a name="94"><font size=-1>94     </font></a><span class="default">    filter(</span><span class="string">&quot;&quot;</span><span class="default">);</span>
+<a name="95"><font size=-1>95     </font></a><span class="default">}</span>
+<a name="96"><font size=-1>96     </font></a><span class="default"></span>
+<a name="97"><font size=-1>97     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">MainWindow::refreshResults()</span>
+<a name="98"><font size=-1>98     </font></a><span class="default">{</span>
+<a name="99"><font size=-1>99     </font></a><span class="default">    filter(ui-&gt;version-&gt;currentText());</span>
+<a name="100"><font size=-1>100     </font></a><span class="default">}</span>
+<a name="101"><font size=-1>101     </font></a><span class="default"></span>
+<a name="102"><font size=-1>102     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">MainWindow::filter(QString filter)</span>
+<a name="103"><font size=-1>103     </font></a><span class="default">{</span>
+<a name="104"><font size=-1>104     </font></a><span class="default">    QStringList allErrors;</span>
+<a name="105"><font size=-1>105     </font></a><span class="default"></span>
+<a name="106"><font size=-1>106     </font></a><span class="default">    </span><span class="keyword">for </span><span class="default">(</span><span class="keyword">const </span><span class="default">QString &amp;errorItem : mAllErrors) {</span>
+<a name="107"><font size=-1>107     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(filter.isEmpty()) {</span>
+<a name="108"><font size=-1>108     </font></a><span class="default">            allErrors &lt;&lt; errorItem;</span>
+<a name="109"><font size=-1>109     </font></a><span class="default">            </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="110"><font size=-1>110     </font></a><span class="default">        }</span>
+<a name="111"><font size=-1>111     </font></a><span class="default"></span>
+<a name="112"><font size=-1>112     </font></a><span class="default">        </span><span class="keyword">const </span><span class="default">QStringList lines = errorItem.split(</span><span class="string">&quot;\n&quot;</span><span class="default">);</span>
+<a name="113"><font size=-1>113     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(lines.size() &lt; </span><span class="number">2</span><span class="default">)</span>
+<a name="114"><font size=-1>114     </font></a><span class="default">            </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="115"><font size=-1>115     </font></a><span class="default"></span>
+<a name="116"><font size=-1>116     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(lines[</span><span class="number">1</span><span class="default">].startsWith(filter))</span>
+<a name="117"><font size=-1>117     </font></a><span class="default">            allErrors &lt;&lt; errorItem;</span>
+<a name="118"><font size=-1>118     </font></a><span class="default">    }</span>
+<a name="119"><font size=-1>119     </font></a><span class="default"></span>
+<a name="120"><font size=-1>120     </font></a><span class="default">    ui-&gt;results-&gt;clear();</span>
+<a name="121"><font size=-1>121     </font></a><span class="default"></span>
+<a name="122"><font size=-1>122     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(ui-&gt;random100-&gt;isChecked() &amp;&amp; allErrors.size() &gt; MAX_ERRORS) {</span>
+<a name="123"><font size=-1>123     </font></a><span class="default">        </span><span class="comment">// remove items in /test/</span>
+<a name="124"><font size=-1>124     </font></a><span class="comment">        </span><span class="keyword">for </span><span class="default">(</span><span class="keyword">int </span><span class="default">i = allErrors.size() - </span><span class="number">1</span><span class="default">; i &gt;= </span><span class="number">0 </span><span class="default">&amp;&amp; allErrors.size() &gt; MAX_ERRORS; --i) {</span>
+<a name="125"><font size=-1>125     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(allErrors[i].indexOf(</span><span class="string">&quot;test&quot;</span><span class="default">) &gt; </span><span class="number">0</span><span class="default">)</span>
+<a name="126"><font size=-1>126     </font></a><span class="default">                allErrors.removeAt(i);</span>
+<a name="127"><font size=-1>127     </font></a><span class="default">        }</span>
+<a name="128"><font size=-1>128     </font></a><span class="default">        std::random_shuffle(allErrors.begin(), allErrors.end());</span>
+<a name="129"><font size=-1>129     </font></a><span class="default">        ui-&gt;results-&gt;addItems(allErrors.mid(</span><span class="number">0</span><span class="default">,MAX_ERRORS));</span>
+<a name="130"><font size=-1>130     </font></a><span class="default">        ui-&gt;results-&gt;sortItems();</span>
+<a name="131"><font size=-1>131     </font></a><span class="default">    } </span><span class="keyword">else </span><span class="default">{</span>
+<a name="132"><font size=-1>132     </font></a><span class="default">        ui-&gt;results-&gt;addItems(allErrors);</span>
+<a name="133"><font size=-1>133     </font></a><span class="default">    }</span>
+<a name="134"><font size=-1>134     </font></a><span class="default">}</span>
+<a name="135"><font size=-1>135     </font></a><span class="default"></span>
+<a name="136"><font size=-1>136     </font></a><span class="default"></span><span class="keyword">bool </span><span class="default">MainWindow::runProcess(</span><span class="keyword">const </span><span class="default">QString &amp;programName, </span><span class="keyword">const </span><span class="default">QStringList &amp;arguments)</span>
+<a name="137"><font size=-1>137     </font></a><span class="default">{</span>
+<a name="138"><font size=-1>138     </font></a><span class="default">    QProcess process;</span>
+<a name="139"><font size=-1>139     </font></a><span class="default">    process.setWorkingDirectory(WORK_FOLDER);</span>
+<a name="140"><font size=-1>140     </font></a><span class="default">    process.start(programName, arguments);</span>
+<a name="141"><font size=-1>141     </font></a><span class="default">    </span><span class="keyword">bool </span><span class="default">success = process.waitForFinished(-</span><span class="number">1</span><span class="default">);</span>
+<a name="142"><font size=-1>142     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(!success) {</span>
+<a name="143"><font size=-1>143     </font></a><span class="default">        QString errorstr(programName);</span>
+<a name="144"><font size=-1>144     </font></a><span class="default">        errorstr.append(</span><span class="string">&quot;: &quot;</span><span class="default">);</span>
+<a name="145"><font size=-1>145     </font></a><span class="default">        errorstr.append(process.errorString());</span>
+<a name="146"><font size=-1>146     </font></a><span class="default">        ui-&gt;statusBar-&gt;showMessage(errorstr);</span>
+<a name="147"><font size=-1>147     </font></a><span class="default">    } </span><span class="keyword">else </span><span class="default">{</span>
+<a name="148"><font size=-1>148     </font></a><span class="default">        </span><span class="keyword">int </span><span class="default">exitCode = process.exitCode();</span>
+<a name="149"><font size=-1>149     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(exitCode != </span><span class="number">0</span><span class="default">) {</span>
+<a name="150"><font size=-1>150     </font></a><span class="default">            success = </span><span class="keyword">false</span><span class="default">;</span>
+<a name="151"><font size=-1>151     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">QByteArray stderrOutput = process.readAllStandardError();</span>
+<a name="152"><font size=-1>152     </font></a><span class="default">            QString errorstr(programName);</span>
+<a name="153"><font size=-1>153     </font></a><span class="default">            errorstr.append(QString(</span><span class="string">&quot;: exited with %1: &quot;</span><span class="default">).arg(exitCode));</span>
+<a name="154"><font size=-1>154     </font></a><span class="default">            errorstr.append(stderrOutput);</span>
+<a name="155"><font size=-1>155     </font></a><span class="default">            ui-&gt;statusBar-&gt;showMessage(errorstr);</span>
+<a name="156"><font size=-1>156     </font></a><span class="default">        }</span>
+<a name="157"><font size=-1>157     </font></a><span class="default">    }</span>
+<a name="158"><font size=-1>158     </font></a><span class="default">    </span><span class="keyword">return </span><span class="default">success;</span>
+<a name="159"><font size=-1>159     </font></a><span class="default">}</span>
+<a name="160"><font size=-1>160     </font></a><span class="default"></span>
+<a name="161"><font size=-1>161     </font></a><span class="default"></span><span class="keyword">bool </span><span class="default">MainWindow::wget(</span><span class="keyword">const </span><span class="default">QString &amp;url)</span>
+<a name="162"><font size=-1>162     </font></a><span class="default">{</span>
+<a name="163"><font size=-1>163     </font></a><span class="default">    </span><span class="keyword">return </span><span class="default">runProcess(</span><span class="string">&quot;wget&quot;</span><span class="default">, QStringList() &lt;&lt; url);</span>
+<a name="164"><font size=-1>164     </font></a><span class="default">}</span>
+<a name="165"><font size=-1>165     </font></a><span class="default"></span>
+<a name="166"><font size=-1>166     </font></a><span class="default"></span><span class="keyword">bool </span><span class="default">MainWindow::unpackArchive(</span><span class="keyword">const </span><span class="default">QString &amp;archiveName)</span>
+<a name="167"><font size=-1>167     </font></a><span class="default">{</span>
+<a name="168"><font size=-1>168     </font></a><span class="default">    </span><span class="comment">// Unpack archive</span>
+<a name="169"><font size=-1>169     </font></a><span class="comment">    </span><span class="default">QStringList args;</span>
+<a name="170"><font size=-1>170     </font></a><span class="default"></span><span class="preproc">#ifdef </span><span class="default">Q_OS_WIN</span>
+<a name="171"><font size=-1>171     </font></a><span class="default">    </span><span class="comment">/* On Windows --force-local is necessary because tar wants to connect to a remote system</span>
+<a name="172"><font size=-1>172     </font></a><span class="comment">     * when a colon is found in the archiveName. So &quot;C:/Users/blah/triage/package&quot; would not work</span>
+<a name="173"><font size=-1>173     </font></a><span class="comment">     * without it. */</span>
+<a name="174"><font size=-1>174     </font></a><span class="comment">    </span><span class="default">args &lt;&lt; </span><span class="string">&quot;--force-local&quot;</span><span class="default">;</span>
+<a name="175"><font size=-1>175     </font></a><span class="default"></span><span class="preproc">#endif</span>
+<a name="176"><font size=-1>176     </font></a><span class="preproc">    </span><span class="keyword">if </span><span class="default">(archiveName.endsWith(</span><span class="string">&quot;.tar.gz&quot;</span><span class="default">))</span>
+<a name="177"><font size=-1>177     </font></a><span class="default">        args &lt;&lt; </span><span class="string">&quot;-xzvf&quot;</span><span class="default">;</span>
+<a name="178"><font size=-1>178     </font></a><span class="default">    </span><span class="keyword">else if </span><span class="default">(archiveName.endsWith(</span><span class="string">&quot;.tar.bz2&quot;</span><span class="default">))</span>
+<a name="179"><font size=-1>179     </font></a><span class="default">        args &lt;&lt; </span><span class="string">&quot;-xjvf&quot;</span><span class="default">;</span>
+<a name="180"><font size=-1>180     </font></a><span class="default">    </span><span class="keyword">else if </span><span class="default">(archiveName.endsWith(</span><span class="string">&quot;.tar.xz&quot;</span><span class="default">))</span>
+<a name="181"><font size=-1>181     </font></a><span class="default">        args &lt;&lt; </span><span class="string">&quot;-xJvf&quot;</span><span class="default">;</span>
+<a name="182"><font size=-1>182     </font></a><span class="default">    </span><span class="keyword">else </span><span class="default">{</span>
+<a name="183"><font size=-1>183     </font></a><span class="default">        </span><span class="comment">// Try to automatically find an (un)compressor for this archive</span>
+<a name="184"><font size=-1>184     </font></a><span class="comment">        </span><span class="default">args &lt;&lt; </span><span class="string">&quot;-xavf&quot;</span><span class="default">;</span>
+<a name="185"><font size=-1>185     </font></a><span class="default">    }</span>
+<a name="186"><font size=-1>186     </font></a><span class="default">    args &lt;&lt; archiveName;</span>
+<a name="187"><font size=-1>187     </font></a><span class="default"></span>
+<a name="188"><font size=-1>188     </font></a><span class="default">    </span><span class="keyword">return </span><span class="default">runProcess(</span><span class="string">&quot;tar&quot;</span><span class="default">, args);</span>
+<a name="189"><font size=-1>189     </font></a><span class="default">}</span>
+<a name="190"><font size=-1>190     </font></a><span class="default"></span>
+<a name="191"><font size=-1>191     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">MainWindow::showResult(QListWidgetItem *item)</span>
+<a name="192"><font size=-1>192     </font></a><span class="default">{</span>
+<a name="193"><font size=-1>193     </font></a><span class="default">    ui-&gt;statusBar-&gt;clearMessage();</span>
+<a name="194"><font size=-1>194     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(!item-&gt;text().startsWith(</span><span class="string">&quot;ftp://&quot;</span><span class="default">))</span>
+<a name="195"><font size=-1>195     </font></a><span class="default">        </span><span class="keyword">return</span><span class="default">;</span>
+<a name="196"><font size=-1>196     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QStringList lines = item-&gt;text().split(</span><span class="string">&quot;\n&quot;</span><span class="default">);</span>
+<a name="197"><font size=-1>197     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(lines.size() &lt; </span><span class="number">2</span><span class="default">)</span>
+<a name="198"><font size=-1>198     </font></a><span class="default">        </span><span class="keyword">return</span><span class="default">;</span>
+<a name="199"><font size=-1>199     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString url = lines[</span><span class="number">0</span><span class="default">];</span>
+<a name="200"><font size=-1>200     </font></a><span class="default">    QString msg = lines[</span><span class="number">1</span><span class="default">];</span>
+<a name="201"><font size=-1>201     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(QRegExp(</span><span class="string">&quot;^(head|1.[0-9][0-9]) .*&quot;</span><span class="default">).exactMatch(msg))</span>
+<a name="202"><font size=-1>202     </font></a><span class="default">        msg = msg.mid(</span><span class="number">5</span><span class="default">);</span>
+<a name="203"><font size=-1>203     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString archiveName = url.mid(url.lastIndexOf(</span><span class="string">&quot;/&quot;</span><span class="default">) + </span><span class="number">1</span><span class="default">);</span>
+<a name="204"><font size=-1>204     </font></a><span class="default">    </span><span class="keyword">const int </span><span class="default">pos1 = msg.indexOf(</span><span class="string">&quot;:&quot;</span><span class="default">);</span>
+<a name="205"><font size=-1>205     </font></a><span class="default">    </span><span class="keyword">const int </span><span class="default">pos2 = msg.indexOf(</span><span class="string">&quot;:&quot;</span><span class="default">, pos1+</span><span class="number">1</span><span class="default">);</span>
+<a name="206"><font size=-1>206     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString fileName = WORK_FOLDER + </span><span class="string">'/' </span><span class="default">+ msg.left(msg.indexOf(</span><span class="string">&quot;:&quot;</span><span class="default">));</span>
+<a name="207"><font size=-1>207     </font></a><span class="default">    </span><span class="keyword">const int </span><span class="default">lineNumber = msg.midRef(pos1+</span><span class="number">1</span><span class="default">,pos2-pos1-</span><span class="number">1</span><span class="default">).toInt();</span>
+<a name="208"><font size=-1>208     </font></a><span class="default"></span>
+<a name="209"><font size=-1>209     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(!QFileInfo::exists(fileName)) {</span>
+<a name="210"><font size=-1>210     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(QFileInfo::exists(DACA2_PACKAGES + </span><span class="string">'/' </span><span class="default">+ archiveName.mid(</span><span class="number">0</span><span class="default">,archiveName.indexOf(</span><span class="string">&quot;.tar.&quot;</span><span class="default">)) + </span><span class="string">&quot;.tar.xz&quot;</span><span class="default">)) {</span>
+<a name="211"><font size=-1>211     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(!unpackArchive(DACA2_PACKAGES + </span><span class="string">'/' </span><span class="default">+ archiveName.mid(</span><span class="number">0</span><span class="default">,archiveName.indexOf(</span><span class="string">&quot;.tar.&quot;</span><span class="default">)) + </span><span class="string">&quot;.tar.xz&quot;</span><span class="default">))</span>
+<a name="212"><font size=-1>212     </font></a><span class="default">                </span><span class="keyword">return</span><span class="default">;</span>
+<a name="213"><font size=-1>213     </font></a><span class="default">        } </span><span class="keyword">else </span><span class="default">{</span>
+<a name="214"><font size=-1>214     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(!QFileInfo::exists(WORK_FOLDER + </span><span class="string">'/' </span><span class="default">+ archiveName)) {</span>
+<a name="215"><font size=-1>215     </font></a><span class="default">                </span><span class="comment">// Download archive</span>
+<a name="216"><font size=-1>216     </font></a><span class="comment">                </span><span class="keyword">if </span><span class="default">(!wget(url))</span>
+<a name="217"><font size=-1>217     </font></a><span class="default">                    </span><span class="keyword">return</span><span class="default">;</span>
+<a name="218"><font size=-1>218     </font></a><span class="default">            }</span>
+<a name="219"><font size=-1>219     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(!unpackArchive(WORK_FOLDER + </span><span class="string">'/' </span><span class="default">+ archiveName))</span>
+<a name="220"><font size=-1>220     </font></a><span class="default">                </span><span class="keyword">return</span><span class="default">;</span>
+<a name="221"><font size=-1>221     </font></a><span class="default">        }</span>
+<a name="222"><font size=-1>222     </font></a><span class="default">    }</span>
+<a name="223"><font size=-1>223     </font></a><span class="default"></span>
+<a name="224"><font size=-1>224     </font></a><span class="default">    </span><span class="comment">// Open file</span>
+<a name="225"><font size=-1>225     </font></a><span class="comment">    </span><span class="default">ui-&gt;code-&gt;setFocus();</span>
+<a name="226"><font size=-1>226     </font></a><span class="default">    QFile f(fileName);</span>
+<a name="227"><font size=-1>227     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(!f.open(QIODevice::ReadOnly | QIODevice::Text)) {</span>
+<a name="228"><font size=-1>228     </font></a><span class="default">        </span><span class="keyword">const </span><span class="default">QString errorMsg =</span>
+<a name="229"><font size=-1>229     </font></a><span class="default">            QString(</span><span class="string">&quot;Opening file %1 failed: %2&quot;</span><span class="default">).arg(f.fileName(), f.errorString());</span>
+<a name="230"><font size=-1>230     </font></a><span class="default">        ui-&gt;statusBar-&gt;showMessage(errorMsg);</span>
+<a name="231"><font size=-1>231     </font></a><span class="default">    } </span><span class="keyword">else </span><span class="default">{</span>
+<a name="232"><font size=-1>232     </font></a><span class="default">        QTextStream textStream(&amp;f);</span>
+<a name="233"><font size=-1>233     </font></a><span class="default">        </span><span class="keyword">const </span><span class="default">QString fileData = textStream.readAll();</span>
+<a name="234"><font size=-1>234     </font></a><span class="default">        ui-&gt;code-&gt;setError(fileData, lineNumber, QStringList());</span>
+<a name="235"><font size=-1>235     </font></a><span class="default"></span>
+<a name="236"><font size=-1>236     </font></a><span class="default">        ui-&gt;edit1-&gt;setText(url);</span>
+<a name="237"><font size=-1>237     </font></a><span class="default">        ui-&gt;edit2-&gt;setText(fileName);</span>
+<a name="238"><font size=-1>238     </font></a><span class="default">        f.close();</span>
+<a name="239"><font size=-1>239     </font></a><span class="default">    }</span>
+<a name="240"><font size=-1>240     </font></a><span class="default">}</span>
+<a name="241"><font size=-1>241     </font></a><span class="default"></span>
+</pre></body></html>

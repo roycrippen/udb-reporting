@@ -1,0 +1,22 @@
+<html><head><title>bad.c</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="sourcestyles.css" />
+</head><body link="blue" vlink="blue">
+<h3>File: /home/crippenre/dev/cpp/cppcheck/samples/AssignmentAddressToInteger/bad.c</h3>
+<SCRIPT>
+defaultStatus = "File: /home/crippenre/dev/cpp/cppcheck/samples/AssignmentAddressToInteger/bad.c";
+top.document.title  = "bad.c";
+</SCRIPT>
+<pre><span class="default"></span><a name="1"><font size=-1>1     </font></a><span class="default"></span><span class="keyword">int </span><span class="default">foo(</span><span class="keyword">int </span><span class="default">*p)</span>
+<a name="2"><font size=-1>2     </font></a><span class="default">{</span>
+<a name="3"><font size=-1>3     </font></a><span class="default">    </span><span class="keyword">int </span><span class="default">a = p;</span>
+<a name="4"><font size=-1>4     </font></a><span class="default">    </span><span class="keyword">return </span><span class="default">a + </span><span class="number">4</span><span class="default">;</span>
+<a name="5"><font size=-1>5     </font></a><span class="default">}</span>
+<a name="6"><font size=-1>6     </font></a><span class="default"></span>
+<a name="7"><font size=-1>7     </font></a><span class="default"></span><span class="keyword">int </span><span class="default">main()</span>
+<a name="8"><font size=-1>8     </font></a><span class="default">{</span>
+<a name="9"><font size=-1>9     </font></a><span class="default">    </span><span class="keyword">int </span><span class="default">i[</span><span class="number">10</span><span class="default">];</span>
+<a name="10"><font size=-1>10     </font></a><span class="default">    foo(i);</span>
+<a name="11"><font size=-1>11     </font></a><span class="default">}</span>
+<a name="12"><font size=-1>12     </font></a><span class="default"></span>
+</pre></body></html>

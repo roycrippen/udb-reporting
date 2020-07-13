@@ -1,0 +1,194 @@
+site_name: 'UDB Metrics Reporting for cpp_check'
+site_description: 'Metrics and Dependency report for a UDB.'
+site_author: 'Roy Crippen'
+
+use_directory_urls: false
+
+theme:
+  name: null
+  custom_dir: ../../mkdocs_ivory
+  # Copy settings from mkdocs_theme.yml, which is ignored by custom_dir themes.
+  static_templates:
+    - 404.html
+
+  include_search_page: true
+  search_index_only: false
+
+  highlightjs: true
+  hljs_languages: []
+
+
+markdown_extensions:
+  - toc:
+      permalink: '#'
+
+extra:
+  history_buttons: true
+  version: v0.0.1
+
+plugins:
+    - search:
+        lang: ['en']
+        prebuild_index: true
+
+nav:
+- Usage: index.md
+- Metrics:
+    - Application Metrics: Metrics/application-metrics.md
+    - cppcheck:
+        - cppcheck Metrics: Metrics/cppcheck/cppcheck-metrics.md
+        - addons:
+            - addons Metrics: Metrics/cppcheck/addons/addons-metrics.md
+            - test:
+                - test Metrics: Metrics/cppcheck/addons/test/test-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/addons/test/zzz-file-metrics.md
+                - misra:
+                    - misra Metrics: Metrics/cppcheck/addons/test/misra/misra-metrics.md
+                    - File Metrics and Dependencies: Metrics/cppcheck/addons/test/misra/zzz-file-metrics.md
+                - path1:
+                    - path1 Metrics: Metrics/cppcheck/addons/test/path1/path1-metrics.md
+                    - File Metrics and Dependencies: Metrics/cppcheck/addons/test/path1/zzz-file-metrics.md
+                - y2038:
+                    - y2038 Metrics: Metrics/cppcheck/addons/test/y2038/y2038-metrics.md
+                    - File Metrics and Dependencies: Metrics/cppcheck/addons/test/y2038/zzz-file-metrics.md
+        - cli:
+            - cli Metrics: Metrics/cppcheck/cli/cli-metrics.md
+            - File Metrics and Dependencies: Metrics/cppcheck/cli/zzz-file-metrics.md
+        - cve-test-suite:
+            - cve-test-suite Metrics: Metrics/cppcheck/cve-test-suite/cve-test-suite-metrics.md
+            - File Metrics and Dependencies: Metrics/cppcheck/cve-test-suite/zzz-file-metrics.md
+        - democlient:
+            - democlient Metrics: Metrics/cppcheck/democlient/democlient-metrics.md
+            - File Metrics and Dependencies: Metrics/cppcheck/democlient/zzz-file-metrics.md
+        - externals:
+            - externals Metrics: Metrics/cppcheck/externals/externals-metrics.md
+            - File Metrics and Dependencies: Metrics/cppcheck/externals/zzz-file-metrics.md
+            - simplecpp:
+                - simplecpp Metrics: Metrics/cppcheck/externals/simplecpp/simplecpp-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/externals/simplecpp/zzz-file-metrics.md
+            - tinyxml:
+                - tinyxml Metrics: Metrics/cppcheck/externals/tinyxml/tinyxml-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/externals/tinyxml/zzz-file-metrics.md
+        - gui:
+            - gui Metrics: Metrics/cppcheck/gui/gui-metrics.md
+            - File Metrics and Dependencies: Metrics/cppcheck/gui/zzz-file-metrics.md
+            - test:
+                - test Metrics: Metrics/cppcheck/gui/test/test-metrics.md
+                - benchmark:
+                    - benchmark Metrics: Metrics/cppcheck/gui/test/benchmark/benchmark-metrics.md
+                    - simple:
+                        - simple Metrics: Metrics/cppcheck/gui/test/benchmark/simple/simple-metrics.md
+                        - File Metrics and Dependencies: Metrics/cppcheck/gui/test/benchmark/simple/zzz-file-metrics.md
+                - data:
+                    - data Metrics: Metrics/cppcheck/gui/test/data/data-metrics.md
+                    - benchmark:
+                        - benchmark Metrics: Metrics/cppcheck/gui/test/data/benchmark/benchmark-metrics.md
+                        - File Metrics and Dependencies: Metrics/cppcheck/gui/test/data/benchmark/zzz-file-metrics.md
+                    - files:
+                        - files Metrics: Metrics/cppcheck/gui/test/data/files/files-metrics.md
+                        - File Metrics and Dependencies: Metrics/cppcheck/gui/test/data/files/zzz-file-metrics.md
+                        - dir1:
+                            - dir1 Metrics: Metrics/cppcheck/gui/test/data/files/dir1/dir1-metrics.md
+                            - File Metrics and Dependencies: Metrics/cppcheck/gui/test/data/files/dir1/zzz-file-metrics.md
+                            - dir11:
+                                - dir11 Metrics: Metrics/cppcheck/gui/test/data/files/dir1/dir11/dir11-metrics.md
+                                - File Metrics and Dependencies: Metrics/cppcheck/gui/test/data/files/dir1/dir11/zzz-file-metrics.md
+                        - dir2:
+                            - dir2 Metrics: Metrics/cppcheck/gui/test/data/files/dir2/dir2-metrics.md
+                            - File Metrics and Dependencies: Metrics/cppcheck/gui/test/data/files/dir2/zzz-file-metrics.md
+                - filelist:
+                    - filelist Metrics: Metrics/cppcheck/gui/test/filelist/filelist-metrics.md
+                    - File Metrics and Dependencies: Metrics/cppcheck/gui/test/filelist/zzz-file-metrics.md
+                - projectfile:
+                    - projectfile Metrics: Metrics/cppcheck/gui/test/projectfile/projectfile-metrics.md
+                    - File Metrics and Dependencies: Metrics/cppcheck/gui/test/projectfile/zzz-file-metrics.md
+                - translationhandler:
+                    - translationhandler Metrics: Metrics/cppcheck/gui/test/translationhandler/translationhandler-metrics.md
+                    - File Metrics and Dependencies: Metrics/cppcheck/gui/test/translationhandler/zzz-file-metrics.md
+                - xmlreportv2:
+                    - xmlreportv2 Metrics: Metrics/cppcheck/gui/test/xmlreportv2/xmlreportv2-metrics.md
+                    - File Metrics and Dependencies: Metrics/cppcheck/gui/test/xmlreportv2/zzz-file-metrics.md
+        - htmlreport:
+            - htmlreport Metrics: Metrics/cppcheck/htmlreport/htmlreport-metrics.md
+            - File Metrics and Dependencies: Metrics/cppcheck/htmlreport/zzz-file-metrics.md
+        - lib:
+            - lib Metrics: Metrics/cppcheck/lib/lib-metrics.md
+            - File Metrics and Dependencies: Metrics/cppcheck/lib/zzz-file-metrics.md
+        - oss-fuzz:
+            - oss-fuzz Metrics: Metrics/cppcheck/oss-fuzz/oss-fuzz-metrics.md
+            - File Metrics and Dependencies: Metrics/cppcheck/oss-fuzz/zzz-file-metrics.md
+        - samples:
+            - samples Metrics: Metrics/cppcheck/samples/samples-metrics.md
+            - AssignmentAddressToInteger:
+                - AssignmentAddressToInteger Metrics: Metrics/cppcheck/samples/AssignmentAddressToInteger/AssignmentAddressToInteger-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/samples/AssignmentAddressToInteger/zzz-file-metrics.md
+            - arrayIndexOutOfBounds:
+                - arrayIndexOutOfBounds Metrics: Metrics/cppcheck/samples/arrayIndexOutOfBounds/arrayIndexOutOfBounds-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/samples/arrayIndexOutOfBounds/zzz-file-metrics.md
+            - autoVariables:
+                - autoVariables Metrics: Metrics/cppcheck/samples/autoVariables/autoVariables-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/samples/autoVariables/zzz-file-metrics.md
+            - bufferAccessOutOfBounds:
+                - bufferAccessOutOfBounds Metrics: Metrics/cppcheck/samples/bufferAccessOutOfBounds/bufferAccessOutOfBounds-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/samples/bufferAccessOutOfBounds/zzz-file-metrics.md
+            - erase:
+                - erase Metrics: Metrics/cppcheck/samples/erase/erase-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/samples/erase/zzz-file-metrics.md
+            - memleak:
+                - memleak Metrics: Metrics/cppcheck/samples/memleak/memleak-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/samples/memleak/zzz-file-metrics.md
+            - outOfBounds:
+                - outOfBounds Metrics: Metrics/cppcheck/samples/outOfBounds/outOfBounds-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/samples/outOfBounds/zzz-file-metrics.md
+            - resourceLeak:
+                - resourceLeak Metrics: Metrics/cppcheck/samples/resourceLeak/resourceLeak-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/samples/resourceLeak/zzz-file-metrics.md
+            - syntaxError:
+                - syntaxError Metrics: Metrics/cppcheck/samples/syntaxError/syntaxError-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/samples/syntaxError/zzz-file-metrics.md
+        - test:
+            - test Metrics: Metrics/cppcheck/test/test-metrics.md
+            - File Metrics and Dependencies: Metrics/cppcheck/test/zzz-file-metrics.md
+            - cfg:
+                - cfg Metrics: Metrics/cppcheck/test/cfg/cfg-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/test/cfg/zzz-file-metrics.md
+            - cli:
+                - cli Metrics: Metrics/cppcheck/test/cli/cli-metrics.md
+                - helloworld:
+                    - helloworld Metrics: Metrics/cppcheck/test/cli/helloworld/helloworld-metrics.md
+                    - File Metrics and Dependencies: Metrics/cppcheck/test/cli/helloworld/zzz-file-metrics.md
+                - proj-inline-suppress:
+                    - proj-inline-suppress Metrics: Metrics/cppcheck/test/cli/proj-inline-suppress/proj-inline-suppress-metrics.md
+                    - File Metrics and Dependencies: Metrics/cppcheck/test/cli/proj-inline-suppress/zzz-file-metrics.md
+                - proj-suppress-syntaxError:
+                    - proj-suppress-syntaxError Metrics: Metrics/cppcheck/test/cli/proj-suppress-syntaxError/proj-suppress-syntaxError-metrics.md
+                    - File Metrics and Dependencies: Metrics/cppcheck/test/cli/proj-suppress-syntaxError/zzz-file-metrics.md
+                - proj2:
+                    - proj2 Metrics: Metrics/cppcheck/test/cli/proj2/proj2-metrics.md
+                    - a:
+                        - a Metrics: Metrics/cppcheck/test/cli/proj2/a/a-metrics.md
+                        - File Metrics and Dependencies: Metrics/cppcheck/test/cli/proj2/a/zzz-file-metrics.md
+                    - b:
+                        - b Metrics: Metrics/cppcheck/test/cli/proj2/b/b-metrics.md
+                        - File Metrics and Dependencies: Metrics/cppcheck/test/cli/proj2/b/zzz-file-metrics.md
+            - synthetic:
+                - synthetic Metrics: Metrics/cppcheck/test/synthetic/synthetic-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/test/synthetic/zzz-file-metrics.md
+            - testsuites:
+                - testsuites Metrics: Metrics/cppcheck/test/testsuites/testsuites-metrics.md
+                - clang:
+                    - clang Metrics: Metrics/cppcheck/test/testsuites/clang/clang-metrics.md
+                    - File Metrics and Dependencies: Metrics/cppcheck/test/testsuites/clang/zzz-file-metrics.md
+                - duma:
+                    - duma Metrics: Metrics/cppcheck/test/testsuites/duma/duma-metrics.md
+                    - File Metrics and Dependencies: Metrics/cppcheck/test/testsuites/duma/zzz-file-metrics.md
+        - tools:
+            - tools Metrics: Metrics/cppcheck/tools/tools-metrics.md
+            - File Metrics and Dependencies: Metrics/cppcheck/tools/zzz-file-metrics.md
+            - triage:
+                - triage Metrics: Metrics/cppcheck/tools/triage/triage-metrics.md
+                - File Metrics and Dependencies: Metrics/cppcheck/tools/triage/zzz-file-metrics.md
+- Reports:
+    - Direct Circular File References: Reports/circular_file_refs.md
+    - File List Indented: Reports/file_list_indented_sloc.md
+    - Red Metrics: Reports/red_metrics.md

@@ -1,0 +1,29 @@
+project_name: Digsim 10 in C
+
+# Valid language names are: "Ada", "C++", "C#", "Fortran", "Java",
+#   "Jovial", "Pascal", "Plm", "Python", "VHDL", or "Web".
+# C is included with "C++"
+languages:
+  - C++
+
+# udb file created by SciTools Understand
+udb_name: task10.udb
+
+# absolute path used im udb file
+udb_source_root: /home/crippenre/dev/digsim/digsim-roy/c/
+
+# text reports
+out_dir_text: 'results/'
+text_reports:
+  - file_list_indented_sloc_text: true
+  - red_metrics_text: true
+  - circular_file_refs_text: true
+
+# markdown reports
+out_dir_md: 'docs/'
+md_reports:
+  - red_metrics: true
+  - file_list_indented_sloc: true
+  - metrics: true  # this one must be true
+  - circular_file_refs: true
+

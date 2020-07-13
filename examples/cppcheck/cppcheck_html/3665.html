@@ -1,0 +1,996 @@
+<html><head><title>checkleakautovar.cpp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="sourcestyles.css" />
+</head><body link="blue" vlink="blue">
+<h3>File: /home/crippenre/dev/cpp/cppcheck/lib/checkleakautovar.cpp</h3>
+<SCRIPT>
+defaultStatus = "File: /home/crippenre/dev/cpp/cppcheck/lib/checkleakautovar.cpp";
+top.document.title  = "checkleakautovar.cpp";
+</SCRIPT>
+<pre><span class="default"></span><a name="1"><font size=-1>1     </font></a><span class="default"></span><span class="comment">/*</span>
+<a name="2"><font size=-1>2     </font></a><span class="comment"> * Cppcheck - A tool for static C/C++ code analysis</span>
+<a name="3"><font size=-1>3     </font></a><span class="comment"> * Copyright (C) 2007-2019 Cppcheck team.</span>
+<a name="4"><font size=-1>4     </font></a><span class="comment"> *</span>
+<a name="5"><font size=-1>5     </font></a><span class="comment"> * This program is free software: you can redistribute it and/or modify</span>
+<a name="6"><font size=-1>6     </font></a><span class="comment"> * it under the terms of the GNU General Public License as published by</span>
+<a name="7"><font size=-1>7     </font></a><span class="comment"> * the Free Software Foundation, either version 3 of the License, or</span>
+<a name="8"><font size=-1>8     </font></a><span class="comment"> * (at your option) any later version.</span>
+<a name="9"><font size=-1>9     </font></a><span class="comment"> *</span>
+<a name="10"><font size=-1>10     </font></a><span class="comment"> * This program is distributed in the hope that it will be useful,</span>
+<a name="11"><font size=-1>11     </font></a><span class="comment"> * but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="12"><font size=-1>12     </font></a><span class="comment"> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="13"><font size=-1>13     </font></a><span class="comment"> * GNU General Public License for more details.</span>
+<a name="14"><font size=-1>14     </font></a><span class="comment"> *</span>
+<a name="15"><font size=-1>15     </font></a><span class="comment"> * You should have received a copy of the GNU General Public License</span>
+<a name="16"><font size=-1>16     </font></a><span class="comment"> * along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="17"><font size=-1>17     </font></a><span class="comment"> */</span>
+<a name="18"><font size=-1>18     </font></a><span class="comment"></span>
+<a name="19"><font size=-1>19     </font></a><span class="comment">//---------------------------------------------------------------------------</span>
+<a name="20"><font size=-1>20     </font></a><span class="comment">// Leaks when using auto variables</span>
+<a name="21"><font size=-1>21     </font></a><span class="comment">//---------------------------------------------------------------------------</span>
+<a name="22"><font size=-1>22     </font></a><span class="comment"></span>
+<a name="23"><font size=-1>23     </font></a><span class="comment"></span><span class="preproc">#include </span><span class="string">&quot;checkleakautovar.h&quot;</span>
+<a name="24"><font size=-1>24     </font></a><span class="string"></span>
+<a name="25"><font size=-1>25     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&quot;astutils.h&quot;</span>
+<a name="26"><font size=-1>26     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&quot;checkmemoryleak.h&quot;  </span><span class="comment">// &lt;- CheckMemoryLeak::memoryLeak</span>
+<a name="27"><font size=-1>27     </font></a><span class="comment"></span><span class="preproc">#include </span><span class="string">&quot;checknullpointer.h&quot; </span><span class="comment">// &lt;- CheckNullPointer::isPointerDeRef</span>
+<a name="28"><font size=-1>28     </font></a><span class="comment"></span><span class="preproc">#include </span><span class="string">&quot;errorlogger.h&quot;</span>
+<a name="29"><font size=-1>29     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&quot;mathlib.h&quot;</span>
+<a name="30"><font size=-1>30     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&quot;settings.h&quot;</span>
+<a name="31"><font size=-1>31     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&quot;symboldatabase.h&quot;</span>
+<a name="32"><font size=-1>32     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&quot;token.h&quot;</span>
+<a name="33"><font size=-1>33     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&quot;tokenize.h&quot;</span>
+<a name="34"><font size=-1>34     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&quot;valueflow.h&quot;</span>
+<a name="35"><font size=-1>35     </font></a><span class="string"></span>
+<a name="36"><font size=-1>36     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;cstddef&gt;</span>
+<a name="37"><font size=-1>37     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;iostream&gt;</span>
+<a name="38"><font size=-1>38     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;list&gt;</span>
+<a name="39"><font size=-1>39     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;stack&gt;</span>
+<a name="40"><font size=-1>40     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;utility&gt;</span>
+<a name="41"><font size=-1>41     </font></a><span class="string"></span>
+<a name="42"><font size=-1>42     </font></a><span class="string"></span><span class="comment">//---------------------------------------------------------------------------</span>
+<a name="43"><font size=-1>43     </font></a><span class="comment"></span>
+<a name="44"><font size=-1>44     </font></a><span class="comment">// Register this check class (by creating a static instance of it)</span>
+<a name="45"><font size=-1>45     </font></a><span class="comment"></span><span class="keyword">namespace </span><span class="default">{</span>
+<a name="46"><font size=-1>46     </font></a><span class="default">    CheckLeakAutoVar instance;</span>
+<a name="47"><font size=-1>47     </font></a><span class="default">}</span>
+<a name="48"><font size=-1>48     </font></a><span class="default"></span>
+<a name="49"><font size=-1>49     </font></a><span class="default"></span><span class="keyword">static const </span><span class="default">CWE CWE672(</span><span class="number">672U</span><span class="default">);</span>
+<a name="50"><font size=-1>50     </font></a><span class="default"></span><span class="keyword">static const </span><span class="default">CWE CWE415(</span><span class="number">415U</span><span class="default">);</span>
+<a name="51"><font size=-1>51     </font></a><span class="default"></span>
+<a name="52"><font size=-1>52     </font></a><span class="default"></span><span class="comment">// Hardcoded allocation types (not from library)</span>
+<a name="53"><font size=-1>53     </font></a><span class="comment"></span><span class="keyword">static const int </span><span class="default">NEW_ARRAY = -</span><span class="number">2</span><span class="default">;</span>
+<a name="54"><font size=-1>54     </font></a><span class="default"></span><span class="keyword">static const int </span><span class="default">NEW = -</span><span class="number">1</span><span class="default">;</span>
+<a name="55"><font size=-1>55     </font></a><span class="default"></span>
+<a name="56"><font size=-1>56     </font></a><span class="default"></span>
+<a name="57"><font size=-1>57     </font></a><span class="default"></span><span class="comment">/**</span>
+<a name="58"><font size=-1>58     </font></a><span class="comment"> * @brief Is variable type some class with automatic deallocation?</span>
+<a name="59"><font size=-1>59     </font></a><span class="comment"> * @param vartok variable token</span>
+<a name="60"><font size=-1>60     </font></a><span class="comment"> * @return true unless it can be seen there is no automatic deallocation</span>
+<a name="61"><font size=-1>61     </font></a><span class="comment"> */</span>
+<a name="62"><font size=-1>62     </font></a><span class="comment"></span><span class="keyword">static bool </span><span class="default">isAutoDealloc(</span><span class="keyword">const </span><span class="default">Variable *var)</span>
+<a name="63"><font size=-1>63     </font></a><span class="default">{</span>
+<a name="64"><font size=-1>64     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(var-&gt;valueType() &amp;&amp; var-&gt;valueType()-&gt;type != ValueType::Type::RECORD &amp;&amp; var-&gt;valueType()-&gt;type != ValueType::Type::UNKNOWN_TYPE)</span>
+<a name="65"><font size=-1>65     </font></a><span class="default">        </span><span class="keyword">return false</span><span class="default">;</span>
+<a name="66"><font size=-1>66     </font></a><span class="default"></span>
+<a name="67"><font size=-1>67     </font></a><span class="default">    </span><span class="comment">// return false if the type is a simple record type without side effects</span>
+<a name="68"><font size=-1>68     </font></a><span class="comment">    // a type that has no side effects (no constructors and no members with constructors)</span>
+<a name="69"><font size=-1>69     </font></a><span class="comment">    /** @todo false negative: check base class for side effects */</span>
+<a name="70"><font size=-1>70     </font></a><span class="comment">    /** @todo false negative: check constructors for side effects */</span>
+<a name="71"><font size=-1>71     </font></a><span class="comment">    </span><span class="keyword">if </span><span class="default">(var-&gt;typeScope() &amp;&amp; var-&gt;typeScope()-&gt;numConstructors == </span><span class="number">0 </span><span class="default">&amp;&amp;</span>
+<a name="72"><font size=-1>72     </font></a><span class="default">        (var-&gt;typeScope()-&gt;varlist.empty() || var-&gt;type()-&gt;needInitialization == Type::NeedInitialization::True) &amp;&amp;</span>
+<a name="73"><font size=-1>73     </font></a><span class="default">        var-&gt;type()-&gt;derivedFrom.empty())</span>
+<a name="74"><font size=-1>74     </font></a><span class="default">        </span><span class="keyword">return false</span><span class="default">;</span>
+<a name="75"><font size=-1>75     </font></a><span class="default"></span>
+<a name="76"><font size=-1>76     </font></a><span class="default">    </span><span class="keyword">return true</span><span class="default">;</span>
+<a name="77"><font size=-1>77     </font></a><span class="default">}</span>
+<a name="78"><font size=-1>78     </font></a><span class="default"></span>
+<a name="79"><font size=-1>79     </font></a><span class="default"></span><span class="comment">//---------------------------------------------------------------------------</span>
+<a name="80"><font size=-1>80     </font></a><span class="comment"></span>
+<a name="81"><font size=-1>81     </font></a><span class="comment"></span><span class="keyword">void </span><span class="default">VarInfo::print()</span>
+<a name="82"><font size=-1>82     </font></a><span class="default">{</span>
+<a name="83"><font size=-1>83     </font></a><span class="default">    std::cout &lt;&lt; </span><span class="string">&quot;size=&quot; </span><span class="default">&lt;&lt; alloctype.size() &lt;&lt; std::endl;</span>
+<a name="84"><font size=-1>84     </font></a><span class="default">    </span><span class="keyword">for </span><span class="default">(std::map&lt;</span><span class="keyword">int</span><span class="default">, AllocInfo&gt;::const_iterator it = alloctype.begin(); it != alloctype.end(); ++it) {</span>
+<a name="85"><font size=-1>85     </font></a><span class="default">        std::string strusage;</span>
+<a name="86"><font size=-1>86     </font></a><span class="default">        </span><span class="keyword">const </span><span class="default">std::map&lt;</span><span class="keyword">int</span><span class="default">, std::string&gt;::const_iterator use =</span>
+<a name="87"><font size=-1>87     </font></a><span class="default">            possibleUsage.find(it-&gt;first);</span>
+<a name="88"><font size=-1>88     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(use != possibleUsage.end())</span>
+<a name="89"><font size=-1>89     </font></a><span class="default">            strusage = use-&gt;second;</span>
+<a name="90"><font size=-1>90     </font></a><span class="default"></span>
+<a name="91"><font size=-1>91     </font></a><span class="default">        std::string status;</span>
+<a name="92"><font size=-1>92     </font></a><span class="default">        </span><span class="keyword">switch </span><span class="default">(it-&gt;second.status) {</span>
+<a name="93"><font size=-1>93     </font></a><span class="default">        </span><span class="keyword">case </span><span class="default">OWNED:</span>
+<a name="94"><font size=-1>94     </font></a><span class="default">            status = </span><span class="string">&quot;owned&quot;</span><span class="default">;</span>
+<a name="95"><font size=-1>95     </font></a><span class="default">            </span><span class="keyword">break</span><span class="default">;</span>
+<a name="96"><font size=-1>96     </font></a><span class="default">        </span><span class="keyword">case </span><span class="default">DEALLOC:</span>
+<a name="97"><font size=-1>97     </font></a><span class="default">            status = </span><span class="string">&quot;dealloc&quot;</span><span class="default">;</span>
+<a name="98"><font size=-1>98     </font></a><span class="default">            </span><span class="keyword">break</span><span class="default">;</span>
+<a name="99"><font size=-1>99     </font></a><span class="default">        </span><span class="keyword">case </span><span class="default">ALLOC:</span>
+<a name="100"><font size=-1>100     </font></a><span class="default">            status = </span><span class="string">&quot;alloc&quot;</span><span class="default">;</span>
+<a name="101"><font size=-1>101     </font></a><span class="default">            </span><span class="keyword">break</span><span class="default">;</span>
+<a name="102"><font size=-1>102     </font></a><span class="default">        </span><span class="keyword">case </span><span class="default">NOALLOC:</span>
+<a name="103"><font size=-1>103     </font></a><span class="default">            status = </span><span class="string">&quot;noalloc&quot;</span><span class="default">;</span>
+<a name="104"><font size=-1>104     </font></a><span class="default">            </span><span class="keyword">break</span><span class="default">;</span>
+<a name="105"><font size=-1>105     </font></a><span class="default">        </span><span class="keyword">default</span><span class="default">:</span>
+<a name="106"><font size=-1>106     </font></a><span class="default">            status = </span><span class="string">&quot;?&quot;</span><span class="default">;</span>
+<a name="107"><font size=-1>107     </font></a><span class="default">            </span><span class="keyword">break</span><span class="default">;</span>
+<a name="108"><font size=-1>108     </font></a><span class="default">        };</span>
+<a name="109"><font size=-1>109     </font></a><span class="default"></span>
+<a name="110"><font size=-1>110     </font></a><span class="default">        std::cout &lt;&lt; </span><span class="string">&quot;status=&quot; </span><span class="default">&lt;&lt; status &lt;&lt; </span><span class="string">&quot; &quot;</span>
+<a name="111"><font size=-1>111     </font></a><span class="string">                  </span><span class="default">&lt;&lt; </span><span class="string">&quot;alloctype='&quot; </span><span class="default">&lt;&lt; it-&gt;second.type &lt;&lt; </span><span class="string">&quot;' &quot;</span>
+<a name="112"><font size=-1>112     </font></a><span class="string">                  </span><span class="default">&lt;&lt; </span><span class="string">&quot;possibleUsage='&quot; </span><span class="default">&lt;&lt; strusage &lt;&lt; </span><span class="string">&quot;' &quot;</span>
+<a name="113"><font size=-1>113     </font></a><span class="string">                  </span><span class="default">&lt;&lt; </span><span class="string">&quot;conditionalAlloc=&quot; </span><span class="default">&lt;&lt; (conditionalAlloc.find(it-&gt;first) != conditionalAlloc.end() ? </span><span class="string">&quot;yes&quot; </span><span class="default">: </span><span class="string">&quot;no&quot;</span><span class="default">) &lt;&lt; </span><span class="string">&quot; &quot;</span>
+<a name="114"><font size=-1>114     </font></a><span class="string">                  </span><span class="default">&lt;&lt; </span><span class="string">&quot;referenced=&quot; </span><span class="default">&lt;&lt; (referenced.find(it-&gt;first) != referenced.end() ? </span><span class="string">&quot;yes&quot; </span><span class="default">: </span><span class="string">&quot;no&quot;</span><span class="default">) &lt;&lt; </span><span class="string">&quot; &quot;</span>
+<a name="115"><font size=-1>115     </font></a><span class="string">                  </span><span class="default">&lt;&lt; std::endl;</span>
+<a name="116"><font size=-1>116     </font></a><span class="default">    }</span>
+<a name="117"><font size=-1>117     </font></a><span class="default">}</span>
+<a name="118"><font size=-1>118     </font></a><span class="default"></span>
+<a name="119"><font size=-1>119     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">VarInfo::possibleUsageAll(</span><span class="keyword">const </span><span class="default">std::string &amp;functionName)</span>
+<a name="120"><font size=-1>120     </font></a><span class="default">{</span>
+<a name="121"><font size=-1>121     </font></a><span class="default">    possibleUsage.clear();</span>
+<a name="122"><font size=-1>122     </font></a><span class="default">    </span><span class="keyword">for </span><span class="default">(std::map&lt;</span><span class="keyword">int</span><span class="default">, AllocInfo&gt;::const_iterator it = alloctype.begin(); it != alloctype.end(); ++it)</span>
+<a name="123"><font size=-1>123     </font></a><span class="default">        possibleUsage[it-&gt;first] = functionName;</span>
+<a name="124"><font size=-1>124     </font></a><span class="default">}</span>
+<a name="125"><font size=-1>125     </font></a><span class="default"></span>
+<a name="126"><font size=-1>126     </font></a><span class="default"></span>
+<a name="127"><font size=-1>127     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">CheckLeakAutoVar::leakError(</span><span class="keyword">const </span><span class="default">Token *tok, </span><span class="keyword">const </span><span class="default">std::string &amp;varname, </span><span class="keyword">int </span><span class="default">type)</span>
+<a name="128"><font size=-1>128     </font></a><span class="default">{</span>
+<a name="129"><font size=-1>129     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">CheckMemoryLeak checkmemleak(mTokenizer, mErrorLogger, mSettings);</span>
+<a name="130"><font size=-1>130     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(Library::isresource(type))</span>
+<a name="131"><font size=-1>131     </font></a><span class="default">        checkmemleak.resourceLeakError(tok, varname);</span>
+<a name="132"><font size=-1>132     </font></a><span class="default">    </span><span class="keyword">else</span>
+<a name="133"><font size=-1>133     </font></a><span class="keyword">        </span><span class="default">checkmemleak.memleakError(tok, varname);</span>
+<a name="134"><font size=-1>134     </font></a><span class="default">}</span>
+<a name="135"><font size=-1>135     </font></a><span class="default"></span>
+<a name="136"><font size=-1>136     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">CheckLeakAutoVar::mismatchError(</span><span class="keyword">const </span><span class="default">Token *deallocTok, </span><span class="keyword">const </span><span class="default">Token *allocTok, </span><span class="keyword">const </span><span class="default">std::string &amp;varname)</span>
+<a name="137"><font size=-1>137     </font></a><span class="default">{</span>
+<a name="138"><font size=-1>138     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">CheckMemoryLeak c(mTokenizer, mErrorLogger, mSettings);</span>
+<a name="139"><font size=-1>139     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">std::list&lt;</span><span class="keyword">const </span><span class="default">Token *&gt; callstack = { allocTok, deallocTok };</span>
+<a name="140"><font size=-1>140     </font></a><span class="default">    c.mismatchAllocDealloc(callstack, varname);</span>
+<a name="141"><font size=-1>141     </font></a><span class="default">}</span>
+<a name="142"><font size=-1>142     </font></a><span class="default"></span>
+<a name="143"><font size=-1>143     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">CheckLeakAutoVar::deallocUseError(</span><span class="keyword">const </span><span class="default">Token *tok, </span><span class="keyword">const </span><span class="default">std::string &amp;varname)</span>
+<a name="144"><font size=-1>144     </font></a><span class="default">{</span>
+<a name="145"><font size=-1>145     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">CheckMemoryLeak c(mTokenizer, mErrorLogger, mSettings);</span>
+<a name="146"><font size=-1>146     </font></a><span class="default">    c.deallocuseError(tok, varname);</span>
+<a name="147"><font size=-1>147     </font></a><span class="default">}</span>
+<a name="148"><font size=-1>148     </font></a><span class="default"></span>
+<a name="149"><font size=-1>149     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">CheckLeakAutoVar::deallocReturnError(</span><span class="keyword">const </span><span class="default">Token *tok, </span><span class="keyword">const </span><span class="default">Token *deallocTok, </span><span class="keyword">const </span><span class="default">std::string &amp;varname)</span>
+<a name="150"><font size=-1>150     </font></a><span class="default">{</span>
+<a name="151"><font size=-1>151     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">std::list&lt;</span><span class="keyword">const </span><span class="default">Token *&gt; locations = { deallocTok, tok };</span>
+<a name="152"><font size=-1>152     </font></a><span class="default">    reportError(locations, Severity::error, </span><span class="string">&quot;deallocret&quot;</span><span class="default">, </span><span class="string">&quot;$symbol:&quot; </span><span class="default">+ varname + </span><span class="string">&quot;\nReturning/dereferencing '$symbol' after it is deallocated / released&quot;</span><span class="default">, CWE672, </span><span class="keyword">false</span><span class="default">);</span>
+<a name="153"><font size=-1>153     </font></a><span class="default">}</span>
+<a name="154"><font size=-1>154     </font></a><span class="default"></span>
+<a name="155"><font size=-1>155     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">CheckLeakAutoVar::configurationInfo(</span><span class="keyword">const </span><span class="default">Token* tok, </span><span class="keyword">const </span><span class="default">std::string &amp;functionName)</span>
+<a name="156"><font size=-1>156     </font></a><span class="default">{</span>
+<a name="157"><font size=-1>157     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(mSettings-&gt;checkLibrary &amp;&amp; mSettings-&gt;isEnabled(Settings::INFORMATION)) {</span>
+<a name="158"><font size=-1>158     </font></a><span class="default">        reportError(tok,</span>
+<a name="159"><font size=-1>159     </font></a><span class="default">                    Severity::information,</span>
+<a name="160"><font size=-1>160     </font></a><span class="default">                    </span><span class="string">&quot;checkLibraryUseIgnore&quot;</span><span class="default">,</span>
+<a name="161"><font size=-1>161     </font></a><span class="default">                    </span><span class="string">&quot;--check-library: Function &quot; </span><span class="default">+ functionName + </span><span class="string">&quot;() should have &lt;use&gt;/&lt;leak-ignore&gt; configuration&quot;</span><span class="default">);</span>
+<a name="162"><font size=-1>162     </font></a><span class="default">    }</span>
+<a name="163"><font size=-1>163     </font></a><span class="default">}</span>
+<a name="164"><font size=-1>164     </font></a><span class="default"></span>
+<a name="165"><font size=-1>165     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">CheckLeakAutoVar::doubleFreeError(</span><span class="keyword">const </span><span class="default">Token *tok, </span><span class="keyword">const </span><span class="default">Token *prevFreeTok, </span><span class="keyword">const </span><span class="default">std::string &amp;varname, </span><span class="keyword">int </span><span class="default">type)</span>
+<a name="166"><font size=-1>166     </font></a><span class="default">{</span>
+<a name="167"><font size=-1>167     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">std::list&lt;</span><span class="keyword">const </span><span class="default">Token *&gt; locations = { prevFreeTok, tok };</span>
+<a name="168"><font size=-1>168     </font></a><span class="default"></span>
+<a name="169"><font size=-1>169     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(Library::isresource(type))</span>
+<a name="170"><font size=-1>170     </font></a><span class="default">        reportError(locations, Severity::error, </span><span class="string">&quot;doubleFree&quot;</span><span class="default">, </span><span class="string">&quot;$symbol:&quot; </span><span class="default">+ varname + </span><span class="string">&quot;\nResource handle '$symbol' freed twice.&quot;</span><span class="default">, CWE415, </span><span class="keyword">false</span><span class="default">);</span>
+<a name="171"><font size=-1>171     </font></a><span class="default">    </span><span class="keyword">else</span>
+<a name="172"><font size=-1>172     </font></a><span class="keyword">        </span><span class="default">reportError(locations, Severity::error, </span><span class="string">&quot;doubleFree&quot;</span><span class="default">, </span><span class="string">&quot;$symbol:&quot; </span><span class="default">+ varname + </span><span class="string">&quot;\nMemory pointed to by '$symbol' is freed twice.&quot;</span><span class="default">, CWE415, </span><span class="keyword">false</span><span class="default">);</span>
+<a name="173"><font size=-1>173     </font></a><span class="default">}</span>
+<a name="174"><font size=-1>174     </font></a><span class="default"></span>
+<a name="175"><font size=-1>175     </font></a><span class="default"></span>
+<a name="176"><font size=-1>176     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">CheckLeakAutoVar::check()</span>
+<a name="177"><font size=-1>177     </font></a><span class="default">{</span>
+<a name="178"><font size=-1>178     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">SymbolDatabase *symbolDatabase = mTokenizer-&gt;getSymbolDatabase();</span>
+<a name="179"><font size=-1>179     </font></a><span class="default"></span>
+<a name="180"><font size=-1>180     </font></a><span class="default">    </span><span class="comment">// Local variables that are known to be non-zero.</span>
+<a name="181"><font size=-1>181     </font></a><span class="comment">    </span><span class="keyword">const </span><span class="default">std::set&lt;</span><span class="keyword">int</span><span class="default">&gt; notzero;</span>
+<a name="182"><font size=-1>182     </font></a><span class="default"></span>
+<a name="183"><font size=-1>183     </font></a><span class="default">    </span><span class="comment">// Check function scopes</span>
+<a name="184"><font size=-1>184     </font></a><span class="comment">    </span><span class="keyword">for </span><span class="default">(</span><span class="keyword">const </span><span class="default">Scope * scope : symbolDatabase-&gt;functionScopes) {</span>
+<a name="185"><font size=-1>185     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(scope-&gt;hasInlineOrLambdaFunction())</span>
+<a name="186"><font size=-1>186     </font></a><span class="default">            </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="187"><font size=-1>187     </font></a><span class="default"></span>
+<a name="188"><font size=-1>188     </font></a><span class="default">        </span><span class="comment">// Empty variable info</span>
+<a name="189"><font size=-1>189     </font></a><span class="comment">        </span><span class="default">VarInfo varInfo;</span>
+<a name="190"><font size=-1>190     </font></a><span class="default"></span>
+<a name="191"><font size=-1>191     </font></a><span class="default">        checkScope(scope-&gt;bodyStart, &amp;varInfo, notzero, </span><span class="number">0</span><span class="default">);</span>
+<a name="192"><font size=-1>192     </font></a><span class="default"></span>
+<a name="193"><font size=-1>193     </font></a><span class="default">        varInfo.conditionalAlloc.clear();</span>
+<a name="194"><font size=-1>194     </font></a><span class="default"></span>
+<a name="195"><font size=-1>195     </font></a><span class="default">        </span><span class="comment">// Clear reference arguments from varInfo..</span>
+<a name="196"><font size=-1>196     </font></a><span class="comment">        </span><span class="default">std::map&lt;</span><span class="keyword">int</span><span class="default">, VarInfo::AllocInfo&gt;::iterator it = varInfo.alloctype.begin();</span>
+<a name="197"><font size=-1>197     </font></a><span class="default">        </span><span class="keyword">while </span><span class="default">(it != varInfo.alloctype.end()) {</span>
+<a name="198"><font size=-1>198     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Variable *var = symbolDatabase-&gt;getVariableFromVarId(it-&gt;first);</span>
+<a name="199"><font size=-1>199     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(!var ||</span>
+<a name="200"><font size=-1>200     </font></a><span class="default">                (var-&gt;isArgument() &amp;&amp; var-&gt;isReference()) ||</span>
+<a name="201"><font size=-1>201     </font></a><span class="default">                (!var-&gt;isArgument() &amp;&amp; !var-&gt;isLocal()))</span>
+<a name="202"><font size=-1>202     </font></a><span class="default">                varInfo.alloctype.erase(it++);</span>
+<a name="203"><font size=-1>203     </font></a><span class="default">            </span><span class="keyword">else</span>
+<a name="204"><font size=-1>204     </font></a><span class="keyword">                </span><span class="default">++it;</span>
+<a name="205"><font size=-1>205     </font></a><span class="default">        }</span>
+<a name="206"><font size=-1>206     </font></a><span class="default"></span>
+<a name="207"><font size=-1>207     </font></a><span class="default">        ret(scope-&gt;bodyEnd, varInfo);</span>
+<a name="208"><font size=-1>208     </font></a><span class="default">    }</span>
+<a name="209"><font size=-1>209     </font></a><span class="default">}</span>
+<a name="210"><font size=-1>210     </font></a><span class="default"></span>
+<a name="211"><font size=-1>211     </font></a><span class="default"></span><span class="keyword">static bool </span><span class="default">isVarUsedInTree(</span><span class="keyword">const </span><span class="default">Token *tok, nonneg </span><span class="keyword">int </span><span class="default">varid)</span>
+<a name="212"><font size=-1>212     </font></a><span class="default">{</span>
+<a name="213"><font size=-1>213     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(!tok)</span>
+<a name="214"><font size=-1>214     </font></a><span class="default">        </span><span class="keyword">return false</span><span class="default">;</span>
+<a name="215"><font size=-1>215     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(tok-&gt;varId() == varid)</span>
+<a name="216"><font size=-1>216     </font></a><span class="default">        </span><span class="keyword">return true</span><span class="default">;</span>
+<a name="217"><font size=-1>217     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(tok-&gt;str() == </span><span class="string">&quot;(&quot; </span><span class="default">&amp;&amp; Token::simpleMatch(tok-&gt;astOperand1(), </span><span class="string">&quot;sizeof&quot;</span><span class="default">))</span>
+<a name="218"><font size=-1>218     </font></a><span class="default">        </span><span class="keyword">return false</span><span class="default">;</span>
+<a name="219"><font size=-1>219     </font></a><span class="default">    </span><span class="keyword">return </span><span class="default">isVarUsedInTree(tok-&gt;astOperand1(), varid) || isVarUsedInTree(tok-&gt;astOperand2(), varid);</span>
+<a name="220"><font size=-1>220     </font></a><span class="default">}</span>
+<a name="221"><font size=-1>221     </font></a><span class="default"></span>
+<a name="222"><font size=-1>222     </font></a><span class="default"></span><span class="keyword">static bool </span><span class="default">isPointerReleased(</span><span class="keyword">const </span><span class="default">Token *startToken, </span><span class="keyword">const </span><span class="default">Token *endToken, nonneg </span><span class="keyword">int </span><span class="default">varid)</span>
+<a name="223"><font size=-1>223     </font></a><span class="default">{</span>
+<a name="224"><font size=-1>224     </font></a><span class="default">    </span><span class="keyword">for </span><span class="default">(</span><span class="keyword">const </span><span class="default">Token *tok = startToken; tok &amp;&amp; tok != endToken; tok = tok-&gt;next()) {</span>
+<a name="225"><font size=-1>225     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(tok-&gt;varId() != varid)</span>
+<a name="226"><font size=-1>226     </font></a><span class="default">            </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="227"><font size=-1>227     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(Token::Match(tok, </span><span class="string">&quot;%var% . release ( )&quot;</span><span class="default">))</span>
+<a name="228"><font size=-1>228     </font></a><span class="default">            </span><span class="keyword">return true</span><span class="default">;</span>
+<a name="229"><font size=-1>229     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(Token::Match(tok, </span><span class="string">&quot;%var% =&quot;</span><span class="default">))</span>
+<a name="230"><font size=-1>230     </font></a><span class="default">            </span><span class="keyword">return false</span><span class="default">;</span>
+<a name="231"><font size=-1>231     </font></a><span class="default">    }</span>
+<a name="232"><font size=-1>232     </font></a><span class="default">    </span><span class="keyword">return false</span><span class="default">;</span>
+<a name="233"><font size=-1>233     </font></a><span class="default">}</span>
+<a name="234"><font size=-1>234     </font></a><span class="default"></span>
+<a name="235"><font size=-1>235     </font></a><span class="default"></span><span class="keyword">static bool </span><span class="default">isLocalVarNoAutoDealloc(</span><span class="keyword">const </span><span class="default">Token *varTok, </span><span class="keyword">const bool </span><span class="default">isCpp)</span>
+<a name="236"><font size=-1>236     </font></a><span class="default">{</span>
+<a name="237"><font size=-1>237     </font></a><span class="default">    </span><span class="comment">// not a local variable nor argument?</span>
+<a name="238"><font size=-1>238     </font></a><span class="comment">    </span><span class="keyword">const </span><span class="default">Variable *var = varTok-&gt;variable();</span>
+<a name="239"><font size=-1>239     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(!var)</span>
+<a name="240"><font size=-1>240     </font></a><span class="default">        </span><span class="keyword">return true</span><span class="default">;</span>
+<a name="241"><font size=-1>241     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(!var-&gt;isArgument() &amp;&amp; (!var-&gt;isLocal() || var-&gt;isStatic()))</span>
+<a name="242"><font size=-1>242     </font></a><span class="default">        </span><span class="keyword">return false</span><span class="default">;</span>
+<a name="243"><font size=-1>243     </font></a><span class="default"></span>
+<a name="244"><font size=-1>244     </font></a><span class="default">    </span><span class="comment">// Don't check reference variables</span>
+<a name="245"><font size=-1>245     </font></a><span class="comment">    </span><span class="keyword">if </span><span class="default">(var-&gt;isReference())</span>
+<a name="246"><font size=-1>246     </font></a><span class="default">        </span><span class="keyword">return false</span><span class="default">;</span>
+<a name="247"><font size=-1>247     </font></a><span class="default"></span>
+<a name="248"><font size=-1>248     </font></a><span class="default">    </span><span class="comment">// non-pod variable</span>
+<a name="249"><font size=-1>249     </font></a><span class="comment">    </span><span class="keyword">if </span><span class="default">(isCpp) {</span>
+<a name="250"><font size=-1>250     </font></a><span class="default">        </span><span class="comment">// Possibly automatically deallocated memory</span>
+<a name="251"><font size=-1>251     </font></a><span class="comment">        </span><span class="keyword">if </span><span class="default">(isAutoDealloc(var) &amp;&amp; Token::Match(varTok, </span><span class="string">&quot;%var% = new&quot;</span><span class="default">))</span>
+<a name="252"><font size=-1>252     </font></a><span class="default">            </span><span class="keyword">return false</span><span class="default">;</span>
+<a name="253"><font size=-1>253     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(!var-&gt;isPointer() &amp;&amp; !var-&gt;typeStartToken()-&gt;isStandardType())</span>
+<a name="254"><font size=-1>254     </font></a><span class="default">            </span><span class="keyword">return false</span><span class="default">;</span>
+<a name="255"><font size=-1>255     </font></a><span class="default">    }</span>
+<a name="256"><font size=-1>256     </font></a><span class="default">    </span><span class="keyword">return true</span><span class="default">;</span>
+<a name="257"><font size=-1>257     </font></a><span class="default">}</span>
+<a name="258"><font size=-1>258     </font></a><span class="default"></span>
+<a name="259"><font size=-1>259     </font></a><span class="default"></span><span class="comment">/** checks if nameToken is a name of a function in a function call:</span>
+<a name="260"><font size=-1>260     </font></a><span class="comment">*     func(arg)</span>
+<a name="261"><font size=-1>261     </font></a><span class="comment">* or</span>
+<a name="262"><font size=-1>262     </font></a><span class="comment">*     func&lt;temp1_arg&gt;(arg)</span>
+<a name="263"><font size=-1>263     </font></a><span class="comment">* @param nameToken Function name token</span>
+<a name="264"><font size=-1>264     </font></a><span class="comment">* @return opening parenthesis token or NULL if not a function call</span>
+<a name="265"><font size=-1>265     </font></a><span class="comment">*/</span>
+<a name="266"><font size=-1>266     </font></a><span class="comment"></span>
+<a name="267"><font size=-1>267     </font></a><span class="comment"></span><span class="keyword">static const </span><span class="default">Token * isFunctionCall(</span><span class="keyword">const </span><span class="default">Token * nameToken)</span>
+<a name="268"><font size=-1>268     </font></a><span class="default">{</span>
+<a name="269"><font size=-1>269     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(nameToken-&gt;isName()) {</span>
+<a name="270"><font size=-1>270     </font></a><span class="default">        nameToken = nameToken-&gt;next();</span>
+<a name="271"><font size=-1>271     </font></a><span class="default">        </span><span class="comment">// check if function is a template</span>
+<a name="272"><font size=-1>272     </font></a><span class="comment">        </span><span class="keyword">if </span><span class="default">(nameToken &amp;&amp; nameToken-&gt;link() &amp;&amp; nameToken-&gt;str() == </span><span class="string">&quot;&lt;&quot;</span><span class="default">) {</span>
+<a name="273"><font size=-1>273     </font></a><span class="default">            </span><span class="comment">// skip template arguments</span>
+<a name="274"><font size=-1>274     </font></a><span class="comment">            </span><span class="default">nameToken = nameToken-&gt;link()-&gt;next();</span>
+<a name="275"><font size=-1>275     </font></a><span class="default">        }</span>
+<a name="276"><font size=-1>276     </font></a><span class="default">        </span><span class="comment">// check for '('</span>
+<a name="277"><font size=-1>277     </font></a><span class="comment">        </span><span class="keyword">if </span><span class="default">(nameToken &amp;&amp; nameToken-&gt;link() &amp;&amp; nameToken-&gt;str() == </span><span class="string">&quot;(&quot;</span><span class="default">) {</span>
+<a name="278"><font size=-1>278     </font></a><span class="default">            </span><span class="comment">// returning opening parenthesis pointer</span>
+<a name="279"><font size=-1>279     </font></a><span class="comment">            </span><span class="keyword">return </span><span class="default">nameToken;</span>
+<a name="280"><font size=-1>280     </font></a><span class="default">        }</span>
+<a name="281"><font size=-1>281     </font></a><span class="default">    }</span>
+<a name="282"><font size=-1>282     </font></a><span class="default">    </span><span class="keyword">return </span><span class="default">nullptr;</span>
+<a name="283"><font size=-1>283     </font></a><span class="default">}</span>
+<a name="284"><font size=-1>284     </font></a><span class="default"></span>
+<a name="285"><font size=-1>285     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">CheckLeakAutoVar::checkScope(</span><span class="keyword">const </span><span class="default">Token * </span><span class="keyword">const </span><span class="default">startToken,</span>
+<a name="286"><font size=-1>286     </font></a><span class="default">                                  VarInfo *varInfo,</span>
+<a name="287"><font size=-1>287     </font></a><span class="default">                                  std::set&lt;</span><span class="keyword">int</span><span class="default">&gt; notzero,</span>
+<a name="288"><font size=-1>288     </font></a><span class="default">                                  nonneg </span><span class="keyword">int </span><span class="default">recursiveCount)</span>
+<a name="289"><font size=-1>289     </font></a><span class="default">{</span>
+<a name="290"><font size=-1>290     </font></a><span class="default"></span><span class="preproc">#if </span><span class="default">ASAN</span>
+<a name="291"><font size=-1>291     </font></a><span class="default">    </span><span class="keyword">static const </span><span class="default">nonneg </span><span class="keyword">int </span><span class="default">recursiveLimit = </span><span class="number">300</span><span class="default">;</span>
+<a name="292"><font size=-1>292     </font></a><span class="default"></span><span class="preproc">#else</span>
+<a name="293"><font size=-1>293     </font></a><span class="preproc">    </span><span class="keyword">static const </span><span class="default">nonneg </span><span class="keyword">int </span><span class="default">recursiveLimit = </span><span class="number">1000</span><span class="default">;</span>
+<a name="294"><font size=-1>294     </font></a><span class="default"></span><span class="preproc">#endif</span>
+<a name="295"><font size=-1>295     </font></a><span class="preproc">    </span><span class="keyword">if </span><span class="default">(++recursiveCount &gt; recursiveLimit)    </span><span class="comment">// maximum number of &quot;else if ()&quot;</span>
+<a name="296"><font size=-1>296     </font></a><span class="comment">        </span><span class="keyword">throw </span><span class="default">InternalError(startToken, </span><span class="string">&quot;Internal limit: CheckLeakAutoVar::checkScope() Maximum recursive count of 1000 reached.&quot;</span><span class="default">, InternalError::LIMIT);</span>
+<a name="297"><font size=-1>297     </font></a><span class="default"></span>
+<a name="298"><font size=-1>298     </font></a><span class="default">    std::map&lt;</span><span class="keyword">int</span><span class="default">, VarInfo::AllocInfo&gt; &amp;alloctype = varInfo-&gt;alloctype;</span>
+<a name="299"><font size=-1>299     </font></a><span class="default">    std::map&lt;</span><span class="keyword">int</span><span class="default">, std::string&gt; &amp;possibleUsage = varInfo-&gt;possibleUsage;</span>
+<a name="300"><font size=-1>300     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">std::set&lt;</span><span class="keyword">int</span><span class="default">&gt; conditionalAlloc(varInfo-&gt;conditionalAlloc);</span>
+<a name="301"><font size=-1>301     </font></a><span class="default"></span>
+<a name="302"><font size=-1>302     </font></a><span class="default">    </span><span class="comment">// Parse all tokens</span>
+<a name="303"><font size=-1>303     </font></a><span class="comment">    </span><span class="keyword">const </span><span class="default">Token * </span><span class="keyword">const </span><span class="default">endToken = startToken-&gt;link();</span>
+<a name="304"><font size=-1>304     </font></a><span class="default">    </span><span class="keyword">for </span><span class="default">(</span><span class="keyword">const </span><span class="default">Token *tok = startToken; tok &amp;&amp; tok != endToken; tok = tok-&gt;next()) {</span>
+<a name="305"><font size=-1>305     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(!tok-&gt;scope()-&gt;isExecutable()) {</span>
+<a name="306"><font size=-1>306     </font></a><span class="default">            tok = tok-&gt;scope()-&gt;bodyEnd;</span>
+<a name="307"><font size=-1>307     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(!tok) </span><span class="comment">// Ticket #6666 (crash upon invalid code)</span>
+<a name="308"><font size=-1>308     </font></a><span class="comment">                </span><span class="keyword">break</span><span class="default">;</span>
+<a name="309"><font size=-1>309     </font></a><span class="default">        }</span>
+<a name="310"><font size=-1>310     </font></a><span class="default"></span>
+<a name="311"><font size=-1>311     </font></a><span class="default">        </span><span class="comment">// check each token</span>
+<a name="312"><font size=-1>312     </font></a><span class="comment">        </span><span class="default">{</span>
+<a name="313"><font size=-1>313     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Token * nextTok = checkTokenInsideExpression(tok, varInfo);</span>
+<a name="314"><font size=-1>314     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(nextTok) {</span>
+<a name="315"><font size=-1>315     </font></a><span class="default">                tok = nextTok;</span>
+<a name="316"><font size=-1>316     </font></a><span class="default">                </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="317"><font size=-1>317     </font></a><span class="default">            }</span>
+<a name="318"><font size=-1>318     </font></a><span class="default">        }</span>
+<a name="319"><font size=-1>319     </font></a><span class="default"></span>
+<a name="320"><font size=-1>320     </font></a><span class="default"></span>
+<a name="321"><font size=-1>321     </font></a><span class="default">        </span><span class="comment">// look for end of statement</span>
+<a name="322"><font size=-1>322     </font></a><span class="comment">        </span><span class="keyword">if </span><span class="default">(!Token::Match(tok, </span><span class="string">&quot;[;{},]&quot;</span><span class="default">) || Token::Match(tok-&gt;next(), </span><span class="string">&quot;[;{},]&quot;</span><span class="default">))</span>
+<a name="323"><font size=-1>323     </font></a><span class="default">            </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="324"><font size=-1>324     </font></a><span class="default"></span>
+<a name="325"><font size=-1>325     </font></a><span class="default">        tok = tok-&gt;next();</span>
+<a name="326"><font size=-1>326     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(!tok || tok == endToken)</span>
+<a name="327"><font size=-1>327     </font></a><span class="default">            </span><span class="keyword">break</span><span class="default">;</span>
+<a name="328"><font size=-1>328     </font></a><span class="default"></span>
+<a name="329"><font size=-1>329     </font></a><span class="default">        </span><span class="comment">// parse statement, skip to last member</span>
+<a name="330"><font size=-1>330     </font></a><span class="comment">        </span><span class="keyword">const </span><span class="default">Token *varTok = tok;</span>
+<a name="331"><font size=-1>331     </font></a><span class="default">        </span><span class="keyword">while </span><span class="default">(Token::Match(varTok, </span><span class="string">&quot;%name% ::|. %name% !!(&quot;</span><span class="default">))</span>
+<a name="332"><font size=-1>332     </font></a><span class="default">            varTok = varTok-&gt;tokAt(</span><span class="number">2</span><span class="default">);</span>
+<a name="333"><font size=-1>333     </font></a><span class="default"></span>
+<a name="334"><font size=-1>334     </font></a><span class="default">        </span><span class="keyword">const </span><span class="default">Token *ftok = tok;</span>
+<a name="335"><font size=-1>335     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(ftok-&gt;str() == </span><span class="string">&quot;::&quot;</span><span class="default">)</span>
+<a name="336"><font size=-1>336     </font></a><span class="default">            ftok = ftok-&gt;next();</span>
+<a name="337"><font size=-1>337     </font></a><span class="default">        </span><span class="keyword">while </span><span class="default">(Token::Match(ftok, </span><span class="string">&quot;%name% :: %name%&quot;</span><span class="default">))</span>
+<a name="338"><font size=-1>338     </font></a><span class="default">            ftok = ftok-&gt;tokAt(</span><span class="number">2</span><span class="default">);</span>
+<a name="339"><font size=-1>339     </font></a><span class="default"></span>
+<a name="340"><font size=-1>340     </font></a><span class="default">        </span><span class="comment">// assignment..</span>
+<a name="341"><font size=-1>341     </font></a><span class="comment">        </span><span class="keyword">if </span><span class="default">(Token::Match(varTok, </span><span class="string">&quot;%var% =&quot;</span><span class="default">)) {</span>
+<a name="342"><font size=-1>342     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Token* </span><span class="keyword">const </span><span class="default">tokAssignOp = varTok-&gt;next();</span>
+<a name="343"><font size=-1>343     </font></a><span class="default"></span>
+<a name="344"><font size=-1>344     </font></a><span class="default">            </span><span class="comment">// taking address of another variable..</span>
+<a name="345"><font size=-1>345     </font></a><span class="comment">            </span><span class="keyword">if </span><span class="default">(Token::Match(tokAssignOp, </span><span class="string">&quot;= %var% [+;]&quot;</span><span class="default">)) {</span>
+<a name="346"><font size=-1>346     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(varTok-&gt;tokAt(</span><span class="number">2</span><span class="default">)-&gt;varId() != varTok-&gt;varId()) {</span>
+<a name="347"><font size=-1>347     </font></a><span class="default">                    </span><span class="comment">// If variable points at allocated memory =&gt; error</span>
+<a name="348"><font size=-1>348     </font></a><span class="comment">                    </span><span class="default">leakIfAllocated(varTok, *varInfo);</span>
+<a name="349"><font size=-1>349     </font></a><span class="default"></span>
+<a name="350"><font size=-1>350     </font></a><span class="default">                    </span><span class="comment">// no multivariable checking currently =&gt; bail out for rhs variables</span>
+<a name="351"><font size=-1>351     </font></a><span class="comment">                    </span><span class="keyword">for </span><span class="default">(</span><span class="keyword">const </span><span class="default">Token *tok2 = varTok; tok2; tok2 = tok2-&gt;next()) {</span>
+<a name="352"><font size=-1>352     </font></a><span class="default">                        </span><span class="keyword">if </span><span class="default">(tok2-&gt;str() == </span><span class="string">&quot;;&quot;</span><span class="default">) {</span>
+<a name="353"><font size=-1>353     </font></a><span class="default">                            </span><span class="keyword">break</span><span class="default">;</span>
+<a name="354"><font size=-1>354     </font></a><span class="default">                        }</span>
+<a name="355"><font size=-1>355     </font></a><span class="default">                        </span><span class="keyword">if </span><span class="default">(tok2-&gt;varId()) {</span>
+<a name="356"><font size=-1>356     </font></a><span class="default">                            varInfo-&gt;erase(tok2-&gt;varId());</span>
+<a name="357"><font size=-1>357     </font></a><span class="default">                        }</span>
+<a name="358"><font size=-1>358     </font></a><span class="default">                    }</span>
+<a name="359"><font size=-1>359     </font></a><span class="default">                }</span>
+<a name="360"><font size=-1>360     </font></a><span class="default">            }</span>
+<a name="361"><font size=-1>361     </font></a><span class="default"></span>
+<a name="362"><font size=-1>362     </font></a><span class="default">            </span><span class="comment">// right ast part (after `=` operator)</span>
+<a name="363"><font size=-1>363     </font></a><span class="comment">            </span><span class="keyword">const </span><span class="default">Token* tokRightAstOperand = tokAssignOp-&gt;astOperand2();</span>
+<a name="364"><font size=-1>364     </font></a><span class="default">            </span><span class="keyword">while </span><span class="default">(tokRightAstOperand &amp;&amp; tokRightAstOperand-&gt;isCast())</span>
+<a name="365"><font size=-1>365     </font></a><span class="default">                tokRightAstOperand = tokRightAstOperand-&gt;astOperand2() ? tokRightAstOperand-&gt;astOperand2() : tokRightAstOperand-&gt;astOperand1();</span>
+<a name="366"><font size=-1>366     </font></a><span class="default"></span>
+<a name="367"><font size=-1>367     </font></a><span class="default">            </span><span class="comment">// is variable used in rhs?</span>
+<a name="368"><font size=-1>368     </font></a><span class="comment">            </span><span class="keyword">if </span><span class="default">(isVarUsedInTree(tokRightAstOperand, varTok-&gt;varId()))</span>
+<a name="369"><font size=-1>369     </font></a><span class="default">                </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="370"><font size=-1>370     </font></a><span class="default"></span>
+<a name="371"><font size=-1>371     </font></a><span class="default">            </span><span class="comment">// Variable has already been allocated =&gt; error</span>
+<a name="372"><font size=-1>372     </font></a><span class="comment">            </span><span class="keyword">if </span><span class="default">(conditionalAlloc.find(varTok-&gt;varId()) == conditionalAlloc.end())</span>
+<a name="373"><font size=-1>373     </font></a><span class="default">                leakIfAllocated(varTok, *varInfo);</span>
+<a name="374"><font size=-1>374     </font></a><span class="default">            varInfo-&gt;erase(varTok-&gt;varId());</span>
+<a name="375"><font size=-1>375     </font></a><span class="default"></span>
+<a name="376"><font size=-1>376     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(!isLocalVarNoAutoDealloc(varTok, mTokenizer-&gt;isCPP()))</span>
+<a name="377"><font size=-1>377     </font></a><span class="default">                </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="378"><font size=-1>378     </font></a><span class="default"></span>
+<a name="379"><font size=-1>379     </font></a><span class="default">            </span><span class="comment">// allocation?</span>
+<a name="380"><font size=-1>380     </font></a><span class="comment">            </span><span class="keyword">const </span><span class="default">Token *</span><span class="keyword">const </span><span class="default">fTok = tokRightAstOperand ? tokRightAstOperand-&gt;previous() : nullptr;</span>
+<a name="381"><font size=-1>381     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(Token::Match(fTok, </span><span class="string">&quot;%type% (&quot;</span><span class="default">)) {</span>
+<a name="382"><font size=-1>382     </font></a><span class="default">                </span><span class="keyword">const </span><span class="default">Library::AllocFunc* f = mSettings-&gt;library.getAllocFuncInfo(fTok);</span>
+<a name="383"><font size=-1>383     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(f &amp;&amp; f-&gt;arg == -</span><span class="number">1</span><span class="default">) {</span>
+<a name="384"><font size=-1>384     </font></a><span class="default">                    VarInfo::AllocInfo&amp; varAlloc = alloctype[varTok-&gt;varId()];</span>
+<a name="385"><font size=-1>385     </font></a><span class="default">                    varAlloc.type = f-&gt;groupId;</span>
+<a name="386"><font size=-1>386     </font></a><span class="default">                    varAlloc.status = VarInfo::ALLOC;</span>
+<a name="387"><font size=-1>387     </font></a><span class="default">                    varAlloc.allocTok = fTok;</span>
+<a name="388"><font size=-1>388     </font></a><span class="default">                }</span>
+<a name="389"><font size=-1>389     </font></a><span class="default"></span>
+<a name="390"><font size=-1>390     </font></a><span class="default">                changeAllocStatusIfRealloc(alloctype, fTok, varTok);</span>
+<a name="391"><font size=-1>391     </font></a><span class="default">            } </span><span class="keyword">else if </span><span class="default">(mTokenizer-&gt;isCPP() &amp;&amp; Token::Match(varTok-&gt;tokAt(</span><span class="number">2</span><span class="default">), </span><span class="string">&quot;new !!(&quot;</span><span class="default">)) {</span>
+<a name="392"><font size=-1>392     </font></a><span class="default">                </span><span class="keyword">const </span><span class="default">Token* tok2 = varTok-&gt;tokAt(</span><span class="number">2</span><span class="default">)-&gt;astOperand1();</span>
+<a name="393"><font size=-1>393     </font></a><span class="default">                </span><span class="keyword">const bool </span><span class="default">arrayNew = (tok2 &amp;&amp; (tok2-&gt;str() == </span><span class="string">&quot;[&quot; </span><span class="default">|| (tok2-&gt;str() == </span><span class="string">&quot;(&quot; </span><span class="default">&amp;&amp; tok2-&gt;astOperand1() &amp;&amp; tok2-&gt;astOperand1()-&gt;str() == </span><span class="string">&quot;[&quot;</span><span class="default">)));</span>
+<a name="394"><font size=-1>394     </font></a><span class="default">                VarInfo::AllocInfo&amp; varAlloc = alloctype[varTok-&gt;varId()];</span>
+<a name="395"><font size=-1>395     </font></a><span class="default">                varAlloc.type = arrayNew ? NEW_ARRAY : NEW;</span>
+<a name="396"><font size=-1>396     </font></a><span class="default">                varAlloc.status = VarInfo::ALLOC;</span>
+<a name="397"><font size=-1>397     </font></a><span class="default">                varAlloc.allocTok = varTok-&gt;tokAt(</span><span class="number">2</span><span class="default">);</span>
+<a name="398"><font size=-1>398     </font></a><span class="default">            }</span>
+<a name="399"><font size=-1>399     </font></a><span class="default"></span>
+<a name="400"><font size=-1>400     </font></a><span class="default">            </span><span class="comment">// Assigning non-zero value variable. It might be used to</span>
+<a name="401"><font size=-1>401     </font></a><span class="comment">            // track the execution for a later if condition.</span>
+<a name="402"><font size=-1>402     </font></a><span class="comment">            </span><span class="keyword">if </span><span class="default">(Token::Match(varTok-&gt;tokAt(</span><span class="number">2</span><span class="default">), </span><span class="string">&quot;%num% ;&quot;</span><span class="default">) &amp;&amp; MathLib::toLongNumber(varTok-&gt;strAt(</span><span class="number">2</span><span class="default">)) != </span><span class="number">0</span><span class="default">)</span>
+<a name="403"><font size=-1>403     </font></a><span class="default">                notzero.insert(varTok-&gt;varId());</span>
+<a name="404"><font size=-1>404     </font></a><span class="default">            </span><span class="keyword">else if </span><span class="default">(Token::Match(varTok-&gt;tokAt(</span><span class="number">2</span><span class="default">), </span><span class="string">&quot;- %type% ;&quot;</span><span class="default">) &amp;&amp; varTok-&gt;tokAt(</span><span class="number">3</span><span class="default">)-&gt;isUpperCaseName())</span>
+<a name="405"><font size=-1>405     </font></a><span class="default">                notzero.insert(varTok-&gt;varId());</span>
+<a name="406"><font size=-1>406     </font></a><span class="default">            </span><span class="keyword">else</span>
+<a name="407"><font size=-1>407     </font></a><span class="keyword">                </span><span class="default">notzero.erase(varTok-&gt;varId());</span>
+<a name="408"><font size=-1>408     </font></a><span class="default">        }</span>
+<a name="409"><font size=-1>409     </font></a><span class="default"></span>
+<a name="410"><font size=-1>410     </font></a><span class="default">        </span><span class="comment">// if/else</span>
+<a name="411"><font size=-1>411     </font></a><span class="comment">        </span><span class="keyword">else if </span><span class="default">(Token::simpleMatch(tok, </span><span class="string">&quot;if (&quot;</span><span class="default">)) {</span>
+<a name="412"><font size=-1>412     </font></a><span class="default">            </span><span class="comment">// Parse function calls inside the condition</span>
+<a name="413"><font size=-1>413     </font></a><span class="comment"></span>
+<a name="414"><font size=-1>414     </font></a><span class="comment">            </span><span class="keyword">const </span><span class="default">Token * closingParenthesis = tok-&gt;linkAt(</span><span class="number">1</span><span class="default">);</span>
+<a name="415"><font size=-1>415     </font></a><span class="default">            </span><span class="keyword">for </span><span class="default">(</span><span class="keyword">const </span><span class="default">Token *innerTok = tok-&gt;tokAt(</span><span class="number">2</span><span class="default">); innerTok &amp;&amp; innerTok != closingParenthesis; innerTok = innerTok-&gt;next()) {</span>
+<a name="416"><font size=-1>416     </font></a><span class="default">                </span><span class="comment">// TODO: replace with checkTokenInsideExpression()</span>
+<a name="417"><font size=-1>417     </font></a><span class="comment"></span>
+<a name="418"><font size=-1>418     </font></a><span class="comment">                </span><span class="keyword">if </span><span class="default">(!isLocalVarNoAutoDealloc(innerTok, mTokenizer-&gt;isCPP()))</span>
+<a name="419"><font size=-1>419     </font></a><span class="default">                    </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="420"><font size=-1>420     </font></a><span class="default"></span>
+<a name="421"><font size=-1>421     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(Token::Match(innerTok, </span><span class="string">&quot;%var% =&quot;</span><span class="default">) &amp;&amp; innerTok-&gt;astParent() == innerTok-&gt;next()) {</span>
+<a name="422"><font size=-1>422     </font></a><span class="default">                    </span><span class="comment">// allocation?</span>
+<a name="423"><font size=-1>423     </font></a><span class="comment">                    // right ast part (after `=` operator)</span>
+<a name="424"><font size=-1>424     </font></a><span class="comment">                    </span><span class="keyword">const </span><span class="default">Token* tokRightAstOperand = innerTok-&gt;next()-&gt;astOperand2();</span>
+<a name="425"><font size=-1>425     </font></a><span class="default">                    </span><span class="keyword">while </span><span class="default">(tokRightAstOperand &amp;&amp; tokRightAstOperand-&gt;isCast())</span>
+<a name="426"><font size=-1>426     </font></a><span class="default">                        tokRightAstOperand = tokRightAstOperand-&gt;astOperand2() ? tokRightAstOperand-&gt;astOperand2() : tokRightAstOperand-&gt;astOperand1();</span>
+<a name="427"><font size=-1>427     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(tokRightAstOperand &amp;&amp; Token::Match(tokRightAstOperand-&gt;previous(), </span><span class="string">&quot;%type% (&quot;</span><span class="default">)) {</span>
+<a name="428"><font size=-1>428     </font></a><span class="default">                        </span><span class="keyword">const </span><span class="default">Library::AllocFunc* f = mSettings-&gt;library.getAllocFuncInfo(tokRightAstOperand-&gt;previous());</span>
+<a name="429"><font size=-1>429     </font></a><span class="default">                        </span><span class="keyword">if </span><span class="default">(f &amp;&amp; f-&gt;arg == -</span><span class="number">1</span><span class="default">) {</span>
+<a name="430"><font size=-1>430     </font></a><span class="default">                            VarInfo::AllocInfo&amp; varAlloc = alloctype[innerTok-&gt;varId()];</span>
+<a name="431"><font size=-1>431     </font></a><span class="default">                            varAlloc.type = f-&gt;groupId;</span>
+<a name="432"><font size=-1>432     </font></a><span class="default">                            varAlloc.status = VarInfo::ALLOC;</span>
+<a name="433"><font size=-1>433     </font></a><span class="default">                            varAlloc.allocTok = tokRightAstOperand-&gt;previous();</span>
+<a name="434"><font size=-1>434     </font></a><span class="default">                        } </span><span class="keyword">else </span><span class="default">{</span>
+<a name="435"><font size=-1>435     </font></a><span class="default">                            </span><span class="comment">// Fixme: warn about leak</span>
+<a name="436"><font size=-1>436     </font></a><span class="comment">                            </span><span class="default">alloctype.erase(innerTok-&gt;varId());</span>
+<a name="437"><font size=-1>437     </font></a><span class="default">                        }</span>
+<a name="438"><font size=-1>438     </font></a><span class="default"></span>
+<a name="439"><font size=-1>439     </font></a><span class="default">                        changeAllocStatusIfRealloc(alloctype, innerTok-&gt;tokAt(</span><span class="number">2</span><span class="default">), varTok);</span>
+<a name="440"><font size=-1>440     </font></a><span class="default">                    } </span><span class="keyword">else if </span><span class="default">(mTokenizer-&gt;isCPP() &amp;&amp; Token::Match(innerTok-&gt;tokAt(</span><span class="number">2</span><span class="default">), </span><span class="string">&quot;new !!(&quot;</span><span class="default">)) {</span>
+<a name="441"><font size=-1>441     </font></a><span class="default">                        </span><span class="keyword">const </span><span class="default">Token* tok2 = innerTok-&gt;tokAt(</span><span class="number">2</span><span class="default">)-&gt;astOperand1();</span>
+<a name="442"><font size=-1>442     </font></a><span class="default">                        </span><span class="keyword">const bool </span><span class="default">arrayNew = (tok2 &amp;&amp; (tok2-&gt;str() == </span><span class="string">&quot;[&quot; </span><span class="default">|| (tok2-&gt;str() == </span><span class="string">&quot;(&quot; </span><span class="default">&amp;&amp; tok2-&gt;astOperand1() &amp;&amp; tok2-&gt;astOperand1()-&gt;str() == </span><span class="string">&quot;[&quot;</span><span class="default">)));</span>
+<a name="443"><font size=-1>443     </font></a><span class="default">                        VarInfo::AllocInfo&amp; varAlloc = alloctype[innerTok-&gt;varId()];</span>
+<a name="444"><font size=-1>444     </font></a><span class="default">                        varAlloc.type = arrayNew ? NEW_ARRAY : NEW;</span>
+<a name="445"><font size=-1>445     </font></a><span class="default">                        varAlloc.status = VarInfo::ALLOC;</span>
+<a name="446"><font size=-1>446     </font></a><span class="default">                        varAlloc.allocTok = innerTok-&gt;tokAt(</span><span class="number">2</span><span class="default">);</span>
+<a name="447"><font size=-1>447     </font></a><span class="default">                    }</span>
+<a name="448"><font size=-1>448     </font></a><span class="default">                }</span>
+<a name="449"><font size=-1>449     </font></a><span class="default"></span>
+<a name="450"><font size=-1>450     </font></a><span class="default">                </span><span class="comment">// check for function call</span>
+<a name="451"><font size=-1>451     </font></a><span class="comment">                </span><span class="keyword">const </span><span class="default">Token * </span><span class="keyword">const </span><span class="default">openingPar = isFunctionCall(innerTok);</span>
+<a name="452"><font size=-1>452     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(openingPar) {</span>
+<a name="453"><font size=-1>453     </font></a><span class="default">                    </span><span class="comment">// innerTok is a function name</span>
+<a name="454"><font size=-1>454     </font></a><span class="comment">                    </span><span class="keyword">const </span><span class="default">VarInfo::AllocInfo allocation(</span><span class="number">0</span><span class="default">, VarInfo::NOALLOC);</span>
+<a name="455"><font size=-1>455     </font></a><span class="default">                    functionCall(innerTok, openingPar, varInfo, allocation, nullptr);</span>
+<a name="456"><font size=-1>456     </font></a><span class="default">                    innerTok = openingPar-&gt;link();</span>
+<a name="457"><font size=-1>457     </font></a><span class="default">                }</span>
+<a name="458"><font size=-1>458     </font></a><span class="default">            }</span>
+<a name="459"><font size=-1>459     </font></a><span class="default"></span>
+<a name="460"><font size=-1>460     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(Token::simpleMatch(closingParenthesis, </span><span class="string">&quot;) {&quot;</span><span class="default">)) {</span>
+<a name="461"><font size=-1>461     </font></a><span class="default">                VarInfo varInfo1(*varInfo);  </span><span class="comment">// VarInfo for if code</span>
+<a name="462"><font size=-1>462     </font></a><span class="comment">                </span><span class="default">VarInfo varInfo2(*varInfo);  </span><span class="comment">// VarInfo for else code</span>
+<a name="463"><font size=-1>463     </font></a><span class="comment"></span>
+<a name="464"><font size=-1>464     </font></a><span class="comment">                // Recursively scan variable comparisons in condition</span>
+<a name="465"><font size=-1>465     </font></a><span class="comment">                </span><span class="default">std::stack&lt;</span><span class="keyword">const </span><span class="default">Token *&gt; tokens;</span>
+<a name="466"><font size=-1>466     </font></a><span class="default">                tokens.push(tok-&gt;next()-&gt;astOperand2());</span>
+<a name="467"><font size=-1>467     </font></a><span class="default">                </span><span class="keyword">while </span><span class="default">(!tokens.empty()) {</span>
+<a name="468"><font size=-1>468     </font></a><span class="default">                    </span><span class="keyword">const </span><span class="default">Token *tok3 = tokens.top();</span>
+<a name="469"><font size=-1>469     </font></a><span class="default">                    tokens.pop();</span>
+<a name="470"><font size=-1>470     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(!tok3)</span>
+<a name="471"><font size=-1>471     </font></a><span class="default">                        </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="472"><font size=-1>472     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(tok3-&gt;str() == </span><span class="string">&quot;&amp;&amp;&quot; </span><span class="default">|| tok3-&gt;str() == </span><span class="string">&quot;||&quot;</span><span class="default">) {</span>
+<a name="473"><font size=-1>473     </font></a><span class="default">                        </span><span class="comment">// FIXME: handle &amp;&amp; ! || better</span>
+<a name="474"><font size=-1>474     </font></a><span class="comment">                        </span><span class="default">tokens.push(tok3-&gt;astOperand1());</span>
+<a name="475"><font size=-1>475     </font></a><span class="default">                        tokens.push(tok3-&gt;astOperand2());</span>
+<a name="476"><font size=-1>476     </font></a><span class="default">                        </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="477"><font size=-1>477     </font></a><span class="default">                    }</span>
+<a name="478"><font size=-1>478     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(tok3-&gt;str() == </span><span class="string">&quot;(&quot; </span><span class="default">&amp;&amp; Token::Match(tok3-&gt;astOperand1(), </span><span class="string">&quot;UNLIKELY|LIKELY&quot;</span><span class="default">)) {</span>
+<a name="479"><font size=-1>479     </font></a><span class="default">                        tokens.push(tok3-&gt;astOperand2());</span>
+<a name="480"><font size=-1>480     </font></a><span class="default">                        </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="481"><font size=-1>481     </font></a><span class="default">                    } </span><span class="keyword">else if </span><span class="default">(tok3-&gt;str() == </span><span class="string">&quot;(&quot; </span><span class="default">&amp;&amp; Token::Match(tok3-&gt;previous(), </span><span class="string">&quot;%name%&quot;</span><span class="default">)) {</span>
+<a name="482"><font size=-1>482     </font></a><span class="default">                        </span><span class="keyword">const </span><span class="default">std::vector&lt;</span><span class="keyword">const </span><span class="default">Token *&gt; params = getArguments(tok3-&gt;previous());</span>
+<a name="483"><font size=-1>483     </font></a><span class="default">                        </span><span class="keyword">for </span><span class="default">(</span><span class="keyword">const </span><span class="default">Token *par : params) {</span>
+<a name="484"><font size=-1>484     </font></a><span class="default">                            </span><span class="keyword">if </span><span class="default">(!par-&gt;isComparisonOp())</span>
+<a name="485"><font size=-1>485     </font></a><span class="default">                                </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="486"><font size=-1>486     </font></a><span class="default">                            </span><span class="keyword">const </span><span class="default">Token *vartok = nullptr;</span>
+<a name="487"><font size=-1>487     </font></a><span class="default">                            </span><span class="keyword">if </span><span class="default">(astIsVariableComparison(par, </span><span class="string">&quot;!=&quot;</span><span class="default">, </span><span class="string">&quot;0&quot;</span><span class="default">, &amp;vartok) ||</span>
+<a name="488"><font size=-1>488     </font></a><span class="default">                                astIsVariableComparison(par, </span><span class="string">&quot;==&quot;</span><span class="default">, </span><span class="string">&quot;0&quot;</span><span class="default">, &amp;vartok) ||</span>
+<a name="489"><font size=-1>489     </font></a><span class="default">                                astIsVariableComparison(par, </span><span class="string">&quot;&lt;&quot;</span><span class="default">, </span><span class="string">&quot;0&quot;</span><span class="default">, &amp;vartok) ||</span>
+<a name="490"><font size=-1>490     </font></a><span class="default">                                astIsVariableComparison(par, </span><span class="string">&quot;&gt;&quot;</span><span class="default">, </span><span class="string">&quot;0&quot;</span><span class="default">, &amp;vartok) ||</span>
+<a name="491"><font size=-1>491     </font></a><span class="default">                                astIsVariableComparison(par, </span><span class="string">&quot;==&quot;</span><span class="default">, </span><span class="string">&quot;-1&quot;</span><span class="default">, &amp;vartok) ||</span>
+<a name="492"><font size=-1>492     </font></a><span class="default">                                astIsVariableComparison(par, </span><span class="string">&quot;!=&quot;</span><span class="default">, </span><span class="string">&quot;-1&quot;</span><span class="default">, &amp;vartok)) {</span>
+<a name="493"><font size=-1>493     </font></a><span class="default">                                varInfo1.erase(vartok-&gt;varId());</span>
+<a name="494"><font size=-1>494     </font></a><span class="default">                                varInfo2.erase(vartok-&gt;varId());</span>
+<a name="495"><font size=-1>495     </font></a><span class="default">                            }</span>
+<a name="496"><font size=-1>496     </font></a><span class="default">                        }</span>
+<a name="497"><font size=-1>497     </font></a><span class="default">                        </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="498"><font size=-1>498     </font></a><span class="default">                    }</span>
+<a name="499"><font size=-1>499     </font></a><span class="default"></span>
+<a name="500"><font size=-1>500     </font></a><span class="default">                    </span><span class="keyword">const </span><span class="default">Token *vartok = nullptr;</span>
+<a name="501"><font size=-1>501     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(astIsVariableComparison(tok3, </span><span class="string">&quot;!=&quot;</span><span class="default">, </span><span class="string">&quot;0&quot;</span><span class="default">, &amp;vartok)) {</span>
+<a name="502"><font size=-1>502     </font></a><span class="default">                        varInfo2.erase(vartok-&gt;varId());</span>
+<a name="503"><font size=-1>503     </font></a><span class="default">                        </span><span class="keyword">if </span><span class="default">(notzero.find(vartok-&gt;varId()) != notzero.end())</span>
+<a name="504"><font size=-1>504     </font></a><span class="default">                            varInfo2.clear();</span>
+<a name="505"><font size=-1>505     </font></a><span class="default">                    } </span><span class="keyword">else if </span><span class="default">(astIsVariableComparison(tok3, </span><span class="string">&quot;==&quot;</span><span class="default">, </span><span class="string">&quot;0&quot;</span><span class="default">, &amp;vartok)) {</span>
+<a name="506"><font size=-1>506     </font></a><span class="default">                        varInfo1.erase(vartok-&gt;varId());</span>
+<a name="507"><font size=-1>507     </font></a><span class="default">                    } </span><span class="keyword">else if </span><span class="default">(astIsVariableComparison(tok3, </span><span class="string">&quot;&lt;&quot;</span><span class="default">, </span><span class="string">&quot;0&quot;</span><span class="default">, &amp;vartok)) {</span>
+<a name="508"><font size=-1>508     </font></a><span class="default">                        varInfo1.erase(vartok-&gt;varId());</span>
+<a name="509"><font size=-1>509     </font></a><span class="default">                    } </span><span class="keyword">else if </span><span class="default">(astIsVariableComparison(tok3, </span><span class="string">&quot;&gt;&quot;</span><span class="default">, </span><span class="string">&quot;0&quot;</span><span class="default">, &amp;vartok)) {</span>
+<a name="510"><font size=-1>510     </font></a><span class="default">                        varInfo2.erase(vartok-&gt;varId());</span>
+<a name="511"><font size=-1>511     </font></a><span class="default">                    } </span><span class="keyword">else if </span><span class="default">(astIsVariableComparison(tok3, </span><span class="string">&quot;==&quot;</span><span class="default">, </span><span class="string">&quot;-1&quot;</span><span class="default">, &amp;vartok)) {</span>
+<a name="512"><font size=-1>512     </font></a><span class="default">                        varInfo1.erase(vartok-&gt;varId());</span>
+<a name="513"><font size=-1>513     </font></a><span class="default">                    }</span>
+<a name="514"><font size=-1>514     </font></a><span class="default">                }</span>
+<a name="515"><font size=-1>515     </font></a><span class="default"></span>
+<a name="516"><font size=-1>516     </font></a><span class="default">                checkScope(closingParenthesis-&gt;next(), &amp;varInfo1, notzero, recursiveCount);</span>
+<a name="517"><font size=-1>517     </font></a><span class="default">                closingParenthesis = closingParenthesis-&gt;linkAt(</span><span class="number">1</span><span class="default">);</span>
+<a name="518"><font size=-1>518     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(Token::simpleMatch(closingParenthesis, </span><span class="string">&quot;} else {&quot;</span><span class="default">)) {</span>
+<a name="519"><font size=-1>519     </font></a><span class="default">                    checkScope(closingParenthesis-&gt;tokAt(</span><span class="number">2</span><span class="default">), &amp;varInfo2, notzero, recursiveCount);</span>
+<a name="520"><font size=-1>520     </font></a><span class="default">                    tok = closingParenthesis-&gt;linkAt(</span><span class="number">2</span><span class="default">)-&gt;previous();</span>
+<a name="521"><font size=-1>521     </font></a><span class="default">                } </span><span class="keyword">else </span><span class="default">{</span>
+<a name="522"><font size=-1>522     </font></a><span class="default">                    tok = closingParenthesis-&gt;previous();</span>
+<a name="523"><font size=-1>523     </font></a><span class="default">                }</span>
+<a name="524"><font size=-1>524     </font></a><span class="default"></span>
+<a name="525"><font size=-1>525     </font></a><span class="default">                VarInfo old;</span>
+<a name="526"><font size=-1>526     </font></a><span class="default">                old.swap(*varInfo);</span>
+<a name="527"><font size=-1>527     </font></a><span class="default"></span>
+<a name="528"><font size=-1>528     </font></a><span class="default">                std::map&lt;</span><span class="keyword">int</span><span class="default">, VarInfo::AllocInfo&gt;::const_iterator it;</span>
+<a name="529"><font size=-1>529     </font></a><span class="default"></span>
+<a name="530"><font size=-1>530     </font></a><span class="default">                </span><span class="keyword">for </span><span class="default">(it = old.alloctype.begin(); it != old.alloctype.end(); ++it) {</span>
+<a name="531"><font size=-1>531     </font></a><span class="default">                    </span><span class="keyword">const int </span><span class="default">varId = it-&gt;first;</span>
+<a name="532"><font size=-1>532     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(old.conditionalAlloc.find(varId) == old.conditionalAlloc.end())</span>
+<a name="533"><font size=-1>533     </font></a><span class="default">                        </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="534"><font size=-1>534     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(varInfo1.alloctype.find(varId) == varInfo1.alloctype.end() ||</span>
+<a name="535"><font size=-1>535     </font></a><span class="default">                        varInfo2.alloctype.find(varId) == varInfo2.alloctype.end()) {</span>
+<a name="536"><font size=-1>536     </font></a><span class="default">                        varInfo1.erase(varId);</span>
+<a name="537"><font size=-1>537     </font></a><span class="default">                        varInfo2.erase(varId);</span>
+<a name="538"><font size=-1>538     </font></a><span class="default">                    }</span>
+<a name="539"><font size=-1>539     </font></a><span class="default">                }</span>
+<a name="540"><font size=-1>540     </font></a><span class="default"></span>
+<a name="541"><font size=-1>541     </font></a><span class="default">                </span><span class="comment">// Conditional allocation in varInfo1</span>
+<a name="542"><font size=-1>542     </font></a><span class="comment">                </span><span class="keyword">for </span><span class="default">(it = varInfo1.alloctype.begin(); it != varInfo1.alloctype.end(); ++it) {</span>
+<a name="543"><font size=-1>543     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(varInfo2.alloctype.find(it-&gt;first) == varInfo2.alloctype.end() &amp;&amp;</span>
+<a name="544"><font size=-1>544     </font></a><span class="default">                        old.alloctype.find(it-&gt;first) == old.alloctype.end()) {</span>
+<a name="545"><font size=-1>545     </font></a><span class="default">                        varInfo-&gt;conditionalAlloc.insert(it-&gt;first);</span>
+<a name="546"><font size=-1>546     </font></a><span class="default">                    }</span>
+<a name="547"><font size=-1>547     </font></a><span class="default">                }</span>
+<a name="548"><font size=-1>548     </font></a><span class="default"></span>
+<a name="549"><font size=-1>549     </font></a><span class="default">                </span><span class="comment">// Conditional allocation in varInfo2</span>
+<a name="550"><font size=-1>550     </font></a><span class="comment">                </span><span class="keyword">for </span><span class="default">(it = varInfo2.alloctype.begin(); it != varInfo2.alloctype.end(); ++it) {</span>
+<a name="551"><font size=-1>551     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(varInfo1.alloctype.find(it-&gt;first) == varInfo1.alloctype.end() &amp;&amp;</span>
+<a name="552"><font size=-1>552     </font></a><span class="default">                        old.alloctype.find(it-&gt;first) == old.alloctype.end()) {</span>
+<a name="553"><font size=-1>553     </font></a><span class="default">                        varInfo-&gt;conditionalAlloc.insert(it-&gt;first);</span>
+<a name="554"><font size=-1>554     </font></a><span class="default">                    }</span>
+<a name="555"><font size=-1>555     </font></a><span class="default">                }</span>
+<a name="556"><font size=-1>556     </font></a><span class="default"></span>
+<a name="557"><font size=-1>557     </font></a><span class="default">                </span><span class="comment">// Conditional allocation/deallocation</span>
+<a name="558"><font size=-1>558     </font></a><span class="comment">                </span><span class="keyword">for </span><span class="default">(it = varInfo1.alloctype.begin(); it != varInfo1.alloctype.end(); ++it) {</span>
+<a name="559"><font size=-1>559     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(it-&gt;second.managed() &amp;&amp; conditionalAlloc.find(it-&gt;first) != conditionalAlloc.end()) {</span>
+<a name="560"><font size=-1>560     </font></a><span class="default">                        varInfo-&gt;conditionalAlloc.erase(it-&gt;first);</span>
+<a name="561"><font size=-1>561     </font></a><span class="default">                        varInfo2.erase(it-&gt;first);</span>
+<a name="562"><font size=-1>562     </font></a><span class="default">                    }</span>
+<a name="563"><font size=-1>563     </font></a><span class="default">                }</span>
+<a name="564"><font size=-1>564     </font></a><span class="default">                </span><span class="keyword">for </span><span class="default">(it = varInfo2.alloctype.begin(); it != varInfo2.alloctype.end(); ++it) {</span>
+<a name="565"><font size=-1>565     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(it-&gt;second.managed() &amp;&amp; conditionalAlloc.find(it-&gt;first) != conditionalAlloc.end()) {</span>
+<a name="566"><font size=-1>566     </font></a><span class="default">                        varInfo-&gt;conditionalAlloc.erase(it-&gt;first);</span>
+<a name="567"><font size=-1>567     </font></a><span class="default">                        varInfo1.erase(it-&gt;first);</span>
+<a name="568"><font size=-1>568     </font></a><span class="default">                    }</span>
+<a name="569"><font size=-1>569     </font></a><span class="default">                }</span>
+<a name="570"><font size=-1>570     </font></a><span class="default"></span>
+<a name="571"><font size=-1>571     </font></a><span class="default">                alloctype.insert(varInfo1.alloctype.begin(), varInfo1.alloctype.end());</span>
+<a name="572"><font size=-1>572     </font></a><span class="default">                alloctype.insert(varInfo2.alloctype.begin(), varInfo2.alloctype.end());</span>
+<a name="573"><font size=-1>573     </font></a><span class="default"></span>
+<a name="574"><font size=-1>574     </font></a><span class="default">                possibleUsage.insert(varInfo1.possibleUsage.begin(), varInfo1.possibleUsage.end());</span>
+<a name="575"><font size=-1>575     </font></a><span class="default">                possibleUsage.insert(varInfo2.possibleUsage.begin(), varInfo2.possibleUsage.end());</span>
+<a name="576"><font size=-1>576     </font></a><span class="default">            }</span>
+<a name="577"><font size=-1>577     </font></a><span class="default">        }</span>
+<a name="578"><font size=-1>578     </font></a><span class="default"></span>
+<a name="579"><font size=-1>579     </font></a><span class="default">        </span><span class="comment">// unknown control.. (TODO: handle loops)</span>
+<a name="580"><font size=-1>580     </font></a><span class="comment">        </span><span class="keyword">else if </span><span class="default">((Token::Match(tok, </span><span class="string">&quot;%type% (&quot;</span><span class="default">) &amp;&amp; Token::simpleMatch(tok-&gt;linkAt(</span><span class="number">1</span><span class="default">), </span><span class="string">&quot;) {&quot;</span><span class="default">)) || Token::simpleMatch(tok, </span><span class="string">&quot;do {&quot;</span><span class="default">)) {</span>
+<a name="581"><font size=-1>581     </font></a><span class="default">            varInfo-&gt;clear();</span>
+<a name="582"><font size=-1>582     </font></a><span class="default">            </span><span class="keyword">break</span><span class="default">;</span>
+<a name="583"><font size=-1>583     </font></a><span class="default">        }</span>
+<a name="584"><font size=-1>584     </font></a><span class="default"></span>
+<a name="585"><font size=-1>585     </font></a><span class="default">        </span><span class="comment">// return</span>
+<a name="586"><font size=-1>586     </font></a><span class="comment">        </span><span class="keyword">else if </span><span class="default">(tok-&gt;str() == </span><span class="string">&quot;return&quot;</span><span class="default">) {</span>
+<a name="587"><font size=-1>587     </font></a><span class="default">            ret(tok, *varInfo);</span>
+<a name="588"><font size=-1>588     </font></a><span class="default">            varInfo-&gt;clear();</span>
+<a name="589"><font size=-1>589     </font></a><span class="default">        }</span>
+<a name="590"><font size=-1>590     </font></a><span class="default"></span>
+<a name="591"><font size=-1>591     </font></a><span class="default">        </span><span class="comment">// throw</span>
+<a name="592"><font size=-1>592     </font></a><span class="comment">        </span><span class="keyword">else if </span><span class="default">(mTokenizer-&gt;isCPP() &amp;&amp; tok-&gt;str() == </span><span class="string">&quot;throw&quot;</span><span class="default">) {</span>
+<a name="593"><font size=-1>593     </font></a><span class="default">            </span><span class="keyword">bool </span><span class="default">tryFound = </span><span class="keyword">false</span><span class="default">;</span>
+<a name="594"><font size=-1>594     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Scope* scope = tok-&gt;scope();</span>
+<a name="595"><font size=-1>595     </font></a><span class="default">            </span><span class="keyword">while </span><span class="default">(scope &amp;&amp; scope-&gt;isExecutable()) {</span>
+<a name="596"><font size=-1>596     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(scope-&gt;type == Scope::eTry)</span>
+<a name="597"><font size=-1>597     </font></a><span class="default">                    tryFound = </span><span class="keyword">true</span><span class="default">;</span>
+<a name="598"><font size=-1>598     </font></a><span class="default">                scope = scope-&gt;nestedIn;</span>
+<a name="599"><font size=-1>599     </font></a><span class="default">            }</span>
+<a name="600"><font size=-1>600     </font></a><span class="default">            </span><span class="comment">// If the execution leaves the function then treat it as return</span>
+<a name="601"><font size=-1>601     </font></a><span class="comment">            </span><span class="keyword">if </span><span class="default">(!tryFound)</span>
+<a name="602"><font size=-1>602     </font></a><span class="default">                ret(tok, *varInfo);</span>
+<a name="603"><font size=-1>603     </font></a><span class="default">            varInfo-&gt;clear();</span>
+<a name="604"><font size=-1>604     </font></a><span class="default">        }</span>
+<a name="605"><font size=-1>605     </font></a><span class="default"></span>
+<a name="606"><font size=-1>606     </font></a><span class="default">        </span><span class="comment">// delete</span>
+<a name="607"><font size=-1>607     </font></a><span class="comment">        </span><span class="keyword">else if </span><span class="default">(mTokenizer-&gt;isCPP() &amp;&amp; tok-&gt;str() == </span><span class="string">&quot;delete&quot;</span><span class="default">) {</span>
+<a name="608"><font size=-1>608     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Token * delTok = tok;</span>
+<a name="609"><font size=-1>609     </font></a><span class="default">            </span><span class="keyword">const bool </span><span class="default">arrayDelete = Token::simpleMatch(tok-&gt;next(), </span><span class="string">&quot;[ ]&quot;</span><span class="default">);</span>
+<a name="610"><font size=-1>610     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(arrayDelete)</span>
+<a name="611"><font size=-1>611     </font></a><span class="default">                tok = tok-&gt;tokAt(</span><span class="number">3</span><span class="default">);</span>
+<a name="612"><font size=-1>612     </font></a><span class="default">            </span><span class="keyword">else</span>
+<a name="613"><font size=-1>613     </font></a><span class="keyword">                </span><span class="default">tok = tok-&gt;next();</span>
+<a name="614"><font size=-1>614     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(tok-&gt;str() == </span><span class="string">&quot;(&quot;</span><span class="default">)</span>
+<a name="615"><font size=-1>615     </font></a><span class="default">                tok = tok-&gt;next();</span>
+<a name="616"><font size=-1>616     </font></a><span class="default">            </span><span class="keyword">while </span><span class="default">(Token::Match(tok, </span><span class="string">&quot;%name% ::|.&quot;</span><span class="default">))</span>
+<a name="617"><font size=-1>617     </font></a><span class="default">                tok = tok-&gt;tokAt(</span><span class="number">2</span><span class="default">);</span>
+<a name="618"><font size=-1>618     </font></a><span class="default">            </span><span class="keyword">const bool </span><span class="default">isnull = tok-&gt;hasKnownIntValue() &amp;&amp; tok-&gt;values().front().intvalue == </span><span class="number">0</span><span class="default">;</span>
+<a name="619"><font size=-1>619     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(!isnull &amp;&amp; tok-&gt;varId() &amp;&amp; tok-&gt;strAt(</span><span class="number">1</span><span class="default">) != </span><span class="string">&quot;[&quot;</span><span class="default">) {</span>
+<a name="620"><font size=-1>620     </font></a><span class="default">                </span><span class="keyword">const </span><span class="default">VarInfo::AllocInfo allocation(arrayDelete ? NEW_ARRAY : NEW, VarInfo::DEALLOC, delTok);</span>
+<a name="621"><font size=-1>621     </font></a><span class="default">                changeAllocStatus(varInfo, allocation, tok, tok);</span>
+<a name="622"><font size=-1>622     </font></a><span class="default">            }</span>
+<a name="623"><font size=-1>623     </font></a><span class="default">        }</span>
+<a name="624"><font size=-1>624     </font></a><span class="default"></span>
+<a name="625"><font size=-1>625     </font></a><span class="default">        </span><span class="comment">// Function call..</span>
+<a name="626"><font size=-1>626     </font></a><span class="comment">        </span><span class="keyword">else if </span><span class="default">(isFunctionCall(ftok)) {</span>
+<a name="627"><font size=-1>627     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Token * openingPar = isFunctionCall(ftok);</span>
+<a name="628"><font size=-1>628     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Library::AllocFunc* af = mSettings-&gt;library.getDeallocFuncInfo(ftok);</span>
+<a name="629"><font size=-1>629     </font></a><span class="default">            VarInfo::AllocInfo allocation(af ? af-&gt;groupId : </span><span class="number">0</span><span class="default">, VarInfo::DEALLOC, ftok);</span>
+<a name="630"><font size=-1>630     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(allocation.type == </span><span class="number">0</span><span class="default">)</span>
+<a name="631"><font size=-1>631     </font></a><span class="default">                allocation.status = VarInfo::NOALLOC;</span>
+<a name="632"><font size=-1>632     </font></a><span class="default">            functionCall(ftok, openingPar, varInfo, allocation, af);</span>
+<a name="633"><font size=-1>633     </font></a><span class="default"></span>
+<a name="634"><font size=-1>634     </font></a><span class="default">            tok = ftok-&gt;next()-&gt;link();</span>
+<a name="635"><font size=-1>635     </font></a><span class="default"></span>
+<a name="636"><font size=-1>636     </font></a><span class="default">            </span><span class="comment">// Handle scopes that might be noreturn</span>
+<a name="637"><font size=-1>637     </font></a><span class="comment">            </span><span class="keyword">if </span><span class="default">(allocation.status == VarInfo::NOALLOC &amp;&amp; Token::simpleMatch(tok, </span><span class="string">&quot;) ; }&quot;</span><span class="default">)) {</span>
+<a name="638"><font size=-1>638     </font></a><span class="default">                </span><span class="keyword">const </span><span class="default">std::string &amp;functionName(tok-&gt;link()-&gt;previous()-&gt;str());</span>
+<a name="639"><font size=-1>639     </font></a><span class="default">                </span><span class="keyword">bool </span><span class="default">unknown = </span><span class="keyword">false</span><span class="default">;</span>
+<a name="640"><font size=-1>640     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(mTokenizer-&gt;IsScopeNoReturn(tok-&gt;tokAt(</span><span class="number">2</span><span class="default">), &amp;unknown)) {</span>
+<a name="641"><font size=-1>641     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(!unknown)</span>
+<a name="642"><font size=-1>642     </font></a><span class="default">                        varInfo-&gt;clear();</span>
+<a name="643"><font size=-1>643     </font></a><span class="default">                    </span><span class="keyword">else if </span><span class="default">(!mSettings-&gt;library.isLeakIgnore(functionName) &amp;&amp; !mSettings-&gt;library.isUse(functionName))</span>
+<a name="644"><font size=-1>644     </font></a><span class="default">                        varInfo-&gt;possibleUsageAll(functionName);</span>
+<a name="645"><font size=-1>645     </font></a><span class="default">                }</span>
+<a name="646"><font size=-1>646     </font></a><span class="default">            }</span>
+<a name="647"><font size=-1>647     </font></a><span class="default"></span>
+<a name="648"><font size=-1>648     </font></a><span class="default">            </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="649"><font size=-1>649     </font></a><span class="default">        }</span>
+<a name="650"><font size=-1>650     </font></a><span class="default"></span>
+<a name="651"><font size=-1>651     </font></a><span class="default">        </span><span class="comment">// goto =&gt; weird execution path</span>
+<a name="652"><font size=-1>652     </font></a><span class="comment">        </span><span class="keyword">else if </span><span class="default">(tok-&gt;str() == </span><span class="string">&quot;goto&quot;</span><span class="default">) {</span>
+<a name="653"><font size=-1>653     </font></a><span class="default">            varInfo-&gt;clear();</span>
+<a name="654"><font size=-1>654     </font></a><span class="default">        }</span>
+<a name="655"><font size=-1>655     </font></a><span class="default"></span>
+<a name="656"><font size=-1>656     </font></a><span class="default">        </span><span class="comment">// continue/break</span>
+<a name="657"><font size=-1>657     </font></a><span class="comment">        </span><span class="keyword">else if </span><span class="default">(Token::Match(tok, </span><span class="string">&quot;continue|break ;&quot;</span><span class="default">)) {</span>
+<a name="658"><font size=-1>658     </font></a><span class="default">            varInfo-&gt;clear();</span>
+<a name="659"><font size=-1>659     </font></a><span class="default">        }</span>
+<a name="660"><font size=-1>660     </font></a><span class="default"></span>
+<a name="661"><font size=-1>661     </font></a><span class="default">        </span><span class="comment">// Check smart pointer</span>
+<a name="662"><font size=-1>662     </font></a><span class="comment">        </span><span class="keyword">else if </span><span class="default">(Token::Match(ftok, </span><span class="string">&quot;%name% &lt;&quot;</span><span class="default">) &amp;&amp; mSettings-&gt;library.isSmartPointer(tok)) {</span>
+<a name="663"><font size=-1>663     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Token * typeEndTok = ftok-&gt;linkAt(</span><span class="number">1</span><span class="default">);</span>
+<a name="664"><font size=-1>664     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(!Token::Match(typeEndTok, </span><span class="string">&quot;&gt; %var% {|( %var% ,|)|}&quot;</span><span class="default">))</span>
+<a name="665"><font size=-1>665     </font></a><span class="default">                </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="666"><font size=-1>666     </font></a><span class="default"></span>
+<a name="667"><font size=-1>667     </font></a><span class="default">            tok = typeEndTok-&gt;linkAt(</span><span class="number">2</span><span class="default">);</span>
+<a name="668"><font size=-1>668     </font></a><span class="default"></span>
+<a name="669"><font size=-1>669     </font></a><span class="default">            </span><span class="keyword">const int </span><span class="default">varid = typeEndTok-&gt;next()-&gt;varId();</span>
+<a name="670"><font size=-1>670     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(isPointerReleased(typeEndTok-&gt;tokAt(</span><span class="number">2</span><span class="default">), endToken, varid))</span>
+<a name="671"><font size=-1>671     </font></a><span class="default">                </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="672"><font size=-1>672     </font></a><span class="default"></span>
+<a name="673"><font size=-1>673     </font></a><span class="default">            </span><span class="keyword">bool </span><span class="default">arrayDelete = </span><span class="keyword">false</span><span class="default">;</span>
+<a name="674"><font size=-1>674     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(Token::findsimplematch(ftok-&gt;next(), </span><span class="string">&quot;[ ]&quot;</span><span class="default">, typeEndTok))</span>
+<a name="675"><font size=-1>675     </font></a><span class="default">                arrayDelete = </span><span class="keyword">true</span><span class="default">;</span>
+<a name="676"><font size=-1>676     </font></a><span class="default"></span>
+<a name="677"><font size=-1>677     </font></a><span class="default">            </span><span class="comment">// Check deleter</span>
+<a name="678"><font size=-1>678     </font></a><span class="comment">            </span><span class="keyword">const </span><span class="default">Token * deleterToken = nullptr;</span>
+<a name="679"><font size=-1>679     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Token * endDeleterToken = nullptr;</span>
+<a name="680"><font size=-1>680     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Library::AllocFunc* af = nullptr;</span>
+<a name="681"><font size=-1>681     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(Token::Match(ftok, </span><span class="string">&quot;unique_ptr &lt; %type% ,&quot;</span><span class="default">)) {</span>
+<a name="682"><font size=-1>682     </font></a><span class="default">                deleterToken = ftok-&gt;tokAt(</span><span class="number">4</span><span class="default">);</span>
+<a name="683"><font size=-1>683     </font></a><span class="default">                endDeleterToken = typeEndTok;</span>
+<a name="684"><font size=-1>684     </font></a><span class="default">            } </span><span class="keyword">else if </span><span class="default">(Token::Match(typeEndTok, </span><span class="string">&quot;&gt; %var% {|( %var% ,&quot;</span><span class="default">)) {</span>
+<a name="685"><font size=-1>685     </font></a><span class="default">                deleterToken = typeEndTok-&gt;tokAt(</span><span class="number">5</span><span class="default">);</span>
+<a name="686"><font size=-1>686     </font></a><span class="default">                endDeleterToken = typeEndTok-&gt;linkAt(</span><span class="number">2</span><span class="default">);</span>
+<a name="687"><font size=-1>687     </font></a><span class="default">            }</span>
+<a name="688"><font size=-1>688     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(deleterToken) {</span>
+<a name="689"><font size=-1>689     </font></a><span class="default">                </span><span class="comment">// Skip the decaying plus in expressions like +[](T*){}</span>
+<a name="690"><font size=-1>690     </font></a><span class="comment">                </span><span class="keyword">if </span><span class="default">(deleterToken-&gt;str() == </span><span class="string">&quot;+&quot;</span><span class="default">) {</span>
+<a name="691"><font size=-1>691     </font></a><span class="default">                    deleterToken = deleterToken-&gt;next();</span>
+<a name="692"><font size=-1>692     </font></a><span class="default">                }</span>
+<a name="693"><font size=-1>693     </font></a><span class="default">                </span><span class="comment">// Check if its a pointer to a function</span>
+<a name="694"><font size=-1>694     </font></a><span class="comment">                </span><span class="keyword">const </span><span class="default">Token * dtok = Token::findmatch(deleterToken, </span><span class="string">&quot;&amp; %name%&quot;</span><span class="default">, endDeleterToken);</span>
+<a name="695"><font size=-1>695     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(dtok) {</span>
+<a name="696"><font size=-1>696     </font></a><span class="default">                    af = mSettings-&gt;library.getDeallocFuncInfo(dtok-&gt;tokAt(</span><span class="number">1</span><span class="default">));</span>
+<a name="697"><font size=-1>697     </font></a><span class="default">                } </span><span class="keyword">else </span><span class="default">{</span>
+<a name="698"><font size=-1>698     </font></a><span class="default">                    </span><span class="keyword">const </span><span class="default">Token * tscopeStart = nullptr;</span>
+<a name="699"><font size=-1>699     </font></a><span class="default">                    </span><span class="keyword">const </span><span class="default">Token * tscopeEnd = nullptr;</span>
+<a name="700"><font size=-1>700     </font></a><span class="default">                    </span><span class="comment">// If the deleter is a lambda, check if it calls the dealloc function</span>
+<a name="701"><font size=-1>701     </font></a><span class="comment">                    </span><span class="keyword">if </span><span class="default">(deleterToken-&gt;str() == </span><span class="string">&quot;[&quot; </span><span class="default">&amp;&amp;</span>
+<a name="702"><font size=-1>702     </font></a><span class="default">                        Token::simpleMatch(deleterToken-&gt;link(), </span><span class="string">&quot;] (&quot;</span><span class="default">) &amp;&amp;</span>
+<a name="703"><font size=-1>703     </font></a><span class="default">                        </span><span class="comment">// TODO: Check for mutable keyword</span>
+<a name="704"><font size=-1>704     </font></a><span class="comment">                        </span><span class="default">Token::simpleMatch(deleterToken-&gt;link()-&gt;linkAt(</span><span class="number">1</span><span class="default">), </span><span class="string">&quot;) {&quot;</span><span class="default">)) {</span>
+<a name="705"><font size=-1>705     </font></a><span class="default">                        tscopeStart = deleterToken-&gt;link()-&gt;linkAt(</span><span class="number">1</span><span class="default">)-&gt;tokAt(</span><span class="number">1</span><span class="default">);</span>
+<a name="706"><font size=-1>706     </font></a><span class="default">                        tscopeEnd = tscopeStart-&gt;link();</span>
+<a name="707"><font size=-1>707     </font></a><span class="default">                        </span><span class="comment">// If the deleter is a class, check if class calls the dealloc function</span>
+<a name="708"><font size=-1>708     </font></a><span class="comment">                    </span><span class="default">} </span><span class="keyword">else if </span><span class="default">((dtok = Token::findmatch(deleterToken, </span><span class="string">&quot;%type%&quot;</span><span class="default">, endDeleterToken)) &amp;&amp; dtok-&gt;type()) {</span>
+<a name="709"><font size=-1>709     </font></a><span class="default">                        </span><span class="keyword">const </span><span class="default">Scope * tscope = dtok-&gt;type()-&gt;classScope;</span>
+<a name="710"><font size=-1>710     </font></a><span class="default">                        </span><span class="keyword">if </span><span class="default">(tscope) {</span>
+<a name="711"><font size=-1>711     </font></a><span class="default">                            tscopeStart = tscope-&gt;bodyStart;</span>
+<a name="712"><font size=-1>712     </font></a><span class="default">                            tscopeEnd = tscope-&gt;bodyEnd;</span>
+<a name="713"><font size=-1>713     </font></a><span class="default">                        }</span>
+<a name="714"><font size=-1>714     </font></a><span class="default">                    }</span>
+<a name="715"><font size=-1>715     </font></a><span class="default"></span>
+<a name="716"><font size=-1>716     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(tscopeStart &amp;&amp; tscopeEnd) {</span>
+<a name="717"><font size=-1>717     </font></a><span class="default">                        </span><span class="keyword">for </span><span class="default">(</span><span class="keyword">const </span><span class="default">Token *tok2 = tscopeStart; tok2 != tscopeEnd; tok2 = tok2-&gt;next()) {</span>
+<a name="718"><font size=-1>718     </font></a><span class="default">                            af = mSettings-&gt;library.getDeallocFuncInfo(tok2);</span>
+<a name="719"><font size=-1>719     </font></a><span class="default">                            </span><span class="keyword">if </span><span class="default">(af)</span>
+<a name="720"><font size=-1>720     </font></a><span class="default">                                </span><span class="keyword">break</span><span class="default">;</span>
+<a name="721"><font size=-1>721     </font></a><span class="default">                        }</span>
+<a name="722"><font size=-1>722     </font></a><span class="default">                    }</span>
+<a name="723"><font size=-1>723     </font></a><span class="default">                }</span>
+<a name="724"><font size=-1>724     </font></a><span class="default">            }</span>
+<a name="725"><font size=-1>725     </font></a><span class="default"></span>
+<a name="726"><font size=-1>726     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Token * vtok = typeEndTok-&gt;tokAt(</span><span class="number">3</span><span class="default">);</span>
+<a name="727"><font size=-1>727     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">VarInfo::AllocInfo allocation(af ? af-&gt;groupId : (arrayDelete ? NEW_ARRAY : NEW), VarInfo::OWNED, ftok);</span>
+<a name="728"><font size=-1>728     </font></a><span class="default">            changeAllocStatus(varInfo, allocation, vtok, vtok);</span>
+<a name="729"><font size=-1>729     </font></a><span class="default">        }</span>
+<a name="730"><font size=-1>730     </font></a><span class="default">    }</span>
+<a name="731"><font size=-1>731     </font></a><span class="default">}</span>
+<a name="732"><font size=-1>732     </font></a><span class="default"></span>
+<a name="733"><font size=-1>733     </font></a><span class="default"></span>
+<a name="734"><font size=-1>734     </font></a><span class="default"></span><span class="keyword">const </span><span class="default">Token * CheckLeakAutoVar::checkTokenInsideExpression(</span><span class="keyword">const </span><span class="default">Token * </span><span class="keyword">const </span><span class="default">tok, VarInfo *varInfo)</span>
+<a name="735"><font size=-1>735     </font></a><span class="default">{</span>
+<a name="736"><font size=-1>736     </font></a><span class="default">    </span><span class="comment">// Deallocation and then dereferencing pointer..</span>
+<a name="737"><font size=-1>737     </font></a><span class="comment">    </span><span class="keyword">if </span><span class="default">(tok-&gt;varId() &gt; </span><span class="number">0</span><span class="default">) {</span>
+<a name="738"><font size=-1>738     </font></a><span class="default">        </span><span class="comment">// TODO : Write a separate checker for this that uses valueFlowForward.</span>
+<a name="739"><font size=-1>739     </font></a><span class="comment">        </span><span class="keyword">const </span><span class="default">std::map&lt;</span><span class="keyword">int</span><span class="default">, VarInfo::AllocInfo&gt;::const_iterator var = varInfo-&gt;alloctype.find(tok-&gt;varId());</span>
+<a name="740"><font size=-1>740     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(var != varInfo-&gt;alloctype.end()) {</span>
+<a name="741"><font size=-1>741     </font></a><span class="default">            </span><span class="keyword">bool </span><span class="default">unknown = </span><span class="keyword">false</span><span class="default">;</span>
+<a name="742"><font size=-1>742     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(var-&gt;second.status == VarInfo::DEALLOC &amp;&amp; CheckNullPointer::isPointerDeRef(tok, unknown, mSettings) &amp;&amp; !unknown) {</span>
+<a name="743"><font size=-1>743     </font></a><span class="default">                deallocUseError(tok, tok-&gt;str());</span>
+<a name="744"><font size=-1>744     </font></a><span class="default">            } </span><span class="keyword">else if </span><span class="default">(Token::simpleMatch(tok-&gt;tokAt(-</span><span class="number">2</span><span class="default">), </span><span class="string">&quot;= &amp;&quot;</span><span class="default">)) {</span>
+<a name="745"><font size=-1>745     </font></a><span class="default">                varInfo-&gt;erase(tok-&gt;varId());</span>
+<a name="746"><font size=-1>746     </font></a><span class="default">            } </span><span class="keyword">else if </span><span class="default">(Token::Match(tok-&gt;previous(), </span><span class="string">&quot;= %var% [;,)]&quot;</span><span class="default">)) {</span>
+<a name="747"><font size=-1>747     </font></a><span class="default">                varInfo-&gt;erase(tok-&gt;varId());</span>
+<a name="748"><font size=-1>748     </font></a><span class="default">            }</span>
+<a name="749"><font size=-1>749     </font></a><span class="default">        } </span><span class="keyword">else if </span><span class="default">(Token::Match(tok-&gt;previous(), </span><span class="string">&quot;&amp; %name% = %var% ;&quot;</span><span class="default">)) {</span>
+<a name="750"><font size=-1>750     </font></a><span class="default">            varInfo-&gt;referenced.insert(tok-&gt;tokAt(</span><span class="number">2</span><span class="default">)-&gt;varId());</span>
+<a name="751"><font size=-1>751     </font></a><span class="default">        }</span>
+<a name="752"><font size=-1>752     </font></a><span class="default">    }</span>
+<a name="753"><font size=-1>753     </font></a><span class="default"></span>
+<a name="754"><font size=-1>754     </font></a><span class="default">    </span><span class="comment">// check for function call</span>
+<a name="755"><font size=-1>755     </font></a><span class="comment">    </span><span class="keyword">const </span><span class="default">Token * </span><span class="keyword">const </span><span class="default">openingPar = isFunctionCall(tok);</span>
+<a name="756"><font size=-1>756     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(openingPar) {</span>
+<a name="757"><font size=-1>757     </font></a><span class="default">        </span><span class="keyword">const </span><span class="default">Library::AllocFunc* allocFunc = mSettings-&gt;library.getDeallocFuncInfo(tok);</span>
+<a name="758"><font size=-1>758     </font></a><span class="default">        VarInfo::AllocInfo alloc(allocFunc ? allocFunc-&gt;groupId : </span><span class="number">0</span><span class="default">, VarInfo::DEALLOC, tok);</span>
+<a name="759"><font size=-1>759     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(alloc.type == </span><span class="number">0</span><span class="default">)</span>
+<a name="760"><font size=-1>760     </font></a><span class="default">            alloc.status = VarInfo::NOALLOC;</span>
+<a name="761"><font size=-1>761     </font></a><span class="default">        functionCall(tok, openingPar, varInfo, alloc, nullptr);</span>
+<a name="762"><font size=-1>762     </font></a><span class="default">        </span><span class="keyword">return </span><span class="default">openingPar-&gt;link();</span>
+<a name="763"><font size=-1>763     </font></a><span class="default">    }</span>
+<a name="764"><font size=-1>764     </font></a><span class="default"></span>
+<a name="765"><font size=-1>765     </font></a><span class="default">    </span><span class="keyword">return </span><span class="default">nullptr;</span>
+<a name="766"><font size=-1>766     </font></a><span class="default">}</span>
+<a name="767"><font size=-1>767     </font></a><span class="default"></span>
+<a name="768"><font size=-1>768     </font></a><span class="default"></span>
+<a name="769"><font size=-1>769     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">CheckLeakAutoVar::changeAllocStatusIfRealloc(std::map&lt;</span><span class="keyword">int</span><span class="default">, VarInfo::AllocInfo&gt; &amp;alloctype, </span><span class="keyword">const </span><span class="default">Token *fTok, </span><span class="keyword">const </span><span class="default">Token *retTok)</span>
+<a name="770"><font size=-1>770     </font></a><span class="default">{</span>
+<a name="771"><font size=-1>771     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">Library::AllocFunc* f = mSettings-&gt;library.getReallocFuncInfo(fTok);</span>
+<a name="772"><font size=-1>772     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(f &amp;&amp; f-&gt;arg == -</span><span class="number">1 </span><span class="default">&amp;&amp; f-&gt;reallocArg &gt; </span><span class="number">0 </span><span class="default">&amp;&amp; f-&gt;reallocArg &lt;= numberOfArguments(fTok)) {</span>
+<a name="773"><font size=-1>773     </font></a><span class="default">        </span><span class="keyword">const </span><span class="default">Token* argTok = getArguments(fTok).at(f-&gt;reallocArg - </span><span class="number">1</span><span class="default">);</span>
+<a name="774"><font size=-1>774     </font></a><span class="default">        VarInfo::AllocInfo&amp; argAlloc = alloctype[argTok-&gt;varId()];</span>
+<a name="775"><font size=-1>775     </font></a><span class="default">        VarInfo::AllocInfo&amp; retAlloc = alloctype[retTok-&gt;varId()];</span>
+<a name="776"><font size=-1>776     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(argAlloc.type != </span><span class="number">0 </span><span class="default">&amp;&amp; argAlloc.type != f-&gt;groupId)</span>
+<a name="777"><font size=-1>777     </font></a><span class="default">            mismatchError(fTok, argAlloc.allocTok, argTok-&gt;str());</span>
+<a name="778"><font size=-1>778     </font></a><span class="default">        argAlloc.status = VarInfo::DEALLOC;</span>
+<a name="779"><font size=-1>779     </font></a><span class="default">        argAlloc.allocTok = fTok;</span>
+<a name="780"><font size=-1>780     </font></a><span class="default">        retAlloc.type = f-&gt;groupId;</span>
+<a name="781"><font size=-1>781     </font></a><span class="default">        retAlloc.status = VarInfo::ALLOC;</span>
+<a name="782"><font size=-1>782     </font></a><span class="default">        retAlloc.allocTok = fTok;</span>
+<a name="783"><font size=-1>783     </font></a><span class="default">    }</span>
+<a name="784"><font size=-1>784     </font></a><span class="default">}</span>
+<a name="785"><font size=-1>785     </font></a><span class="default"></span>
+<a name="786"><font size=-1>786     </font></a><span class="default"></span>
+<a name="787"><font size=-1>787     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">CheckLeakAutoVar::changeAllocStatus(VarInfo *varInfo, </span><span class="keyword">const </span><span class="default">VarInfo::AllocInfo&amp; allocation, </span><span class="keyword">const </span><span class="default">Token* tok, </span><span class="keyword">const </span><span class="default">Token* arg)</span>
+<a name="788"><font size=-1>788     </font></a><span class="default">{</span>
+<a name="789"><font size=-1>789     </font></a><span class="default">    std::map&lt;</span><span class="keyword">int</span><span class="default">, VarInfo::AllocInfo&gt; &amp;alloctype = varInfo-&gt;alloctype;</span>
+<a name="790"><font size=-1>790     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">std::map&lt;</span><span class="keyword">int</span><span class="default">, VarInfo::AllocInfo&gt;::iterator var = alloctype.find(arg-&gt;varId());</span>
+<a name="791"><font size=-1>791     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(var != alloctype.end()) {</span>
+<a name="792"><font size=-1>792     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(allocation.status == VarInfo::NOALLOC) {</span>
+<a name="793"><font size=-1>793     </font></a><span class="default">            </span><span class="comment">// possible usage</span>
+<a name="794"><font size=-1>794     </font></a><span class="comment">            </span><span class="default">varInfo-&gt;possibleUsage[arg-&gt;varId()] = tok-&gt;str();</span>
+<a name="795"><font size=-1>795     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(var-&gt;second.status == VarInfo::DEALLOC &amp;&amp; arg-&gt;previous()-&gt;str() == </span><span class="string">&quot;&amp;&quot;</span><span class="default">)</span>
+<a name="796"><font size=-1>796     </font></a><span class="default">                varInfo-&gt;erase(arg-&gt;varId());</span>
+<a name="797"><font size=-1>797     </font></a><span class="default">        } </span><span class="keyword">else if </span><span class="default">(var-&gt;second.managed()) {</span>
+<a name="798"><font size=-1>798     </font></a><span class="default">            doubleFreeError(tok, var-&gt;second.allocTok, arg-&gt;str(), allocation.type);</span>
+<a name="799"><font size=-1>799     </font></a><span class="default">        } </span><span class="keyword">else if </span><span class="default">(var-&gt;second.type != allocation.type) {</span>
+<a name="800"><font size=-1>800     </font></a><span class="default">            </span><span class="comment">// mismatching allocation and deallocation</span>
+<a name="801"><font size=-1>801     </font></a><span class="comment">            </span><span class="default">mismatchError(tok, var-&gt;second.allocTok, arg-&gt;str());</span>
+<a name="802"><font size=-1>802     </font></a><span class="default">            varInfo-&gt;erase(arg-&gt;varId());</span>
+<a name="803"><font size=-1>803     </font></a><span class="default">        } </span><span class="keyword">else </span><span class="default">{</span>
+<a name="804"><font size=-1>804     </font></a><span class="default">            </span><span class="comment">// deallocation</span>
+<a name="805"><font size=-1>805     </font></a><span class="comment">            </span><span class="default">var-&gt;second.status = allocation.status;</span>
+<a name="806"><font size=-1>806     </font></a><span class="default">            var-&gt;second.type = allocation.type;</span>
+<a name="807"><font size=-1>807     </font></a><span class="default">            var-&gt;second.allocTok = allocation.allocTok;</span>
+<a name="808"><font size=-1>808     </font></a><span class="default">        }</span>
+<a name="809"><font size=-1>809     </font></a><span class="default">    } </span><span class="keyword">else if </span><span class="default">(allocation.status != VarInfo::NOALLOC) {</span>
+<a name="810"><font size=-1>810     </font></a><span class="default">        alloctype[arg-&gt;varId()].status = VarInfo::DEALLOC;</span>
+<a name="811"><font size=-1>811     </font></a><span class="default">        alloctype[arg-&gt;varId()].allocTok = tok;</span>
+<a name="812"><font size=-1>812     </font></a><span class="default">    }</span>
+<a name="813"><font size=-1>813     </font></a><span class="default">}</span>
+<a name="814"><font size=-1>814     </font></a><span class="default"></span>
+<a name="815"><font size=-1>815     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">CheckLeakAutoVar::functionCall(</span><span class="keyword">const </span><span class="default">Token *tokName, </span><span class="keyword">const </span><span class="default">Token *tokOpeningPar, VarInfo *varInfo, </span><span class="keyword">const </span><span class="default">VarInfo::AllocInfo&amp; allocation, </span><span class="keyword">const </span><span class="default">Library::AllocFunc* af)</span>
+<a name="816"><font size=-1>816     </font></a><span class="default">{</span>
+<a name="817"><font size=-1>817     </font></a><span class="default">    </span><span class="comment">// Ignore function call?</span>
+<a name="818"><font size=-1>818     </font></a><span class="comment">    </span><span class="keyword">if </span><span class="default">(mSettings-&gt;library.isLeakIgnore(tokName-&gt;str()))</span>
+<a name="819"><font size=-1>819     </font></a><span class="default">        </span><span class="keyword">return</span><span class="default">;</span>
+<a name="820"><font size=-1>820     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(mSettings-&gt;library.getReallocFuncInfo(tokName))</span>
+<a name="821"><font size=-1>821     </font></a><span class="default">        </span><span class="keyword">return</span><span class="default">;</span>
+<a name="822"><font size=-1>822     </font></a><span class="default"></span>
+<a name="823"><font size=-1>823     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">Token * </span><span class="keyword">const </span><span class="default">tokFirstArg = tokOpeningPar-&gt;next();</span>
+<a name="824"><font size=-1>824     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(!tokFirstArg || tokFirstArg-&gt;str() == </span><span class="string">&quot;)&quot;</span><span class="default">) {</span>
+<a name="825"><font size=-1>825     </font></a><span class="default">        </span><span class="comment">// no arguments</span>
+<a name="826"><font size=-1>826     </font></a><span class="comment">        </span><span class="keyword">return</span><span class="default">;</span>
+<a name="827"><font size=-1>827     </font></a><span class="default">    }</span>
+<a name="828"><font size=-1>828     </font></a><span class="default"></span>
+<a name="829"><font size=-1>829     </font></a><span class="default">    </span><span class="keyword">int </span><span class="default">argNr = </span><span class="number">1</span><span class="default">;</span>
+<a name="830"><font size=-1>830     </font></a><span class="default">    </span><span class="keyword">for </span><span class="default">(</span><span class="keyword">const </span><span class="default">Token *arg = tokFirstArg; arg; arg = arg-&gt;nextArgument()) {</span>
+<a name="831"><font size=-1>831     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(mTokenizer-&gt;isCPP() &amp;&amp; arg-&gt;str() == </span><span class="string">&quot;new&quot;</span><span class="default">) {</span>
+<a name="832"><font size=-1>832     </font></a><span class="default">            arg = arg-&gt;next();</span>
+<a name="833"><font size=-1>833     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(Token::simpleMatch(arg, </span><span class="string">&quot;( std :: nothrow )&quot;</span><span class="default">))</span>
+<a name="834"><font size=-1>834     </font></a><span class="default">                arg = arg-&gt;tokAt(</span><span class="number">5</span><span class="default">);</span>
+<a name="835"><font size=-1>835     </font></a><span class="default">        }</span>
+<a name="836"><font size=-1>836     </font></a><span class="default"></span>
+<a name="837"><font size=-1>837     </font></a><span class="default">        </span><span class="comment">// Skip casts</span>
+<a name="838"><font size=-1>838     </font></a><span class="comment">        </span><span class="keyword">while </span><span class="default">(arg &amp;&amp; arg-&gt;isCast())</span>
+<a name="839"><font size=-1>839     </font></a><span class="default">            arg = arg-&gt;astOperand2() ? arg-&gt;astOperand2() : arg-&gt;astOperand1();</span>
+<a name="840"><font size=-1>840     </font></a><span class="default">        </span><span class="keyword">const </span><span class="default">Token * </span><span class="keyword">const </span><span class="default">argTypeStartTok = arg;</span>
+<a name="841"><font size=-1>841     </font></a><span class="default"></span>
+<a name="842"><font size=-1>842     </font></a><span class="default">        </span><span class="keyword">while </span><span class="default">(Token::Match(arg, </span><span class="string">&quot;%name% .|:: %name%&quot;</span><span class="default">))</span>
+<a name="843"><font size=-1>843     </font></a><span class="default">            arg = arg-&gt;tokAt(</span><span class="number">2</span><span class="default">);</span>
+<a name="844"><font size=-1>844     </font></a><span class="default"></span>
+<a name="845"><font size=-1>845     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(Token::Match(arg, </span><span class="string">&quot;%var% [-,)] !!.&quot;</span><span class="default">) || Token::Match(arg, </span><span class="string">&quot;&amp; %var%&quot;</span><span class="default">)) {</span>
+<a name="846"><font size=-1>846     </font></a><span class="default">            </span><span class="comment">// goto variable</span>
+<a name="847"><font size=-1>847     </font></a><span class="comment">            </span><span class="keyword">if </span><span class="default">(arg-&gt;str() == </span><span class="string">&quot;&amp;&quot;</span><span class="default">)</span>
+<a name="848"><font size=-1>848     </font></a><span class="default">                arg = arg-&gt;next();</span>
+<a name="849"><font size=-1>849     </font></a><span class="default"></span>
+<a name="850"><font size=-1>850     </font></a><span class="default">            </span><span class="keyword">const bool </span><span class="default">isnull = arg-&gt;hasKnownIntValue() &amp;&amp; arg-&gt;values().front().intvalue == </span><span class="number">0</span><span class="default">;</span>
+<a name="851"><font size=-1>851     </font></a><span class="default"></span>
+<a name="852"><font size=-1>852     </font></a><span class="default">            </span><span class="comment">// Is variable allocated?</span>
+<a name="853"><font size=-1>853     </font></a><span class="comment">            </span><span class="keyword">if </span><span class="default">(!isnull &amp;&amp; (!af || af-&gt;arg == argNr))</span>
+<a name="854"><font size=-1>854     </font></a><span class="default">                changeAllocStatus(varInfo, allocation, tokName, arg);</span>
+<a name="855"><font size=-1>855     </font></a><span class="default">        }</span>
+<a name="856"><font size=-1>856     </font></a><span class="default">        </span><span class="comment">// Check smart pointer</span>
+<a name="857"><font size=-1>857     </font></a><span class="comment">        </span><span class="keyword">else if </span><span class="default">(Token::Match(arg, </span><span class="string">&quot;%name% &lt; %type%&quot;</span><span class="default">) &amp;&amp; mSettings-&gt;library.isSmartPointer(argTypeStartTok)) {</span>
+<a name="858"><font size=-1>858     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Token * typeEndTok = arg-&gt;linkAt(</span><span class="number">1</span><span class="default">);</span>
+<a name="859"><font size=-1>859     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Token * allocTok = nullptr;</span>
+<a name="860"><font size=-1>860     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(!Token::Match(typeEndTok, </span><span class="string">&quot;&gt; {|( %var% ,|)|}&quot;</span><span class="default">))</span>
+<a name="861"><font size=-1>861     </font></a><span class="default">                </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="862"><font size=-1>862     </font></a><span class="default"></span>
+<a name="863"><font size=-1>863     </font></a><span class="default">            </span><span class="keyword">bool </span><span class="default">arrayDelete = </span><span class="keyword">false</span><span class="default">;</span>
+<a name="864"><font size=-1>864     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(Token::findsimplematch(arg-&gt;next(), </span><span class="string">&quot;[ ]&quot;</span><span class="default">, typeEndTok))</span>
+<a name="865"><font size=-1>865     </font></a><span class="default">                arrayDelete = </span><span class="keyword">true</span><span class="default">;</span>
+<a name="866"><font size=-1>866     </font></a><span class="default"></span>
+<a name="867"><font size=-1>867     </font></a><span class="default">            </span><span class="comment">// Check deleter</span>
+<a name="868"><font size=-1>868     </font></a><span class="comment">            </span><span class="keyword">const </span><span class="default">Token * deleterToken = nullptr;</span>
+<a name="869"><font size=-1>869     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Token * endDeleterToken = nullptr;</span>
+<a name="870"><font size=-1>870     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Library::AllocFunc* sp_af = nullptr;</span>
+<a name="871"><font size=-1>871     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(Token::Match(arg, </span><span class="string">&quot;unique_ptr &lt; %type% ,&quot;</span><span class="default">)) {</span>
+<a name="872"><font size=-1>872     </font></a><span class="default">                deleterToken = arg-&gt;tokAt(</span><span class="number">4</span><span class="default">);</span>
+<a name="873"><font size=-1>873     </font></a><span class="default">                endDeleterToken = typeEndTok;</span>
+<a name="874"><font size=-1>874     </font></a><span class="default">            } </span><span class="keyword">else if </span><span class="default">(Token::Match(typeEndTok, </span><span class="string">&quot;&gt; {|( %var% ,&quot;</span><span class="default">)) {</span>
+<a name="875"><font size=-1>875     </font></a><span class="default">                deleterToken = typeEndTok-&gt;tokAt(</span><span class="number">4</span><span class="default">);</span>
+<a name="876"><font size=-1>876     </font></a><span class="default">                endDeleterToken = typeEndTok-&gt;linkAt(</span><span class="number">1</span><span class="default">);</span>
+<a name="877"><font size=-1>877     </font></a><span class="default">            }</span>
+<a name="878"><font size=-1>878     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(deleterToken) {</span>
+<a name="879"><font size=-1>879     </font></a><span class="default">                </span><span class="comment">// Check if its a pointer to a function</span>
+<a name="880"><font size=-1>880     </font></a><span class="comment">                </span><span class="keyword">const </span><span class="default">Token * dtok = Token::findmatch(deleterToken, </span><span class="string">&quot;&amp; %name%&quot;</span><span class="default">, endDeleterToken);</span>
+<a name="881"><font size=-1>881     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(dtok) {</span>
+<a name="882"><font size=-1>882     </font></a><span class="default">                    sp_af = mSettings-&gt;library.getDeallocFuncInfo(dtok-&gt;tokAt(</span><span class="number">1</span><span class="default">));</span>
+<a name="883"><font size=-1>883     </font></a><span class="default">                } </span><span class="keyword">else </span><span class="default">{</span>
+<a name="884"><font size=-1>884     </font></a><span class="default">                    </span><span class="comment">// If the deleter is a class, check if class calls the dealloc function</span>
+<a name="885"><font size=-1>885     </font></a><span class="comment">                    </span><span class="default">dtok = Token::findmatch(deleterToken, </span><span class="string">&quot;%type%&quot;</span><span class="default">, endDeleterToken);</span>
+<a name="886"><font size=-1>886     </font></a><span class="default">                    </span><span class="keyword">if </span><span class="default">(dtok &amp;&amp; dtok-&gt;type()) {</span>
+<a name="887"><font size=-1>887     </font></a><span class="default">                        </span><span class="keyword">const </span><span class="default">Scope * tscope = dtok-&gt;type()-&gt;classScope;</span>
+<a name="888"><font size=-1>888     </font></a><span class="default">                        </span><span class="keyword">for </span><span class="default">(</span><span class="keyword">const </span><span class="default">Token *tok2 = tscope-&gt;bodyStart; tok2 != tscope-&gt;bodyEnd; tok2 = tok2-&gt;next()) {</span>
+<a name="889"><font size=-1>889     </font></a><span class="default">                            sp_af = mSettings-&gt;library.getDeallocFuncInfo(tok2);</span>
+<a name="890"><font size=-1>890     </font></a><span class="default">                            </span><span class="keyword">if </span><span class="default">(sp_af) {</span>
+<a name="891"><font size=-1>891     </font></a><span class="default">                                allocTok = tok2;</span>
+<a name="892"><font size=-1>892     </font></a><span class="default">                                </span><span class="keyword">break</span><span class="default">;</span>
+<a name="893"><font size=-1>893     </font></a><span class="default">                            }</span>
+<a name="894"><font size=-1>894     </font></a><span class="default">                        }</span>
+<a name="895"><font size=-1>895     </font></a><span class="default">                    }</span>
+<a name="896"><font size=-1>896     </font></a><span class="default">                }</span>
+<a name="897"><font size=-1>897     </font></a><span class="default">            }</span>
+<a name="898"><font size=-1>898     </font></a><span class="default"></span>
+<a name="899"><font size=-1>899     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">Token * vtok = typeEndTok-&gt;tokAt(</span><span class="number">2</span><span class="default">);</span>
+<a name="900"><font size=-1>900     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">VarInfo::AllocInfo sp_allocation(sp_af ? sp_af-&gt;groupId : (arrayDelete ? NEW_ARRAY : NEW), VarInfo::OWNED, allocTok);</span>
+<a name="901"><font size=-1>901     </font></a><span class="default">            changeAllocStatus(varInfo, sp_allocation, vtok, vtok);</span>
+<a name="902"><font size=-1>902     </font></a><span class="default">        } </span><span class="keyword">else </span><span class="default">{</span>
+<a name="903"><font size=-1>903     </font></a><span class="default">            checkTokenInsideExpression(arg, varInfo);</span>
+<a name="904"><font size=-1>904     </font></a><span class="default">        }</span>
+<a name="905"><font size=-1>905     </font></a><span class="default">        </span><span class="comment">// TODO: check each token in argument expression (could contain multiple variables)</span>
+<a name="906"><font size=-1>906     </font></a><span class="comment">        </span><span class="default">argNr++;</span>
+<a name="907"><font size=-1>907     </font></a><span class="default">    }</span>
+<a name="908"><font size=-1>908     </font></a><span class="default">}</span>
+<a name="909"><font size=-1>909     </font></a><span class="default"></span>
+<a name="910"><font size=-1>910     </font></a><span class="default"></span>
+<a name="911"><font size=-1>911     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">CheckLeakAutoVar::leakIfAllocated(</span><span class="keyword">const </span><span class="default">Token *vartok,</span>
+<a name="912"><font size=-1>912     </font></a><span class="default">                                       </span><span class="keyword">const </span><span class="default">VarInfo &amp;varInfo)</span>
+<a name="913"><font size=-1>913     </font></a><span class="default">{</span>
+<a name="914"><font size=-1>914     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">std::map&lt;</span><span class="keyword">int</span><span class="default">, VarInfo::AllocInfo&gt; &amp;alloctype = varInfo.alloctype;</span>
+<a name="915"><font size=-1>915     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">std::map&lt;</span><span class="keyword">int</span><span class="default">, std::string&gt; &amp;possibleUsage = varInfo.possibleUsage;</span>
+<a name="916"><font size=-1>916     </font></a><span class="default"></span>
+<a name="917"><font size=-1>917     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">std::map&lt;</span><span class="keyword">int</span><span class="default">, VarInfo::AllocInfo&gt;::const_iterator var = alloctype.find(vartok-&gt;varId());</span>
+<a name="918"><font size=-1>918     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(var != alloctype.end() &amp;&amp; var-&gt;second.status == VarInfo::ALLOC) {</span>
+<a name="919"><font size=-1>919     </font></a><span class="default">        </span><span class="keyword">const </span><span class="default">std::map&lt;</span><span class="keyword">int</span><span class="default">, std::string&gt;::const_iterator use = possibleUsage.find(vartok-&gt;varId());</span>
+<a name="920"><font size=-1>920     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(use == possibleUsage.end()) {</span>
+<a name="921"><font size=-1>921     </font></a><span class="default">            leakError(vartok, vartok-&gt;str(), var-&gt;second.type);</span>
+<a name="922"><font size=-1>922     </font></a><span class="default">        } </span><span class="keyword">else </span><span class="default">{</span>
+<a name="923"><font size=-1>923     </font></a><span class="default">            configurationInfo(vartok, use-&gt;second);</span>
+<a name="924"><font size=-1>924     </font></a><span class="default">        }</span>
+<a name="925"><font size=-1>925     </font></a><span class="default">    }</span>
+<a name="926"><font size=-1>926     </font></a><span class="default">}</span>
+<a name="927"><font size=-1>927     </font></a><span class="default"></span>
+<a name="928"><font size=-1>928     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">CheckLeakAutoVar::ret(</span><span class="keyword">const </span><span class="default">Token *tok, </span><span class="keyword">const </span><span class="default">VarInfo &amp;varInfo)</span>
+<a name="929"><font size=-1>929     </font></a><span class="default">{</span>
+<a name="930"><font size=-1>930     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">std::map&lt;</span><span class="keyword">int</span><span class="default">, VarInfo::AllocInfo&gt; &amp;alloctype = varInfo.alloctype;</span>
+<a name="931"><font size=-1>931     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">std::map&lt;</span><span class="keyword">int</span><span class="default">, std::string&gt; &amp;possibleUsage = varInfo.possibleUsage;</span>
+<a name="932"><font size=-1>932     </font></a><span class="default"></span>
+<a name="933"><font size=-1>933     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">SymbolDatabase *symbolDatabase = mTokenizer-&gt;getSymbolDatabase();</span>
+<a name="934"><font size=-1>934     </font></a><span class="default">    </span><span class="keyword">for </span><span class="default">(std::map&lt;</span><span class="keyword">int</span><span class="default">, VarInfo::AllocInfo&gt;::const_iterator it = alloctype.begin(); it != alloctype.end(); ++it) {</span>
+<a name="935"><font size=-1>935     </font></a><span class="default">        </span><span class="comment">// don't warn if variable is conditionally allocated</span>
+<a name="936"><font size=-1>936     </font></a><span class="comment">        </span><span class="keyword">if </span><span class="default">(!it-&gt;second.managed() &amp;&amp; varInfo.conditionalAlloc.find(it-&gt;first) != varInfo.conditionalAlloc.end())</span>
+<a name="937"><font size=-1>937     </font></a><span class="default">            </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="938"><font size=-1>938     </font></a><span class="default"></span>
+<a name="939"><font size=-1>939     </font></a><span class="default">        </span><span class="comment">// don't warn if there is a reference of the variable</span>
+<a name="940"><font size=-1>940     </font></a><span class="comment">        </span><span class="keyword">if </span><span class="default">(varInfo.referenced.find(it-&gt;first) != varInfo.referenced.end())</span>
+<a name="941"><font size=-1>941     </font></a><span class="default">            </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="942"><font size=-1>942     </font></a><span class="default"></span>
+<a name="943"><font size=-1>943     </font></a><span class="default">        </span><span class="keyword">const int </span><span class="default">varid = it-&gt;first;</span>
+<a name="944"><font size=-1>944     </font></a><span class="default">        </span><span class="keyword">const </span><span class="default">Variable *var = symbolDatabase-&gt;getVariableFromVarId(varid);</span>
+<a name="945"><font size=-1>945     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(var) {</span>
+<a name="946"><font size=-1>946     </font></a><span class="default">            </span><span class="keyword">bool </span><span class="default">used = </span><span class="keyword">false</span><span class="default">;</span>
+<a name="947"><font size=-1>947     </font></a><span class="default">            </span><span class="keyword">for </span><span class="default">(</span><span class="keyword">const </span><span class="default">Token *tok2 = tok; tok2; tok2 = tok2-&gt;next()) {</span>
+<a name="948"><font size=-1>948     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(tok2-&gt;str() == </span><span class="string">&quot;;&quot;</span><span class="default">)</span>
+<a name="949"><font size=-1>949     </font></a><span class="default">                    </span><span class="keyword">break</span><span class="default">;</span>
+<a name="950"><font size=-1>950     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(!Token::Match(tok2, </span><span class="string">&quot;return|(|{|,&quot;</span><span class="default">))</span>
+<a name="951"><font size=-1>951     </font></a><span class="default">                    </span><span class="keyword">continue</span><span class="default">;</span>
+<a name="952"><font size=-1>952     </font></a><span class="default"></span>
+<a name="953"><font size=-1>953     </font></a><span class="default">                </span><span class="keyword">const </span><span class="default">Token* tok3 = tok2-&gt;next();</span>
+<a name="954"><font size=-1>954     </font></a><span class="default">                </span><span class="keyword">while </span><span class="default">(tok3 &amp;&amp; tok3-&gt;isCast() &amp;&amp; tok3-&gt;valueType() &amp;&amp;</span>
+<a name="955"><font size=-1>955     </font></a><span class="default">                       (tok3-&gt;valueType()-&gt;pointer ||</span>
+<a name="956"><font size=-1>956     </font></a><span class="default">                        (tok3-&gt;valueType()-&gt;typeSize(*mSettings) == </span><span class="number">0</span><span class="default">) ||</span>
+<a name="957"><font size=-1>957     </font></a><span class="default">                        (tok3-&gt;valueType()-&gt;typeSize(*mSettings) &gt;= mSettings-&gt;sizeof_pointer)))</span>
+<a name="958"><font size=-1>958     </font></a><span class="default">                    tok3 = tok3-&gt;astOperand2() ? tok3-&gt;astOperand2() : tok3-&gt;astOperand1();</span>
+<a name="959"><font size=-1>959     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(Token::Match(tok3, </span><span class="string">&quot;%varid%&quot;</span><span class="default">, varid))</span>
+<a name="960"><font size=-1>960     </font></a><span class="default">                    tok2 = tok3-&gt;next();</span>
+<a name="961"><font size=-1>961     </font></a><span class="default">                </span><span class="keyword">else if </span><span class="default">(Token::Match(tok3, </span><span class="string">&quot;&amp; %varid% . %name%&quot;</span><span class="default">, varid))</span>
+<a name="962"><font size=-1>962     </font></a><span class="default">                    tok2 = tok3-&gt;tokAt(</span><span class="number">4</span><span class="default">);</span>
+<a name="963"><font size=-1>963     </font></a><span class="default">                </span><span class="keyword">else</span>
+<a name="964"><font size=-1>964     </font></a><span class="keyword">                    continue</span><span class="default">;</span>
+<a name="965"><font size=-1>965     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(Token::Match(tok2, </span><span class="string">&quot;[});,]&quot;</span><span class="default">)) {</span>
+<a name="966"><font size=-1>966     </font></a><span class="default">                    used = </span><span class="keyword">true</span><span class="default">;</span>
+<a name="967"><font size=-1>967     </font></a><span class="default">                    </span><span class="keyword">break</span><span class="default">;</span>
+<a name="968"><font size=-1>968     </font></a><span class="default">                }</span>
+<a name="969"><font size=-1>969     </font></a><span class="default">            }</span>
+<a name="970"><font size=-1>970     </font></a><span class="default"></span>
+<a name="971"><font size=-1>971     </font></a><span class="default">            </span><span class="comment">// return deallocated pointer</span>
+<a name="972"><font size=-1>972     </font></a><span class="comment">            </span><span class="keyword">if </span><span class="default">(used &amp;&amp; it-&gt;second.status == VarInfo::DEALLOC)</span>
+<a name="973"><font size=-1>973     </font></a><span class="default">                deallocReturnError(tok, it-&gt;second.allocTok, var-&gt;name());</span>
+<a name="974"><font size=-1>974     </font></a><span class="default"></span>
+<a name="975"><font size=-1>975     </font></a><span class="default">            </span><span class="keyword">else if </span><span class="default">(!used &amp;&amp; !it-&gt;second.managed()) {</span>
+<a name="976"><font size=-1>976     </font></a><span class="default">                </span><span class="keyword">const </span><span class="default">std::map&lt;</span><span class="keyword">int</span><span class="default">, std::string&gt;::const_iterator use = possibleUsage.find(varid);</span>
+<a name="977"><font size=-1>977     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(use == possibleUsage.end()) {</span>
+<a name="978"><font size=-1>978     </font></a><span class="default">                    leakError(tok, var-&gt;name(), it-&gt;second.type);</span>
+<a name="979"><font size=-1>979     </font></a><span class="default">                } </span><span class="keyword">else </span><span class="default">{</span>
+<a name="980"><font size=-1>980     </font></a><span class="default">                    configurationInfo(tok, use-&gt;second);</span>
+<a name="981"><font size=-1>981     </font></a><span class="default">                }</span>
+<a name="982"><font size=-1>982     </font></a><span class="default">            }</span>
+<a name="983"><font size=-1>983     </font></a><span class="default">        }</span>
+<a name="984"><font size=-1>984     </font></a><span class="default">    }</span>
+<a name="985"><font size=-1>985     </font></a><span class="default">}</span>
+<a name="986"><font size=-1>986     </font></a><span class="default"></span>
+</pre></body></html>

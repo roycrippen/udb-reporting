@@ -1,0 +1,229 @@
+<!DOCTYPE html><html><head><title>Unused Objects and Functions [L]</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><script src="jquery-3.3.1.min.js" type="text/javascript"></script><script src="d3.js" type="text/javascript"></script><script src="d3pie.min.js" type="text/javascript"></script><script src="plotly.min.js" type="text/javascript"></script><link href="reportCSS.css" type="text/css" rel="stylesheet" /><script src="reportJS.js" type="text/javascript"></script><script src="table_of_contents.js" type="text/javascript"></script></head><body bgcolor="#ffffff" TEXT="#000000"><nav id="main-nav" class="nav"><div id="upper-nav"><img id=und-icon src="understand-logo.png" alt="Understand"></div><div class="navbar" style="position:relative;z-index:1003"><button onclick="pageToTop()" id="pagedesc" title="Return to top of page"><span id="descText">cppcheck - Unused Objects and Functions</span></button></div><div id="lower-nav" class=navbar><div id="main-dropdown-html" class="dropdown" tabindex="0"><button id="dropdown-button" class="dropbtn">Contents <img id="dropdown-icon" src="ToCdropdown.png" style="height:12px"></button><div id="dropdown-buffer" class="dropdown-border" style="height:120px;width:300px;"></div><div id="nav-dropdown-content" class="dropdown-content"><a href="table_of_contents.html">Table of Contents</a><txt style="font-size: 12px; text-align: center">Enable javascript to use dropdown contents and other features.</txt></div></div><div class="rightspacer" id="rightspacer"><button id="buttonRight" onclick="scrollTableRight()"><img id="imgRight" src="ToCdropdown.png" /></button><button id="buttonLeft"  onclick="scrollTableLeft()" ><img id="imgLeft" src="ToCdropdown.png"  /></button></div><div class="navCenter">
+<a href="unuseditemsall_&.html">&</a><a href="unuseditemsall_A.html">A</a><a href="unuseditemsall_B.html">B</a><a href="unuseditemsall_C.html">C</a><a href="unuseditemsall_D.html">D</a><a href="unuseditemsall_E.html">E</a><a href="unuseditemsall_F.html">F</a><a href="unuseditemsall_G.html">G</a><a2>H</a2><a href="unuseditemsall_I.html">I</a><a2>J</a2><a2>K</a2><a href="unuseditemsall_L.html">L</a><a href="unuseditemsall_M.html">M</a><a href="unuseditemsall_N.html">N</a><a href="unuseditemsall_O.html">O</a><a href="unuseditemsall_P.html">P</a><a href="unuseditemsall_Q.html">Q</a><a2>R</a2><a href="unuseditemsall_S.html">S</a><a href="unuseditemsall_T.html">T</a><a href="unuseditemsall_U.html">U</a><a href="unuseditemsall_V.html">V</a><a href="unuseditemsall_W.html">W</a><a2>X</a2><a href="unuseditemsall_Y.html">Y</a><a2>Z</a2></div></div></nav>
+<script type="text/javascript">navbar();</script><script type="text/javascript">if (typeof ToC === 'undefined') {document.getElementById("dropdown-button").remove();document.getElementById("dropdown-buffer").remove();document.getElementById("nav-dropdown-content").remove();}</script>
+<div id="main-content"><pre>
+<a href="9032.html"><b>leak1.c</b></a>
+       [<a href="9032.html#3">main, 3</a>] - Function
+       [<a href="9032.html#6">pI, 6</a>] - Local Object
+
+<a href="25245.html"><b>leak2.c</b></a>
+       [<a href="25245.html#3">main, 3</a>] - Function
+
+<a href="25250.html"><b>libcurl.c</b></a>
+       [<a href="25250.html#66">buf, 66</a>] - Local Object
+       [<a href="25250.html#79">bufInit, 79</a>] - Local Object
+       [<a href="25250.html#80">bufUninit, 80</a>] - Local Object
+       [<a href="25250.html#36">handle, 36</a>] - Parameter
+      Declared in: <a href="dictionary_I.html#41621">ignoredReturnValue</a>()
+       [<a href="25250.html#56">handle, 56</a>] - Parameter
+      Declared in: <a href="dictionary_M.html#25266">memleak_curl_easy_escape</a>()
+       [<a href="25250.html#64">handle, 64</a>] - Parameter
+      Declared in: <a href="dictionary_N.html#9141">nullPointer</a>()
+       [<a href="25250.html#49">handle, 49</a>] - Parameter
+      Declared in: <a href="dictionary_R.html#25273">resourceLeak_curl_easy_duphandle</a>()
+       [<a href="25250.html#77">handle, 77</a>] - Parameter
+      Declared in: <a href="dictionary_U.html#9158">uninitvar</a>()
+       [<a href="25250.html#36">ignoredReturnValue, 36</a>] - Function
+       [<a href="25250.html#67">len, 67</a>] - Local Object
+       [<a href="25250.html#81">len, 81</a>] - Local Object
+       [<a href="25250.html#56">memleak_curl_easy_escape, 56</a>] - Function
+       [<a href="25250.html#64">nullPointer, 64</a>] - Function
+       [<a href="25250.html#49">resourceLeak_curl_easy_duphandle, 49</a>] - Function
+       [<a href="25250.html#42">resourceLeak_curl_easy_init, 42</a>] - Function
+       [<a href="25250.html#77">uninitvar, 77</a>] - Function
+       [<a href="25250.html#13">validCode, 13</a>] - Function
+
+<a href="556.html"><b>library.cpp</b></a>
+       [<a href="556.html#739">[unnamed], 739</a>] - Local Object
+
+<a href="581.html"><b>library.h</b></a>
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2168">AllocFunc</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2170">AllocFunc</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2174">ArgumentChecks</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2176">ArgumentChecks</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2180">IteratorInfo</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2182">IteratorInfo</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2184">operator=</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2186">operator=</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2196">operator=</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2200">CodeBlock</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2202">CodeBlock</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2208">operator=</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2213">Container</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2215">Container</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2217">Function</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2219">Function</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2227">operator=</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#681">Error</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#682">Error</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2233">operator=</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2236">ExportedFunctions</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2238">ExportedFunctions</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2248">operator=</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2252">Function</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2254">Function</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2256">operator=</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2259">Library</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2261">Library</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2263">Platform</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2265">Platform</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2267">operator=</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2273">PlatformType</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2275">PlatformType</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2279">operator=</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2282">PodType</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2284">PodType</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2287">WarnInfo</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2289">WarnInfo</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2291">operator=</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2345">operator=</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#2347">operator=</a>()
+       [<a href="581.html#277">MinSize, 277</a>] - Public Function
+       [<a href="581.html#504">CodeBlock, 504</a>] - Public Function
+       [<a href="581.html#306">Function, 306</a>] - Public Function
+
+<a href="18267.html"><b>libraryaddfunctiondialog.cpp</b></a>
+       [<a href="18267.html#22">functionName, 22</a>] - Public Const Function
+       [<a href="18267.html#7">LibraryAddFunctionDialog, 7</a>] - Public Function
+       [<a href="18267.html#7">parent, 7</a>] - Parameter
+      Declared in: <a href="dictionary_L.html#18268">LibraryAddFunctionDialog</a>()
+       [<a href="18267.html#12">rx, 12</a>] - Local Object
+       [<a href="18267.html#13">validator, 13</a>] - Local Object
+
+<a href="8912.html"><b>libraryaddfunctiondialog.h</b></a>
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#8915">LibraryAddFunctionDialog</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#8920">operator=</a>()
+
+<a href="21194.html"><b>librarydialog.cpp</b></a>
+       [<a href="21194.html#326">arg, 326</a>] - Parameter
+      Declared in: <a href="dictionary_L.html#4178">getArgText</a>()
+       [<a href="21194.html#180">arg, 180</a>] - Local Object
+       [<a href="21194.html#316">d, 316</a>] - Local Object
+       [<a href="21194.html#79">datadir, 79</a>] - Local Object
+       [<a href="21194.html#104">errmsg, 104</a>] - Local Object
+       [<a href="21194.html#175">f, 175</a>] - Local Object
+       [<a href="21194.html#92">file, 92</a>] - Local Object
+       [<a href="21194.html#137">file, 137</a>] - Local Object
+       [<a href="21194.html#274">filter, 274</a>] - Parameter
+      Declared in: <a href="dictionary_L.html#4176">filterFunctions</a>()
+       [<a href="21194.html#82">filter, 82</a>] - Local Object
+       [<a href="21194.html#154">filter, 154</a>] - Local Object
+       [<a href="21194.html#344">function, 344</a>] - Parameter
+      Declared in: <a href="dictionary_L.html#4191">updateArguments</a>()
+       [<a href="21194.html#198">function, 198</a>] - Local Object
+       [<a href="21194.html#122">function, 122</a>] - Local Object
+       [<a href="21194.html#263">function, 263</a>] - Local Object
+       [<a href="21194.html#44">function, 44</a>] - Public Object
+       [<a href="21194.html#36">FunctionListItem, 36</a>] - Public Function
+       [<a href="21194.html#197">functionName, 197</a>] - Local Object
+       [<a href="21194.html#193">item, 193</a>] - Parameter
+      Declared in: <a href="dictionary_L.html#4174">editFunctionName</a>()
+       [<a href="21194.html#170">addFunction, 170</a>] - Private Function
+       [<a href="21194.html#289">changeFunction, 289</a>] - Private Function
+       [<a href="21194.html#306">editArg, 306</a>] - Private Function
+       [<a href="21194.html#193">editFunctionName, 193</a>] - Private Function
+       [<a href="21194.html#274">filterFunctions, 274</a>] - Public Function
+       [<a href="21194.html#326">getArgText, 326</a>] - Public Function
+       [<a href="21194.html#47">LibraryDialog, 47</a>] - Public Function
+       [<a href="21194.html#76">openCfg, 76</a>] - Public Function
+       [<a href="21194.html#152">saveCfgAs, 152</a>] - Private Function
+       [<a href="21194.html#255">sortFunctions, 255</a>] - Private Function
+       [<a href="21194.html#63">~LibraryDialog, 63</a>] - Private Function
+       [<a href="21194.html#94">msg, 94</a>] - Local Object
+       [<a href="21194.html#106">msg, 106</a>] - Local Object
+       [<a href="21194.html#143">msg, 143</a>] - Local Object
+       [<a href="21194.html#47">parent, 47</a>] - Parameter
+      Declared in: <a href="dictionary_L.html#21199">LibraryDialog</a>()
+       [<a href="21194.html#155">path, 155</a>] - Local Object
+       [<a href="21194.html#328">s, 328</a>] - Local Object
+       [<a href="21194.html#38">selected, 38</a>] - Parameter
+      Declared in: <a href="dictionary_F.html#21239">FunctionListItem</a>()
+       [<a href="21194.html#83">selectedFile, 83</a>] - Local Object
+       [<a href="21194.html#156">selectedFile, 156</a>] - Local Object
+       [<a href="21194.html#81">selectedFilter, 81</a>] - Local Object
+       [<a href="21194.html#261">selfunction, 261</a>] - Local Object
+       [<a href="21194.html#78">settings, 78</a>] - Local Object
+       [<a href="21194.html#103">tempdata, 103</a>] - Local Object
+       [<a href="21194.html#139">ts, 139</a>] - Local Object
+       [<a href="21194.html#36">view, 36</a>] - Parameter
+      Declared in: <a href="dictionary_F.html#21239">FunctionListItem</a>()
+
+<a href="4160.html"><b>librarydialog.h</b></a>
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#4167">LibraryDialog</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#4184">operator=</a>()
+
+<a href="32521.html"><b>libraryeditargdialog.cpp</b></a>
+       [<a href="32521.html#92">[unnamed], 92</a>] - Parameter
+      Declared in: <a href="dictionary_L.html#32529">minsizeChanged</a>()
+       [<a href="32521.html#4">arg, 4</a>] - Parameter
+      Declared in: <a href="dictionary_L.html#32522">LibraryEditArgDialog</a>()
+       [<a href="32521.html#24">items, 24</a>] - Local Object
+       [<a href="32521.html#63">getArg, 63</a>] - Private Const Function
+       [<a href="32521.html#4">LibraryEditArgDialog, 4</a>] - Public Function
+       [<a href="32521.html#92">minsizeChanged, 92</a>] - Public Function
+       [<a href="32521.html#72">minsize1, 72</a>] - Local Object
+       [<a href="32521.html#80">minsize2, 80</a>] - Local Object
+       [<a href="32521.html#4">parent, 4</a>] - Parameter
+      Declared in: <a href="dictionary_L.html#32522">LibraryEditArgDialog</a>()
+
+<a href="21235.html"><b>libraryeditargdialog.h</b></a>
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#27922">LibraryEditArgDialog</a>()
+     - Unresolved Parameter
+      Declared in: <a href="dictionary_L.html#27928">operator=</a>()
+
+<a href="25370.html"><b>lua.c</b></a>
+       [<a href="25370.html#21">ignoredReturnValue, 21</a>] - Function
+       [<a href="25370.html#21">L, 21</a>] - Parameter
+      Declared in: <a href="dictionary_I.html#33838">ignoredReturnValue</a>()
+       [<a href="25370.html#13">L, 13</a>] - Parameter
+      Declared in: <a href="dictionary_V.html#29638">validCode</a>()
+       [<a href="25370.html#13">validCode, 13</a>] - Function
+</pre>
+<p>
+<div class="footer"><b>Generated:</b> Wednesday, March 18, 2020 1:28:38 PM CDT</div><center><p><div class="scitools-tag">Scientific Toolworks, Inc.<br></div><div class="scitools-link"><A target="_blank" href="mailto:support@scitools.com">support@scitools.com</A><br><A href="http://www.scitools.com">www.scitools.com</A></div></center></div></body></html>

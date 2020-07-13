@@ -1,0 +1,418 @@
+<html><head><title>statsdialog.cpp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="sourcestyles.css" />
+</head><body link="blue" vlink="blue">
+<h3>File: /home/crippenre/dev/cpp/cppcheck/gui/statsdialog.cpp</h3>
+<SCRIPT>
+defaultStatus = "File: /home/crippenre/dev/cpp/cppcheck/gui/statsdialog.cpp";
+top.document.title  = "statsdialog.cpp";
+</SCRIPT>
+<pre><span class="default"></span><a name="1"><font size=-1>1     </font></a><span class="default"></span><span class="comment">/*</span>
+<a name="2"><font size=-1>2     </font></a><span class="comment"> * Cppcheck - A tool for static C/C++ code analysis</span>
+<a name="3"><font size=-1>3     </font></a><span class="comment"> * Copyright (C) 2007-2019 Cppcheck team.</span>
+<a name="4"><font size=-1>4     </font></a><span class="comment"> *</span>
+<a name="5"><font size=-1>5     </font></a><span class="comment"> * This program is free software: you can redistribute it and/or modify</span>
+<a name="6"><font size=-1>6     </font></a><span class="comment"> * it under the terms of the GNU General Public License as published by</span>
+<a name="7"><font size=-1>7     </font></a><span class="comment"> * the Free Software Foundation, either version 3 of the License, or</span>
+<a name="8"><font size=-1>8     </font></a><span class="comment"> * (at your option) any later version.</span>
+<a name="9"><font size=-1>9     </font></a><span class="comment"> *</span>
+<a name="10"><font size=-1>10     </font></a><span class="comment"> * This program is distributed in the hope that it will be useful,</span>
+<a name="11"><font size=-1>11     </font></a><span class="comment"> * but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="12"><font size=-1>12     </font></a><span class="comment"> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="13"><font size=-1>13     </font></a><span class="comment"> * GNU General Public License for more details.</span>
+<a name="14"><font size=-1>14     </font></a><span class="comment"> *</span>
+<a name="15"><font size=-1>15     </font></a><span class="comment"> * You should have received a copy of the GNU General Public License</span>
+<a name="16"><font size=-1>16     </font></a><span class="comment"> * along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="17"><font size=-1>17     </font></a><span class="comment"> */</span>
+<a name="18"><font size=-1>18     </font></a><span class="comment"></span><span class="preproc">#include </span><span class="string">&lt;QPrinter&gt;</span>
+<a name="19"><font size=-1>19     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QDate&gt;</span>
+<a name="20"><font size=-1>20     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QFileDialog&gt;</span>
+<a name="21"><font size=-1>21     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QFileInfo&gt;</span>
+<a name="22"><font size=-1>22     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QTextDocument&gt;</span>
+<a name="23"><font size=-1>23     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QWidget&gt;</span>
+<a name="24"><font size=-1>24     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QString&gt;</span>
+<a name="25"><font size=-1>25     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QClipboard&gt;</span>
+<a name="26"><font size=-1>26     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&lt;QMimeData&gt;</span>
+<a name="27"><font size=-1>27     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&quot;projectfile.h&quot;</span>
+<a name="28"><font size=-1>28     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&quot;statsdialog.h&quot;</span>
+<a name="29"><font size=-1>29     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&quot;checkstatistics.h&quot;</span>
+<a name="30"><font size=-1>30     </font></a><span class="string"></span><span class="preproc">#include </span><span class="string">&quot;common.h&quot;</span>
+<a name="31"><font size=-1>31     </font></a><span class="string"></span>
+<a name="32"><font size=-1>32     </font></a><span class="string"></span><span class="keyword">static const </span><span class="default">QString CPPCHECK(</span><span class="string">&quot;cppcheck&quot;</span><span class="default">);</span>
+<a name="33"><font size=-1>33     </font></a><span class="default"></span>
+<a name="34"><font size=-1>34     </font></a><span class="default">StatsDialog::StatsDialog(QWidget *parent)</span>
+<a name="35"><font size=-1>35     </font></a><span class="default">    : QDialog(parent),</span>
+<a name="36"><font size=-1>36     </font></a><span class="default">      mStatistics(nullptr)</span>
+<a name="37"><font size=-1>37     </font></a><span class="default">{</span>
+<a name="38"><font size=-1>38     </font></a><span class="default">    mUI.setupUi(</span><span class="keyword">this</span><span class="default">);</span>
+<a name="39"><font size=-1>39     </font></a><span class="default"></span>
+<a name="40"><font size=-1>40     </font></a><span class="default">    setWindowFlags(Qt::Window);</span>
+<a name="41"><font size=-1>41     </font></a><span class="default"></span>
+<a name="42"><font size=-1>42     </font></a><span class="default">    connect(mUI.mCopyToClipboard, &amp;QPushButton::pressed, </span><span class="keyword">this</span><span class="default">, &amp;StatsDialog::copyToClipboard);</span>
+<a name="43"><font size=-1>43     </font></a><span class="default">    connect(mUI.mPDFexport, &amp;QPushButton::pressed, </span><span class="keyword">this</span><span class="default">, &amp;StatsDialog::pdfExport);</span>
+<a name="44"><font size=-1>44     </font></a><span class="default">}</span>
+<a name="45"><font size=-1>45     </font></a><span class="default"></span>
+<a name="46"><font size=-1>46     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">StatsDialog::setProject(</span><span class="keyword">const </span><span class="default">ProjectFile* projectFile)</span>
+<a name="47"><font size=-1>47     </font></a><span class="default">{</span>
+<a name="48"><font size=-1>48     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(projectFile) {</span>
+<a name="49"><font size=-1>49     </font></a><span class="default">        mUI.mProject-&gt;setText(projectFile-&gt;getRootPath());</span>
+<a name="50"><font size=-1>50     </font></a><span class="default">        mUI.mPaths-&gt;setText(projectFile-&gt;getCheckPaths().join(</span><span class="string">&quot;;&quot;</span><span class="default">));</span>
+<a name="51"><font size=-1>51     </font></a><span class="default">        mUI.mIncludePaths-&gt;setText(projectFile-&gt;getIncludeDirs().join(</span><span class="string">&quot;;&quot;</span><span class="default">));</span>
+<a name="52"><font size=-1>52     </font></a><span class="default">        mUI.mDefines-&gt;setText(projectFile-&gt;getDefines().join(</span><span class="string">&quot;;&quot;</span><span class="default">));</span>
+<a name="53"><font size=-1>53     </font></a><span class="default">        mUI.mUndefines-&gt;setText(projectFile-&gt;getUndefines().join(</span><span class="string">&quot;;&quot;</span><span class="default">));</span>
+<a name="54"><font size=-1>54     </font></a><span class="default"></span><span class="preproc">#ifndef </span><span class="default">HAVE_QCHART</span>
+<a name="55"><font size=-1>55     </font></a><span class="default">        mUI.mTabHistory-&gt;setVisible(</span><span class="keyword">false</span><span class="default">);</span>
+<a name="56"><font size=-1>56     </font></a><span class="default"></span><span class="preproc">#else</span>
+<a name="57"><font size=-1>57     </font></a><span class="preproc">        </span><span class="default">QString statsFile;</span>
+<a name="58"><font size=-1>58     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(!projectFile-&gt;getBuildDir().isEmpty()) {</span>
+<a name="59"><font size=-1>59     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">QString prjpath = QFileInfo(projectFile-&gt;getFilename()).absolutePath();</span>
+<a name="60"><font size=-1>60     </font></a><span class="default">            </span><span class="keyword">const </span><span class="default">QString buildDir = prjpath + </span><span class="string">'/' </span><span class="default">+ projectFile-&gt;getBuildDir();</span>
+<a name="61"><font size=-1>61     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(QDir(buildDir).exists()) {</span>
+<a name="62"><font size=-1>62     </font></a><span class="default">                statsFile = buildDir + </span><span class="string">&quot;/statistics.txt&quot;</span><span class="default">;</span>
+<a name="63"><font size=-1>63     </font></a><span class="default">            }</span>
+<a name="64"><font size=-1>64     </font></a><span class="default">        }</span>
+<a name="65"><font size=-1>65     </font></a><span class="default">        mUI.mLblHistoryFile-&gt;setText(tr(</span><span class="string">&quot;File: &quot;</span><span class="default">) + (statsFile.isEmpty() ? tr(</span><span class="string">&quot;No cppcheck build dir&quot;</span><span class="default">) : statsFile));</span>
+<a name="66"><font size=-1>66     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(!statsFile.isEmpty()) {</span>
+<a name="67"><font size=-1>67     </font></a><span class="default">            QChartView *chartView;</span>
+<a name="68"><font size=-1>68     </font></a><span class="default">            chartView = createChart(statsFile, </span><span class="string">&quot;cppcheck&quot;</span><span class="default">);</span>
+<a name="69"><font size=-1>69     </font></a><span class="default">            mUI.mTabHistory-&gt;layout()-&gt;addWidget(chartView);</span>
+<a name="70"><font size=-1>70     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(projectFile-&gt;getClangAnalyzer()) {</span>
+<a name="71"><font size=-1>71     </font></a><span class="default">                chartView = createChart(statsFile, CLANG_ANALYZER);</span>
+<a name="72"><font size=-1>72     </font></a><span class="default">                mUI.mTabHistory-&gt;layout()-&gt;addWidget(chartView);</span>
+<a name="73"><font size=-1>73     </font></a><span class="default">            }</span>
+<a name="74"><font size=-1>74     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(projectFile-&gt;getClangTidy()) {</span>
+<a name="75"><font size=-1>75     </font></a><span class="default">                chartView = createChart(statsFile, CLANG_TIDY);</span>
+<a name="76"><font size=-1>76     </font></a><span class="default">                mUI.mTabHistory-&gt;layout()-&gt;addWidget(chartView);</span>
+<a name="77"><font size=-1>77     </font></a><span class="default">            }</span>
+<a name="78"><font size=-1>78     </font></a><span class="default">        }</span>
+<a name="79"><font size=-1>79     </font></a><span class="default"></span><span class="preproc">#endif</span>
+<a name="80"><font size=-1>80     </font></a><span class="preproc">    </span><span class="default">} </span><span class="keyword">else </span><span class="default">{</span>
+<a name="81"><font size=-1>81     </font></a><span class="default">        mUI.mProject-&gt;setText(QString());</span>
+<a name="82"><font size=-1>82     </font></a><span class="default">        mUI.mPaths-&gt;setText(QString());</span>
+<a name="83"><font size=-1>83     </font></a><span class="default">        mUI.mIncludePaths-&gt;setText(QString());</span>
+<a name="84"><font size=-1>84     </font></a><span class="default">        mUI.mDefines-&gt;setText(QString());</span>
+<a name="85"><font size=-1>85     </font></a><span class="default">        mUI.mUndefines-&gt;setText(QString());</span>
+<a name="86"><font size=-1>86     </font></a><span class="default">    }</span>
+<a name="87"><font size=-1>87     </font></a><span class="default">}</span>
+<a name="88"><font size=-1>88     </font></a><span class="default"></span>
+<a name="89"><font size=-1>89     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">StatsDialog::setPathSelected(</span><span class="keyword">const </span><span class="default">QString&amp; path)</span>
+<a name="90"><font size=-1>90     </font></a><span class="default">{</span>
+<a name="91"><font size=-1>91     </font></a><span class="default">    mUI.mPath-&gt;setText(path);</span>
+<a name="92"><font size=-1>92     </font></a><span class="default">}</span>
+<a name="93"><font size=-1>93     </font></a><span class="default"></span>
+<a name="94"><font size=-1>94     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">StatsDialog::setNumberOfFilesScanned(</span><span class="keyword">int </span><span class="default">num)</span>
+<a name="95"><font size=-1>95     </font></a><span class="default">{</span>
+<a name="96"><font size=-1>96     </font></a><span class="default">    mUI.mNumberOfFilesScanned-&gt;setText(QString::number(num));</span>
+<a name="97"><font size=-1>97     </font></a><span class="default">}</span>
+<a name="98"><font size=-1>98     </font></a><span class="default"></span>
+<a name="99"><font size=-1>99     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">StatsDialog::setScanDuration(</span><span class="keyword">double </span><span class="default">seconds)</span>
+<a name="100"><font size=-1>100     </font></a><span class="default">{</span>
+<a name="101"><font size=-1>101     </font></a><span class="default">    </span><span class="comment">// Factor the duration into units (days/hours/minutes/seconds)</span>
+<a name="102"><font size=-1>102     </font></a><span class="comment">    </span><span class="keyword">int </span><span class="default">secs = seconds;</span>
+<a name="103"><font size=-1>103     </font></a><span class="default">    </span><span class="keyword">int </span><span class="default">days = secs / (</span><span class="number">24 </span><span class="default">* </span><span class="number">60 </span><span class="default">* </span><span class="number">60</span><span class="default">);</span>
+<a name="104"><font size=-1>104     </font></a><span class="default">    secs -= days * (</span><span class="number">24 </span><span class="default">* </span><span class="number">60 </span><span class="default">* </span><span class="number">60</span><span class="default">);</span>
+<a name="105"><font size=-1>105     </font></a><span class="default">    </span><span class="keyword">int </span><span class="default">hours = secs / (</span><span class="number">60 </span><span class="default">* </span><span class="number">60</span><span class="default">);</span>
+<a name="106"><font size=-1>106     </font></a><span class="default">    secs -= hours * (</span><span class="number">60 </span><span class="default">* </span><span class="number">60</span><span class="default">);</span>
+<a name="107"><font size=-1>107     </font></a><span class="default">    </span><span class="keyword">int </span><span class="default">mins = secs / </span><span class="number">60</span><span class="default">;</span>
+<a name="108"><font size=-1>108     </font></a><span class="default">    secs -= mins * </span><span class="number">60</span><span class="default">;</span>
+<a name="109"><font size=-1>109     </font></a><span class="default"></span>
+<a name="110"><font size=-1>110     </font></a><span class="default">    </span><span class="comment">// Concatenate the two most significant units (e.g. &quot;1 day and 3 hours&quot;)</span>
+<a name="111"><font size=-1>111     </font></a><span class="comment">    </span><span class="default">QStringList parts;</span>
+<a name="112"><font size=-1>112     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(days)</span>
+<a name="113"><font size=-1>113     </font></a><span class="default">        parts &lt;&lt; ((days == </span><span class="number">1</span><span class="default">) ? tr(</span><span class="string">&quot;1 day&quot;</span><span class="default">) : tr(</span><span class="string">&quot;%1 days&quot;</span><span class="default">).arg(days));</span>
+<a name="114"><font size=-1>114     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(hours)</span>
+<a name="115"><font size=-1>115     </font></a><span class="default">        parts &lt;&lt; ((hours == </span><span class="number">1</span><span class="default">) ? tr(</span><span class="string">&quot;1 hour&quot;</span><span class="default">) : tr(</span><span class="string">&quot;%1 hours&quot;</span><span class="default">).arg(hours));</span>
+<a name="116"><font size=-1>116     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(mins &amp;&amp; parts.size() &lt; </span><span class="number">2</span><span class="default">)</span>
+<a name="117"><font size=-1>117     </font></a><span class="default">        parts &lt;&lt; ((mins == </span><span class="number">1</span><span class="default">) ? tr(</span><span class="string">&quot;1 minute&quot;</span><span class="default">) : tr(</span><span class="string">&quot;%1 minutes&quot;</span><span class="default">).arg(mins));</span>
+<a name="118"><font size=-1>118     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(secs &amp;&amp; parts.size() &lt; </span><span class="number">2</span><span class="default">)</span>
+<a name="119"><font size=-1>119     </font></a><span class="default">        parts &lt;&lt; ((secs == </span><span class="number">1</span><span class="default">) ? tr(</span><span class="string">&quot;1 second&quot;</span><span class="default">) : tr(</span><span class="string">&quot;%1 seconds&quot;</span><span class="default">).arg(secs));</span>
+<a name="120"><font size=-1>120     </font></a><span class="default"></span>
+<a name="121"><font size=-1>121     </font></a><span class="default">    </span><span class="comment">// For durations &lt; 1s, show the fraction of a second (e.g. &quot;0.7 seconds&quot;)</span>
+<a name="122"><font size=-1>122     </font></a><span class="comment">    </span><span class="keyword">if </span><span class="default">(parts.isEmpty())</span>
+<a name="123"><font size=-1>123     </font></a><span class="default">        parts &lt;&lt; tr(</span><span class="string">&quot;0.%1 seconds&quot;</span><span class="default">).arg(</span><span class="keyword">int</span><span class="default">(</span><span class="number">10.0 </span><span class="default">*(seconds - secs)));</span>
+<a name="124"><font size=-1>124     </font></a><span class="default"></span>
+<a name="125"><font size=-1>125     </font></a><span class="default">    mUI.mScanDuration-&gt;setText(parts.join(tr(</span><span class="string">&quot; and &quot;</span><span class="default">)));</span>
+<a name="126"><font size=-1>126     </font></a><span class="default">}</span>
+<a name="127"><font size=-1>127     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">StatsDialog::pdfExport()</span>
+<a name="128"><font size=-1>128     </font></a><span class="default">{</span>
+<a name="129"><font size=-1>129     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString Stat = QString(</span>
+<a name="130"><font size=-1>130     </font></a><span class="default">                             </span><span class="string">&quot;&lt;center&gt;&lt;h1&gt;%1   %2&lt;/h1&gt;&lt;/center&gt;\n&quot;</span>
+<a name="131"><font size=-1>131     </font></a><span class="string">                             &quot;&lt;font color=\&quot;red\&quot;&gt;&lt;h3&gt;%3   :   %4&lt;/h3&gt;&lt;/font&gt;\n&quot;</span>
+<a name="132"><font size=-1>132     </font></a><span class="string">                             &quot;&lt;font color=\&quot;green\&quot;&gt;&lt;h3&gt;%5   :   %6&lt;/h3&gt;&lt;/font&gt;\n&quot;</span>
+<a name="133"><font size=-1>133     </font></a><span class="string">                             &quot;&lt;font color=\&quot;orange\&quot;&gt;&lt;h3&gt;%7   :   %8&lt;/h3&gt;&lt;/font&gt;\n&quot;</span>
+<a name="134"><font size=-1>134     </font></a><span class="string">                             &quot;&lt;font color=\&quot;blue\&quot;&gt;&lt;h3&gt;%9   :   %10&lt;/h3&gt;&lt;/font&gt;\n&quot;</span>
+<a name="135"><font size=-1>135     </font></a><span class="string">                             &quot;&lt;font color=\&quot;blue\&quot;&gt;&lt;h3&gt;%11  :   %12&lt;/h3&gt;&lt;/font&gt;\n&quot;</span>
+<a name="136"><font size=-1>136     </font></a><span class="string">                             &quot;&lt;font color=\&quot;purple\&quot;&gt;&lt;h3&gt;%13  :   %14&lt;/h3&gt;&lt;/font&gt;\n&quot;</span><span class="default">)</span>
+<a name="137"><font size=-1>137     </font></a><span class="default">                         .arg(tr(</span><span class="string">&quot;Statistics&quot;</span><span class="default">))</span>
+<a name="138"><font size=-1>138     </font></a><span class="default">                         .arg(QDate::currentDate().toString(</span><span class="string">&quot;dd.MM.yyyy&quot;</span><span class="default">))</span>
+<a name="139"><font size=-1>139     </font></a><span class="default">                         .arg(tr(</span><span class="string">&quot;Errors&quot;</span><span class="default">))</span>
+<a name="140"><font size=-1>140     </font></a><span class="default">                         .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowErrors))</span>
+<a name="141"><font size=-1>141     </font></a><span class="default">                         .arg(tr(</span><span class="string">&quot;Warnings&quot;</span><span class="default">))</span>
+<a name="142"><font size=-1>142     </font></a><span class="default">                         .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowWarnings))</span>
+<a name="143"><font size=-1>143     </font></a><span class="default">                         .arg(tr(</span><span class="string">&quot;Style warnings&quot;</span><span class="default">))</span>
+<a name="144"><font size=-1>144     </font></a><span class="default">                         .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowStyle))</span>
+<a name="145"><font size=-1>145     </font></a><span class="default">                         .arg(tr(</span><span class="string">&quot;Portability warnings&quot;</span><span class="default">))</span>
+<a name="146"><font size=-1>146     </font></a><span class="default">                         .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowPortability))</span>
+<a name="147"><font size=-1>147     </font></a><span class="default">                         .arg(tr(</span><span class="string">&quot;Performance warnings&quot;</span><span class="default">))</span>
+<a name="148"><font size=-1>148     </font></a><span class="default">                         .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowPerformance))</span>
+<a name="149"><font size=-1>149     </font></a><span class="default">                         .arg(tr(</span><span class="string">&quot;Information messages&quot;</span><span class="default">))</span>
+<a name="150"><font size=-1>150     </font></a><span class="default">                         .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowInformation));</span>
+<a name="151"><font size=-1>151     </font></a><span class="default"></span>
+<a name="152"><font size=-1>152     </font></a><span class="default">    QString fileName = QFileDialog::getSaveFileName((QWidget*)nullptr, tr(</span><span class="string">&quot;Export PDF&quot;</span><span class="default">), QString(), </span><span class="string">&quot;*.pdf&quot;</span><span class="default">);</span>
+<a name="153"><font size=-1>153     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(QFileInfo(fileName).suffix().isEmpty()) {</span>
+<a name="154"><font size=-1>154     </font></a><span class="default">        fileName.append(</span><span class="string">&quot;.pdf&quot;</span><span class="default">);</span>
+<a name="155"><font size=-1>155     </font></a><span class="default">    }</span>
+<a name="156"><font size=-1>156     </font></a><span class="default">    QPrinter printer(QPrinter::PrinterResolution);</span>
+<a name="157"><font size=-1>157     </font></a><span class="default">    printer.setOutputFormat(QPrinter::PdfFormat);</span>
+<a name="158"><font size=-1>158     </font></a><span class="default">    printer.setPaperSize(QPrinter::A4);</span>
+<a name="159"><font size=-1>159     </font></a><span class="default">    printer.setOutputFileName(fileName);</span>
+<a name="160"><font size=-1>160     </font></a><span class="default"></span>
+<a name="161"><font size=-1>161     </font></a><span class="default">    QTextDocument doc;</span>
+<a name="162"><font size=-1>162     </font></a><span class="default">    doc.setHtml(Stat);</span>
+<a name="163"><font size=-1>163     </font></a><span class="default">    </span><span class="comment">// doc.setPageSize(printer.pageRect().size());</span>
+<a name="164"><font size=-1>164     </font></a><span class="comment">    </span><span class="default">doc.print(&amp;printer);</span>
+<a name="165"><font size=-1>165     </font></a><span class="default"></span>
+<a name="166"><font size=-1>166     </font></a><span class="default">}</span>
+<a name="167"><font size=-1>167     </font></a><span class="default"></span>
+<a name="168"><font size=-1>168     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">StatsDialog::copyToClipboard()</span>
+<a name="169"><font size=-1>169     </font></a><span class="default">{</span>
+<a name="170"><font size=-1>170     </font></a><span class="default">    QClipboard *clipboard = QApplication::clipboard();</span>
+<a name="171"><font size=-1>171     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(!clipboard)</span>
+<a name="172"><font size=-1>172     </font></a><span class="default">        </span><span class="keyword">return</span><span class="default">;</span>
+<a name="173"><font size=-1>173     </font></a><span class="default"></span>
+<a name="174"><font size=-1>174     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString projSettings(tr(</span><span class="string">&quot;Project Settings&quot;</span><span class="default">));</span>
+<a name="175"><font size=-1>175     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString project(tr(</span><span class="string">&quot;Project&quot;</span><span class="default">));</span>
+<a name="176"><font size=-1>176     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString paths(tr(</span><span class="string">&quot;Paths&quot;</span><span class="default">));</span>
+<a name="177"><font size=-1>177     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString incPaths(tr(</span><span class="string">&quot;Include paths&quot;</span><span class="default">));</span>
+<a name="178"><font size=-1>178     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString defines(tr(</span><span class="string">&quot;Defines&quot;</span><span class="default">));</span>
+<a name="179"><font size=-1>179     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString undefines(tr(</span><span class="string">&quot;Undefines&quot;</span><span class="default">));</span>
+<a name="180"><font size=-1>180     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString prevScan(tr(</span><span class="string">&quot;Previous Scan&quot;</span><span class="default">));</span>
+<a name="181"><font size=-1>181     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString selPath(tr(</span><span class="string">&quot;Path selected&quot;</span><span class="default">));</span>
+<a name="182"><font size=-1>182     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString numFiles(tr(</span><span class="string">&quot;Number of files scanned&quot;</span><span class="default">));</span>
+<a name="183"><font size=-1>183     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString duration(tr(</span><span class="string">&quot;Scan duration&quot;</span><span class="default">));</span>
+<a name="184"><font size=-1>184     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString stats(tr(</span><span class="string">&quot;Statistics&quot;</span><span class="default">));</span>
+<a name="185"><font size=-1>185     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString errors(tr(</span><span class="string">&quot;Errors&quot;</span><span class="default">));</span>
+<a name="186"><font size=-1>186     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString warnings(tr(</span><span class="string">&quot;Warnings&quot;</span><span class="default">));</span>
+<a name="187"><font size=-1>187     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString style(tr(</span><span class="string">&quot;Style warnings&quot;</span><span class="default">));</span>
+<a name="188"><font size=-1>188     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString portability(tr(</span><span class="string">&quot;Portability warnings&quot;</span><span class="default">));</span>
+<a name="189"><font size=-1>189     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString performance(tr(</span><span class="string">&quot;Performance warnings&quot;</span><span class="default">));</span>
+<a name="190"><font size=-1>190     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString information(tr(</span><span class="string">&quot;Information messages&quot;</span><span class="default">));</span>
+<a name="191"><font size=-1>191     </font></a><span class="default"></span>
+<a name="192"><font size=-1>192     </font></a><span class="default">    </span><span class="comment">// Plain text summary</span>
+<a name="193"><font size=-1>193     </font></a><span class="comment">    </span><span class="keyword">const </span><span class="default">QString settings = QString(</span>
+<a name="194"><font size=-1>194     </font></a><span class="default">                                 </span><span class="string">&quot;%1\n&quot;</span>
+<a name="195"><font size=-1>195     </font></a><span class="string">                                 &quot;\t%2:\t%3\n&quot;</span>
+<a name="196"><font size=-1>196     </font></a><span class="string">                                 &quot;\t%4:\t%5\n&quot;</span>
+<a name="197"><font size=-1>197     </font></a><span class="string">                                 &quot;\t%6:\t%7\n&quot;</span>
+<a name="198"><font size=-1>198     </font></a><span class="string">                                 &quot;\t%8:\t%9\n&quot;</span>
+<a name="199"><font size=-1>199     </font></a><span class="string">                                 &quot;\t%10:\t%11\n&quot;</span>
+<a name="200"><font size=-1>200     </font></a><span class="string">                             </span><span class="default">)</span>
+<a name="201"><font size=-1>201     </font></a><span class="default">                             .arg(projSettings)</span>
+<a name="202"><font size=-1>202     </font></a><span class="default">                             .arg(project)</span>
+<a name="203"><font size=-1>203     </font></a><span class="default">                             .arg(mUI.mProject-&gt;text())</span>
+<a name="204"><font size=-1>204     </font></a><span class="default">                             .arg(paths)</span>
+<a name="205"><font size=-1>205     </font></a><span class="default">                             .arg(mUI.mPaths-&gt;text())</span>
+<a name="206"><font size=-1>206     </font></a><span class="default">                             .arg(incPaths)</span>
+<a name="207"><font size=-1>207     </font></a><span class="default">                             .arg(mUI.mIncludePaths-&gt;text())</span>
+<a name="208"><font size=-1>208     </font></a><span class="default">                             .arg(defines)</span>
+<a name="209"><font size=-1>209     </font></a><span class="default">                             .arg(mUI.mDefines-&gt;text())</span>
+<a name="210"><font size=-1>210     </font></a><span class="default">                             .arg(undefines)</span>
+<a name="211"><font size=-1>211     </font></a><span class="default">                             .arg(mUI.mUndefines-&gt;text());</span>
+<a name="212"><font size=-1>212     </font></a><span class="default"></span>
+<a name="213"><font size=-1>213     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString previous = QString(</span>
+<a name="214"><font size=-1>214     </font></a><span class="default">                                 </span><span class="string">&quot;%1\n&quot;</span>
+<a name="215"><font size=-1>215     </font></a><span class="string">                                 &quot;\t%2:\t%3\n&quot;</span>
+<a name="216"><font size=-1>216     </font></a><span class="string">                                 &quot;\t%4:\t%5\n&quot;</span>
+<a name="217"><font size=-1>217     </font></a><span class="string">                                 &quot;\t%6:\t%7\n&quot;</span>
+<a name="218"><font size=-1>218     </font></a><span class="string">                             </span><span class="default">)</span>
+<a name="219"><font size=-1>219     </font></a><span class="default">                             .arg(prevScan)</span>
+<a name="220"><font size=-1>220     </font></a><span class="default">                             .arg(selPath)</span>
+<a name="221"><font size=-1>221     </font></a><span class="default">                             .arg(mUI.mPath-&gt;text())</span>
+<a name="222"><font size=-1>222     </font></a><span class="default">                             .arg(numFiles)</span>
+<a name="223"><font size=-1>223     </font></a><span class="default">                             .arg(mUI.mNumberOfFilesScanned-&gt;text())</span>
+<a name="224"><font size=-1>224     </font></a><span class="default">                             .arg(duration)</span>
+<a name="225"><font size=-1>225     </font></a><span class="default">                             .arg(mUI.mScanDuration-&gt;text());</span>
+<a name="226"><font size=-1>226     </font></a><span class="default"></span>
+<a name="227"><font size=-1>227     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString statistics = QString(</span>
+<a name="228"><font size=-1>228     </font></a><span class="default">                                   </span><span class="string">&quot;%1\n&quot;</span>
+<a name="229"><font size=-1>229     </font></a><span class="string">                                   &quot;\t%2:\t%3\n&quot;</span>
+<a name="230"><font size=-1>230     </font></a><span class="string">                                   &quot;\t%4:\t%5\n&quot;</span>
+<a name="231"><font size=-1>231     </font></a><span class="string">                                   &quot;\t%6:\t%7\n&quot;</span>
+<a name="232"><font size=-1>232     </font></a><span class="string">                                   &quot;\t%8:\t%9\n&quot;</span>
+<a name="233"><font size=-1>233     </font></a><span class="string">                                   &quot;\t%10:\t%11\n&quot;</span>
+<a name="234"><font size=-1>234     </font></a><span class="string">                                   &quot;\t%12:\t%13\n&quot;</span>
+<a name="235"><font size=-1>235     </font></a><span class="string">                               </span><span class="default">)</span>
+<a name="236"><font size=-1>236     </font></a><span class="default">                               .arg(stats)</span>
+<a name="237"><font size=-1>237     </font></a><span class="default">                               .arg(errors)</span>
+<a name="238"><font size=-1>238     </font></a><span class="default">                               .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowErrors))</span>
+<a name="239"><font size=-1>239     </font></a><span class="default">                               .arg(warnings)</span>
+<a name="240"><font size=-1>240     </font></a><span class="default">                               .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowWarnings))</span>
+<a name="241"><font size=-1>241     </font></a><span class="default">                               .arg(style)</span>
+<a name="242"><font size=-1>242     </font></a><span class="default">                               .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowStyle))</span>
+<a name="243"><font size=-1>243     </font></a><span class="default">                               .arg(portability)</span>
+<a name="244"><font size=-1>244     </font></a><span class="default">                               .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowPortability))</span>
+<a name="245"><font size=-1>245     </font></a><span class="default">                               .arg(performance)</span>
+<a name="246"><font size=-1>246     </font></a><span class="default">                               .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowPerformance))</span>
+<a name="247"><font size=-1>247     </font></a><span class="default">                               .arg(information)</span>
+<a name="248"><font size=-1>248     </font></a><span class="default">                               .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowInformation));</span>
+<a name="249"><font size=-1>249     </font></a><span class="default"></span>
+<a name="250"><font size=-1>250     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString textSummary = settings + previous + statistics;</span>
+<a name="251"><font size=-1>251     </font></a><span class="default"></span>
+<a name="252"><font size=-1>252     </font></a><span class="default">    </span><span class="comment">// HTML summary</span>
+<a name="253"><font size=-1>253     </font></a><span class="comment">    </span><span class="keyword">const </span><span class="default">QString htmlSettings = QString(</span>
+<a name="254"><font size=-1>254     </font></a><span class="default">                                     </span><span class="string">&quot;&lt;h3&gt;%1&lt;h3&gt;\n&quot;</span>
+<a name="255"><font size=-1>255     </font></a><span class="string">                                     &quot;&lt;table&gt;\n&quot;</span>
+<a name="256"><font size=-1>256     </font></a><span class="string">                                     &quot; &lt;tr&gt;&lt;th&gt;%2:&lt;/th&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="257"><font size=-1>257     </font></a><span class="string">                                     &quot; &lt;tr&gt;&lt;th&gt;%4:&lt;/th&gt;&lt;td&gt;%5&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="258"><font size=-1>258     </font></a><span class="string">                                     &quot; &lt;tr&gt;&lt;th&gt;%6:&lt;/th&gt;&lt;td&gt;%7&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="259"><font size=-1>259     </font></a><span class="string">                                     &quot; &lt;tr&gt;&lt;th&gt;%8:&lt;/th&gt;&lt;td&gt;%9&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="260"><font size=-1>260     </font></a><span class="string">                                     &quot; &lt;tr&gt;&lt;th&gt;%10:&lt;/th&gt;&lt;td&gt;%11&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="261"><font size=-1>261     </font></a><span class="string">                                     &quot;&lt;/table&gt;\n&quot;</span>
+<a name="262"><font size=-1>262     </font></a><span class="string">                                 </span><span class="default">)</span>
+<a name="263"><font size=-1>263     </font></a><span class="default">                                 .arg(projSettings)</span>
+<a name="264"><font size=-1>264     </font></a><span class="default">                                 .arg(project)</span>
+<a name="265"><font size=-1>265     </font></a><span class="default">                                 .arg(mUI.mProject-&gt;text())</span>
+<a name="266"><font size=-1>266     </font></a><span class="default">                                 .arg(paths)</span>
+<a name="267"><font size=-1>267     </font></a><span class="default">                                 .arg(mUI.mPaths-&gt;text())</span>
+<a name="268"><font size=-1>268     </font></a><span class="default">                                 .arg(incPaths)</span>
+<a name="269"><font size=-1>269     </font></a><span class="default">                                 .arg(mUI.mIncludePaths-&gt;text())</span>
+<a name="270"><font size=-1>270     </font></a><span class="default">                                 .arg(defines)</span>
+<a name="271"><font size=-1>271     </font></a><span class="default">                                 .arg(mUI.mDefines-&gt;text())</span>
+<a name="272"><font size=-1>272     </font></a><span class="default">                                 .arg(undefines)</span>
+<a name="273"><font size=-1>273     </font></a><span class="default">                                 .arg(mUI.mUndefines-&gt;text());</span>
+<a name="274"><font size=-1>274     </font></a><span class="default"></span>
+<a name="275"><font size=-1>275     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString htmlPrevious = QString(</span>
+<a name="276"><font size=-1>276     </font></a><span class="default">                                     </span><span class="string">&quot;&lt;h3&gt;%1&lt;/h3&gt;\n&quot;</span>
+<a name="277"><font size=-1>277     </font></a><span class="string">                                     &quot;&lt;table&gt;\n&quot;</span>
+<a name="278"><font size=-1>278     </font></a><span class="string">                                     &quot; &lt;tr&gt;&lt;th&gt;%2:&lt;/th&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="279"><font size=-1>279     </font></a><span class="string">                                     &quot; &lt;tr&gt;&lt;th&gt;%4:&lt;/th&gt;&lt;td&gt;%5&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="280"><font size=-1>280     </font></a><span class="string">                                     &quot; &lt;tr&gt;&lt;th&gt;%6:&lt;/th&gt;&lt;td&gt;%7&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="281"><font size=-1>281     </font></a><span class="string">                                     &quot;&lt;/table&gt;\n&quot;</span>
+<a name="282"><font size=-1>282     </font></a><span class="string">                                 </span><span class="default">)</span>
+<a name="283"><font size=-1>283     </font></a><span class="default">                                 .arg(prevScan)</span>
+<a name="284"><font size=-1>284     </font></a><span class="default">                                 .arg(selPath)</span>
+<a name="285"><font size=-1>285     </font></a><span class="default">                                 .arg(mUI.mPath-&gt;text())</span>
+<a name="286"><font size=-1>286     </font></a><span class="default">                                 .arg(numFiles)</span>
+<a name="287"><font size=-1>287     </font></a><span class="default">                                 .arg(mUI.mNumberOfFilesScanned-&gt;text())</span>
+<a name="288"><font size=-1>288     </font></a><span class="default">                                 .arg(duration)</span>
+<a name="289"><font size=-1>289     </font></a><span class="default">                                 .arg(mUI.mScanDuration-&gt;text());</span>
+<a name="290"><font size=-1>290     </font></a><span class="default"></span>
+<a name="291"><font size=-1>291     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString htmlStatistics = QString(</span>
+<a name="292"><font size=-1>292     </font></a><span class="default">                                       </span><span class="string">&quot;&lt;h3&gt;%1&lt;/h3&gt;\n&quot;</span>
+<a name="293"><font size=-1>293     </font></a><span class="string">                                       &quot; &lt;tr&gt;&lt;th&gt;%2:&lt;/th&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="294"><font size=-1>294     </font></a><span class="string">                                       &quot; &lt;tr&gt;&lt;th&gt;%4:&lt;/th&gt;&lt;td&gt;%5&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="295"><font size=-1>295     </font></a><span class="string">                                       &quot; &lt;tr&gt;&lt;th&gt;%6:&lt;/th&gt;&lt;td&gt;%7&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="296"><font size=-1>296     </font></a><span class="string">                                       &quot; &lt;tr&gt;&lt;th&gt;%8:&lt;/th&gt;&lt;td&gt;%9&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="297"><font size=-1>297     </font></a><span class="string">                                       &quot; &lt;tr&gt;&lt;th&gt;%10:&lt;/th&gt;&lt;td&gt;%11&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="298"><font size=-1>298     </font></a><span class="string">                                       &quot; &lt;tr&gt;&lt;th&gt;%12:&lt;/th&gt;&lt;td&gt;%13&lt;/td&gt;&lt;/tr&gt;\n&quot;</span>
+<a name="299"><font size=-1>299     </font></a><span class="string">                                       &quot;&lt;/table&gt;\n&quot;</span>
+<a name="300"><font size=-1>300     </font></a><span class="string">                                   </span><span class="default">)</span>
+<a name="301"><font size=-1>301     </font></a><span class="default">                                   .arg(stats)</span>
+<a name="302"><font size=-1>302     </font></a><span class="default">                                   .arg(errors)</span>
+<a name="303"><font size=-1>303     </font></a><span class="default">                                   .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowErrors))</span>
+<a name="304"><font size=-1>304     </font></a><span class="default">                                   .arg(warnings)</span>
+<a name="305"><font size=-1>305     </font></a><span class="default">                                   .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowWarnings))</span>
+<a name="306"><font size=-1>306     </font></a><span class="default">                                   .arg(style)</span>
+<a name="307"><font size=-1>307     </font></a><span class="default">                                   .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowStyle))</span>
+<a name="308"><font size=-1>308     </font></a><span class="default">                                   .arg(portability)</span>
+<a name="309"><font size=-1>309     </font></a><span class="default">                                   .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowPortability))</span>
+<a name="310"><font size=-1>310     </font></a><span class="default">                                   .arg(performance)</span>
+<a name="311"><font size=-1>311     </font></a><span class="default">                                   .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowPerformance))</span>
+<a name="312"><font size=-1>312     </font></a><span class="default">                                   .arg(information)</span>
+<a name="313"><font size=-1>313     </font></a><span class="default">                                   .arg(mStatistics-&gt;getCount(CPPCHECK,ShowTypes::ShowInformation));</span>
+<a name="314"><font size=-1>314     </font></a><span class="default"></span>
+<a name="315"><font size=-1>315     </font></a><span class="default">    </span><span class="keyword">const </span><span class="default">QString htmlSummary = htmlSettings + htmlPrevious + htmlStatistics;</span>
+<a name="316"><font size=-1>316     </font></a><span class="default"></span>
+<a name="317"><font size=-1>317     </font></a><span class="default">    QMimeData *mimeData = </span><span class="keyword">new </span><span class="default">QMimeData();</span>
+<a name="318"><font size=-1>318     </font></a><span class="default">    mimeData-&gt;setText(textSummary);</span>
+<a name="319"><font size=-1>319     </font></a><span class="default">    mimeData-&gt;setHtml(htmlSummary);</span>
+<a name="320"><font size=-1>320     </font></a><span class="default">    clipboard-&gt;setMimeData(mimeData);</span>
+<a name="321"><font size=-1>321     </font></a><span class="default">}</span>
+<a name="322"><font size=-1>322     </font></a><span class="default"></span>
+<a name="323"><font size=-1>323     </font></a><span class="default"></span><span class="keyword">void </span><span class="default">StatsDialog::setStatistics(</span><span class="keyword">const </span><span class="default">CheckStatistics *stats)</span>
+<a name="324"><font size=-1>324     </font></a><span class="default">{</span>
+<a name="325"><font size=-1>325     </font></a><span class="default">    mStatistics = stats;</span>
+<a name="326"><font size=-1>326     </font></a><span class="default">    mUI.mLblErrors-&gt;setText(QString(</span><span class="string">&quot;%1&quot;</span><span class="default">).arg(stats-&gt;getCount(CPPCHECK,ShowTypes::ShowErrors)));</span>
+<a name="327"><font size=-1>327     </font></a><span class="default">    mUI.mLblWarnings-&gt;setText(QString(</span><span class="string">&quot;%1&quot;</span><span class="default">).arg(stats-&gt;getCount(CPPCHECK,ShowTypes::ShowWarnings)));</span>
+<a name="328"><font size=-1>328     </font></a><span class="default">    mUI.mLblStyle-&gt;setText(QString(</span><span class="string">&quot;%1&quot;</span><span class="default">).arg(stats-&gt;getCount(CPPCHECK,ShowTypes::ShowStyle)));</span>
+<a name="329"><font size=-1>329     </font></a><span class="default">    mUI.mLblPortability-&gt;setText(QString(</span><span class="string">&quot;%1&quot;</span><span class="default">).arg(stats-&gt;getCount(CPPCHECK,ShowTypes::ShowPortability)));</span>
+<a name="330"><font size=-1>330     </font></a><span class="default">    mUI.mLblPerformance-&gt;setText(QString(</span><span class="string">&quot;%1&quot;</span><span class="default">).arg(stats-&gt;getCount(CPPCHECK,ShowTypes::ShowPerformance)));</span>
+<a name="331"><font size=-1>331     </font></a><span class="default">    mUI.mLblInformation-&gt;setText(QString(</span><span class="string">&quot;%1&quot;</span><span class="default">).arg(stats-&gt;getCount(CPPCHECK,ShowTypes::ShowInformation)));</span>
+<a name="332"><font size=-1>332     </font></a><span class="default">}</span>
+<a name="333"><font size=-1>333     </font></a><span class="default"></span>
+<a name="334"><font size=-1>334     </font></a><span class="default"></span><span class="preproc">#ifdef </span><span class="default">HAVE_QCHART</span>
+<a name="335"><font size=-1>335     </font></a><span class="default">QChartView *StatsDialog::createChart(</span><span class="keyword">const </span><span class="default">QString &amp;statsFile, </span><span class="keyword">const </span><span class="default">QString &amp;tool)</span>
+<a name="336"><font size=-1>336     </font></a><span class="default">{</span>
+<a name="337"><font size=-1>337     </font></a><span class="default">    QChart *chart = </span><span class="keyword">new </span><span class="default">QChart;</span>
+<a name="338"><font size=-1>338     </font></a><span class="default">    chart-&gt;addSeries(numberOfReports(statsFile, tool + </span><span class="string">&quot;-error&quot;</span><span class="default">));</span>
+<a name="339"><font size=-1>339     </font></a><span class="default">    chart-&gt;addSeries(numberOfReports(statsFile, tool + </span><span class="string">&quot;-warning&quot;</span><span class="default">));</span>
+<a name="340"><font size=-1>340     </font></a><span class="default">    chart-&gt;addSeries(numberOfReports(statsFile, tool + </span><span class="string">&quot;-style&quot;</span><span class="default">));</span>
+<a name="341"><font size=-1>341     </font></a><span class="default">    chart-&gt;addSeries(numberOfReports(statsFile, tool + </span><span class="string">&quot;-performance&quot;</span><span class="default">));</span>
+<a name="342"><font size=-1>342     </font></a><span class="default">    chart-&gt;addSeries(numberOfReports(statsFile, tool + </span><span class="string">&quot;-portability&quot;</span><span class="default">));</span>
+<a name="343"><font size=-1>343     </font></a><span class="default"></span>
+<a name="344"><font size=-1>344     </font></a><span class="default">    QDateTimeAxis *axisX = </span><span class="keyword">new </span><span class="default">QDateTimeAxis;</span>
+<a name="345"><font size=-1>345     </font></a><span class="default">    axisX-&gt;setTitleText(</span><span class="string">&quot;Date&quot;</span><span class="default">);</span>
+<a name="346"><font size=-1>346     </font></a><span class="default">    chart-&gt;addAxis(axisX, Qt::AlignBottom);</span>
+<a name="347"><font size=-1>347     </font></a><span class="default"></span>
+<a name="348"><font size=-1>348     </font></a><span class="default">    foreach (QAbstractSeries *s, chart-&gt;series()) {</span>
+<a name="349"><font size=-1>349     </font></a><span class="default">        s-&gt;attachAxis(axisX);</span>
+<a name="350"><font size=-1>350     </font></a><span class="default">    }</span>
+<a name="351"><font size=-1>351     </font></a><span class="default"></span>
+<a name="352"><font size=-1>352     </font></a><span class="default">    QValueAxis *axisY = </span><span class="keyword">new </span><span class="default">QValueAxis;</span>
+<a name="353"><font size=-1>353     </font></a><span class="default">    axisY-&gt;setLabelFormat(</span><span class="string">&quot;%i&quot;</span><span class="default">);</span>
+<a name="354"><font size=-1>354     </font></a><span class="default">    axisY-&gt;setTitleText(</span><span class="string">&quot;Count&quot;</span><span class="default">);</span>
+<a name="355"><font size=-1>355     </font></a><span class="default">    chart-&gt;addAxis(axisY, Qt::AlignLeft);</span>
+<a name="356"><font size=-1>356     </font></a><span class="default"></span>
+<a name="357"><font size=-1>357     </font></a><span class="default">    qreal maxY = </span><span class="number">0</span><span class="default">;</span>
+<a name="358"><font size=-1>358     </font></a><span class="default">    foreach (QAbstractSeries *s, chart-&gt;series()) {</span>
+<a name="359"><font size=-1>359     </font></a><span class="default">        s-&gt;attachAxis(axisY);</span>
+<a name="360"><font size=-1>360     </font></a><span class="default">        </span><span class="keyword">if </span><span class="default">(QLineSeries *ls = </span><span class="keyword">dynamic_cast</span><span class="default">&lt;QLineSeries*&gt;(s)) {</span>
+<a name="361"><font size=-1>361     </font></a><span class="default">            foreach (QPointF p, ls-&gt;points()) {</span>
+<a name="362"><font size=-1>362     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(p.y() &gt; maxY)</span>
+<a name="363"><font size=-1>363     </font></a><span class="default">                    maxY = p.y();</span>
+<a name="364"><font size=-1>364     </font></a><span class="default">            }</span>
+<a name="365"><font size=-1>365     </font></a><span class="default">        }</span>
+<a name="366"><font size=-1>366     </font></a><span class="default">    }</span>
+<a name="367"><font size=-1>367     </font></a><span class="default">    axisY-&gt;setMax(maxY);</span>
+<a name="368"><font size=-1>368     </font></a><span class="default"></span>
+<a name="369"><font size=-1>369     </font></a><span class="default">    </span><span class="comment">//chart-&gt;createDefaultAxes();</span>
+<a name="370"><font size=-1>370     </font></a><span class="comment">    </span><span class="default">chart-&gt;setTitle(tool);</span>
+<a name="371"><font size=-1>371     </font></a><span class="default"></span>
+<a name="372"><font size=-1>372     </font></a><span class="default">    QChartView *chartView = </span><span class="keyword">new </span><span class="default">QChartView(chart);</span>
+<a name="373"><font size=-1>373     </font></a><span class="default">    chartView-&gt;setRenderHint(QPainter::Antialiasing);</span>
+<a name="374"><font size=-1>374     </font></a><span class="default">    </span><span class="keyword">return </span><span class="default">chartView;</span>
+<a name="375"><font size=-1>375     </font></a><span class="default">}</span>
+<a name="376"><font size=-1>376     </font></a><span class="default"></span>
+<a name="377"><font size=-1>377     </font></a><span class="default">QLineSeries *StatsDialog::numberOfReports(</span><span class="keyword">const </span><span class="default">QString &amp;fileName, </span><span class="keyword">const </span><span class="default">QString &amp;severity) </span><span class="keyword">const</span>
+<a name="378"><font size=-1>378     </font></a><span class="keyword"></span><span class="default">{</span>
+<a name="379"><font size=-1>379     </font></a><span class="default">    QLineSeries *series = </span><span class="keyword">new </span><span class="default">QLineSeries();</span>
+<a name="380"><font size=-1>380     </font></a><span class="default">    series-&gt;setName(severity);</span>
+<a name="381"><font size=-1>381     </font></a><span class="default">    QFile f(fileName);</span>
+<a name="382"><font size=-1>382     </font></a><span class="default">    </span><span class="keyword">if </span><span class="default">(f.open(QIODevice::ReadOnly | QIODevice::Text)) {</span>
+<a name="383"><font size=-1>383     </font></a><span class="default">        quint64 t = </span><span class="number">0</span><span class="default">;</span>
+<a name="384"><font size=-1>384     </font></a><span class="default">        QTextStream in(&amp;f);</span>
+<a name="385"><font size=-1>385     </font></a><span class="default">        </span><span class="keyword">while </span><span class="default">(!in.atEnd()) {</span>
+<a name="386"><font size=-1>386     </font></a><span class="default">            QString line = in.readLine();</span>
+<a name="387"><font size=-1>387     </font></a><span class="default">            QRegExp rxdate(</span><span class="string">&quot;\\[(\\d\\d)\\.(\\d\\d)\\.(\\d\\d\\d\\d)\\]&quot;</span><span class="default">);</span>
+<a name="388"><font size=-1>388     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(rxdate.exactMatch(line)) {</span>
+<a name="389"><font size=-1>389     </font></a><span class="default">                </span><span class="keyword">int </span><span class="default">y = rxdate.cap(</span><span class="number">3</span><span class="default">).toInt();</span>
+<a name="390"><font size=-1>390     </font></a><span class="default">                </span><span class="keyword">int </span><span class="default">m = rxdate.cap(</span><span class="number">2</span><span class="default">).toInt();</span>
+<a name="391"><font size=-1>391     </font></a><span class="default">                </span><span class="keyword">int </span><span class="default">d = rxdate.cap(</span><span class="number">1</span><span class="default">).toInt();</span>
+<a name="392"><font size=-1>392     </font></a><span class="default">                QDateTime dt;</span>
+<a name="393"><font size=-1>393     </font></a><span class="default">                dt.setDate(QDate(y,m,d));</span>
+<a name="394"><font size=-1>394     </font></a><span class="default">                </span><span class="keyword">if </span><span class="default">(t == dt.toMSecsSinceEpoch())</span>
+<a name="395"><font size=-1>395     </font></a><span class="default">                    t += </span><span class="number">1000</span><span class="default">;</span>
+<a name="396"><font size=-1>396     </font></a><span class="default">                </span><span class="keyword">else</span>
+<a name="397"><font size=-1>397     </font></a><span class="keyword">                    </span><span class="default">t = dt.toMSecsSinceEpoch();</span>
+<a name="398"><font size=-1>398     </font></a><span class="default">            }</span>
+<a name="399"><font size=-1>399     </font></a><span class="default">            </span><span class="keyword">if </span><span class="default">(line.startsWith(severity + </span><span class="string">':'</span><span class="default">)) {</span>
+<a name="400"><font size=-1>400     </font></a><span class="default">                </span><span class="keyword">int </span><span class="default">y = line.mid(</span><span class="number">1</span><span class="default">+severity.length()).toInt();</span>
+<a name="401"><font size=-1>401     </font></a><span class="default">                series-&gt;append(t, y);</span>
+<a name="402"><font size=-1>402     </font></a><span class="default">            }</span>
+<a name="403"><font size=-1>403     </font></a><span class="default">        }</span>
+<a name="404"><font size=-1>404     </font></a><span class="default">    }</span>
+<a name="405"><font size=-1>405     </font></a><span class="default">    </span><span class="keyword">return </span><span class="default">series;</span>
+<a name="406"><font size=-1>406     </font></a><span class="default">}</span>
+<a name="407"><font size=-1>407     </font></a><span class="default"></span><span class="preproc">#endif</span>
+<a name="408"><font size=-1>408     </font></a><span class="preproc"></span>
+</pre></body></html>

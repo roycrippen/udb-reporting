@@ -1,0 +1,382 @@
+site_name: 'UDB Metrics jenetics'
+site_description: 'Metrics and Dependency report for a UDB.'
+site_author: 'Roy Crippen'
+
+use_directory_urls: false
+
+theme:
+  name: null
+  custom_dir: ../../mkdocs_ivory
+  # Copy settings from mkdocs_theme.yml, which is ignored by custom_dir themes.
+  static_templates:
+    - 404.html
+
+  include_search_page: true
+  search_index_only: false
+
+  highlightjs: true
+  hljs_languages: []
+
+
+markdown_extensions:
+  - toc:
+      permalink: '#'
+
+extra:
+  history_buttons: true
+  version: v0.0.1
+
+plugins:
+    - search:
+        lang: ['en']
+        prebuild_index: true
+
+nav:
+- Usage: index.md
+- Metrics:
+    - Application Metrics: Metrics/application-metrics.md
+    - jenetics:
+        - jenetics Metrics: Metrics/jenetics/jenetics-metrics.md
+        - buildSrc:
+            - buildSrc Metrics: Metrics/jenetics/buildSrc/buildSrc-metrics.md
+            - resources:
+                - resources Metrics: Metrics/jenetics/buildSrc/resources/resources-metrics.md
+            - src:
+                - src Metrics: Metrics/jenetics/buildSrc/src/src-metrics.md
+                - main:
+                    - main Metrics: Metrics/jenetics/buildSrc/src/main/main-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/buildSrc/src/main/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/buildSrc/src/main/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/buildSrc/src/main/java/io/jenetics/jenetics-metrics.md
+                                - colorizer:
+                                    - colorizer Metrics: Metrics/jenetics/buildSrc/src/main/java/io/jenetics/colorizer/colorizer-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/buildSrc/src/main/java/io/jenetics/colorizer/zzz-file-metrics.md
+                                - gradle:
+                                    - gradle Metrics: Metrics/jenetics/buildSrc/src/main/java/io/jenetics/gradle/gradle-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/buildSrc/src/main/java/io/jenetics/gradle/zzz-file-metrics.md
+                                    - task:
+                                        - task Metrics: Metrics/jenetics/buildSrc/src/main/java/io/jenetics/gradle/task/task-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/buildSrc/src/main/java/io/jenetics/gradle/task/zzz-file-metrics.md
+        - jenetics:
+            - jenetics Metrics: Metrics/jenetics/jenetics/jenetics-metrics.md
+            - src:
+                - src Metrics: Metrics/jenetics/jenetics/src/src-metrics.md
+                - jmh:
+                    - jmh Metrics: Metrics/jenetics/jenetics/src/jmh/jmh-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics/src/jmh/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics/src/jmh/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics/src/jmh/java/io/jenetics/jenetics-metrics.md
+                                - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/jmh/java/io/jenetics/zzz-file-metrics.md
+                                - internal:
+                                    - internal Metrics: Metrics/jenetics/jenetics/src/jmh/java/io/jenetics/internal/internal-metrics.md
+                                    - util:
+                                        - util Metrics: Metrics/jenetics/jenetics/src/jmh/java/io/jenetics/internal/util/util-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/jmh/java/io/jenetics/internal/util/zzz-file-metrics.md
+                                - util:
+                                    - util Metrics: Metrics/jenetics/jenetics/src/jmh/java/io/jenetics/util/util-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/jmh/java/io/jenetics/util/zzz-file-metrics.md
+                - main:
+                    - main Metrics: Metrics/jenetics/jenetics/src/main/main-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics/src/main/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics/src/main/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics/src/main/java/io/jenetics/jenetics-metrics.md
+                                - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/main/java/io/jenetics/zzz-file-metrics.md
+                                - engine:
+                                    - engine Metrics: Metrics/jenetics/jenetics/src/main/java/io/jenetics/engine/engine-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/main/java/io/jenetics/engine/zzz-file-metrics.md
+                                - internal:
+                                    - internal Metrics: Metrics/jenetics/jenetics/src/main/java/io/jenetics/internal/internal-metrics.md
+                                    - collection:
+                                        - collection Metrics: Metrics/jenetics/jenetics/src/main/java/io/jenetics/internal/collection/collection-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/main/java/io/jenetics/internal/collection/zzz-file-metrics.md
+                                    - engine:
+                                        - engine Metrics: Metrics/jenetics/jenetics/src/main/java/io/jenetics/internal/engine/engine-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/main/java/io/jenetics/internal/engine/zzz-file-metrics.md
+                                    - math:
+                                        - math Metrics: Metrics/jenetics/jenetics/src/main/java/io/jenetics/internal/math/math-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/main/java/io/jenetics/internal/math/zzz-file-metrics.md
+                                    - util:
+                                        - util Metrics: Metrics/jenetics/jenetics/src/main/java/io/jenetics/internal/util/util-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/main/java/io/jenetics/internal/util/zzz-file-metrics.md
+                                - stat:
+                                    - stat Metrics: Metrics/jenetics/jenetics/src/main/java/io/jenetics/stat/stat-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/main/java/io/jenetics/stat/zzz-file-metrics.md
+                                - util:
+                                    - util Metrics: Metrics/jenetics/jenetics/src/main/java/io/jenetics/util/util-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/main/java/io/jenetics/util/zzz-file-metrics.md
+                - test:
+                    - test Metrics: Metrics/jenetics/jenetics/src/test/test-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics/src/test/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics/src/test/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics/src/test/java/io/jenetics/jenetics-metrics.md
+                                - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/test/java/io/jenetics/zzz-file-metrics.md
+                                - engine:
+                                    - engine Metrics: Metrics/jenetics/jenetics/src/test/java/io/jenetics/engine/engine-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/test/java/io/jenetics/engine/zzz-file-metrics.md
+                                - internal:
+                                    - internal Metrics: Metrics/jenetics/jenetics/src/test/java/io/jenetics/internal/internal-metrics.md
+                                    - collection:
+                                        - collection Metrics: Metrics/jenetics/jenetics/src/test/java/io/jenetics/internal/collection/collection-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/test/java/io/jenetics/internal/collection/zzz-file-metrics.md
+                                    - engine:
+                                        - engine Metrics: Metrics/jenetics/jenetics/src/test/java/io/jenetics/internal/engine/engine-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/test/java/io/jenetics/internal/engine/zzz-file-metrics.md
+                                    - math:
+                                        - math Metrics: Metrics/jenetics/jenetics/src/test/java/io/jenetics/internal/math/math-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/test/java/io/jenetics/internal/math/zzz-file-metrics.md
+                                    - util:
+                                        - util Metrics: Metrics/jenetics/jenetics/src/test/java/io/jenetics/internal/util/util-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/test/java/io/jenetics/internal/util/zzz-file-metrics.md
+                                - stat:
+                                    - stat Metrics: Metrics/jenetics/jenetics/src/test/java/io/jenetics/stat/stat-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/test/java/io/jenetics/stat/zzz-file-metrics.md
+                                - test:
+                                    - test Metrics: Metrics/jenetics/jenetics/src/test/java/io/jenetics/test/test-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/test/java/io/jenetics/test/zzz-file-metrics.md
+                                - util:
+                                    - util Metrics: Metrics/jenetics/jenetics/src/test/java/io/jenetics/util/util-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/test/java/io/jenetics/util/zzz-file-metrics.md
+                                    - performance:
+                                        - performance Metrics: Metrics/jenetics/jenetics/src/test/java/io/jenetics/util/performance/performance-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics/src/test/java/io/jenetics/util/performance/zzz-file-metrics.md
+        - jenetics.doc:
+            - jenetics.doc Metrics: Metrics/jenetics/jenetics.doc/jenetics.doc-metrics.md
+            - src:
+                - src Metrics: Metrics/jenetics/jenetics.doc/src/src-metrics.md
+                - main:
+                    - main Metrics: Metrics/jenetics/jenetics.doc/src/main/main-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics.doc/src/main/java/java-metrics.md
+                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.doc/src/main/java/zzz-file-metrics.md
+                    - resources:
+                        - resources Metrics: Metrics/jenetics/jenetics.doc/src/main/resources/resources-metrics.md
+        - jenetics.example:
+            - jenetics.example Metrics: Metrics/jenetics/jenetics.example/jenetics.example-metrics.md
+            - src:
+                - src Metrics: Metrics/jenetics/jenetics.example/src/src-metrics.md
+                - main:
+                    - main Metrics: Metrics/jenetics/jenetics.example/src/main/main-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics.example/src/main/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics.example/src/main/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics.example/src/main/java/io/jenetics/jenetics-metrics.md
+                                - example:
+                                    - example Metrics: Metrics/jenetics/jenetics.example/src/main/java/io/jenetics/example/example-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics.example/src/main/java/io/jenetics/example/zzz-file-metrics.md
+                                    - image:
+                                        - image Metrics: Metrics/jenetics/jenetics.example/src/main/java/io/jenetics/example/image/image-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.example/src/main/java/io/jenetics/example/image/zzz-file-metrics.md
+        - jenetics.ext:
+            - jenetics.ext Metrics: Metrics/jenetics/jenetics.ext/jenetics.ext-metrics.md
+            - src:
+                - src Metrics: Metrics/jenetics/jenetics.ext/src/src-metrics.md
+                - jmh:
+                    - jmh Metrics: Metrics/jenetics/jenetics.ext/src/jmh/jmh-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics.ext/src/jmh/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics.ext/src/jmh/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics.ext/src/jmh/java/io/jenetics/jenetics-metrics.md
+                                - ext:
+                                    - ext Metrics: Metrics/jenetics/jenetics.ext/src/jmh/java/io/jenetics/ext/ext-metrics.md
+                                    - util:
+                                        - util Metrics: Metrics/jenetics/jenetics.ext/src/jmh/java/io/jenetics/ext/util/util-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.ext/src/jmh/java/io/jenetics/ext/util/zzz-file-metrics.md
+                - main:
+                    - main Metrics: Metrics/jenetics/jenetics.ext/src/main/main-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics.ext/src/main/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics.ext/src/main/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics.ext/src/main/java/io/jenetics/jenetics-metrics.md
+                                - ext:
+                                    - ext Metrics: Metrics/jenetics/jenetics.ext/src/main/java/io/jenetics/ext/ext-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics.ext/src/main/java/io/jenetics/ext/zzz-file-metrics.md
+                                    - engine:
+                                        - engine Metrics: Metrics/jenetics/jenetics.ext/src/main/java/io/jenetics/ext/engine/engine-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.ext/src/main/java/io/jenetics/ext/engine/zzz-file-metrics.md
+                                    - internal:
+                                        - internal Metrics: Metrics/jenetics/jenetics.ext/src/main/java/io/jenetics/ext/internal/internal-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.ext/src/main/java/io/jenetics/ext/internal/zzz-file-metrics.md
+                                    - moea:
+                                        - moea Metrics: Metrics/jenetics/jenetics.ext/src/main/java/io/jenetics/ext/moea/moea-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.ext/src/main/java/io/jenetics/ext/moea/zzz-file-metrics.md
+                                    - rewriting:
+                                        - rewriting Metrics: Metrics/jenetics/jenetics.ext/src/main/java/io/jenetics/ext/rewriting/rewriting-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.ext/src/main/java/io/jenetics/ext/rewriting/zzz-file-metrics.md
+                                    - util:
+                                        - util Metrics: Metrics/jenetics/jenetics.ext/src/main/java/io/jenetics/ext/util/util-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.ext/src/main/java/io/jenetics/ext/util/zzz-file-metrics.md
+                - test:
+                    - test Metrics: Metrics/jenetics/jenetics.ext/src/test/test-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics.ext/src/test/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics.ext/src/test/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics.ext/src/test/java/io/jenetics/jenetics-metrics.md
+                                - ext:
+                                    - ext Metrics: Metrics/jenetics/jenetics.ext/src/test/java/io/jenetics/ext/ext-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics.ext/src/test/java/io/jenetics/ext/zzz-file-metrics.md
+                                    - engine:
+                                        - engine Metrics: Metrics/jenetics/jenetics.ext/src/test/java/io/jenetics/ext/engine/engine-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.ext/src/test/java/io/jenetics/ext/engine/zzz-file-metrics.md
+                                    - internal:
+                                        - internal Metrics: Metrics/jenetics/jenetics.ext/src/test/java/io/jenetics/ext/internal/internal-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.ext/src/test/java/io/jenetics/ext/internal/zzz-file-metrics.md
+                                    - moea:
+                                        - moea Metrics: Metrics/jenetics/jenetics.ext/src/test/java/io/jenetics/ext/moea/moea-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.ext/src/test/java/io/jenetics/ext/moea/zzz-file-metrics.md
+                                    - rewriting:
+                                        - rewriting Metrics: Metrics/jenetics/jenetics.ext/src/test/java/io/jenetics/ext/rewriting/rewriting-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.ext/src/test/java/io/jenetics/ext/rewriting/zzz-file-metrics.md
+                                    - util:
+                                        - util Metrics: Metrics/jenetics/jenetics.ext/src/test/java/io/jenetics/ext/util/util-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.ext/src/test/java/io/jenetics/ext/util/zzz-file-metrics.md
+        - jenetics.prog:
+            - jenetics.prog Metrics: Metrics/jenetics/jenetics.prog/jenetics.prog-metrics.md
+            - src:
+                - src Metrics: Metrics/jenetics/jenetics.prog/src/src-metrics.md
+                - main:
+                    - main Metrics: Metrics/jenetics/jenetics.prog/src/main/main-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics.prog/src/main/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics.prog/src/main/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics.prog/src/main/java/io/jenetics/jenetics-metrics.md
+                                - prog:
+                                    - prog Metrics: Metrics/jenetics/jenetics.prog/src/main/java/io/jenetics/prog/prog-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics.prog/src/main/java/io/jenetics/prog/zzz-file-metrics.md
+                                    - op:
+                                        - op Metrics: Metrics/jenetics/jenetics.prog/src/main/java/io/jenetics/prog/op/op-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.prog/src/main/java/io/jenetics/prog/op/zzz-file-metrics.md
+                                    - regression:
+                                        - regression Metrics: Metrics/jenetics/jenetics.prog/src/main/java/io/jenetics/prog/regression/regression-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.prog/src/main/java/io/jenetics/prog/regression/zzz-file-metrics.md
+                - test:
+                    - test Metrics: Metrics/jenetics/jenetics.prog/src/test/test-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics.prog/src/test/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics.prog/src/test/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics.prog/src/test/java/io/jenetics/jenetics-metrics.md
+                                - prog:
+                                    - prog Metrics: Metrics/jenetics/jenetics.prog/src/test/java/io/jenetics/prog/prog-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics.prog/src/test/java/io/jenetics/prog/zzz-file-metrics.md
+                                    - op:
+                                        - op Metrics: Metrics/jenetics/jenetics.prog/src/test/java/io/jenetics/prog/op/op-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.prog/src/test/java/io/jenetics/prog/op/zzz-file-metrics.md
+                                    - regression:
+                                        - regression Metrics: Metrics/jenetics/jenetics.prog/src/test/java/io/jenetics/prog/regression/regression-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.prog/src/test/java/io/jenetics/prog/regression/zzz-file-metrics.md
+        - jenetics.tool:
+            - jenetics.tool Metrics: Metrics/jenetics/jenetics.tool/jenetics.tool-metrics.md
+            - src:
+                - src Metrics: Metrics/jenetics/jenetics.tool/src/src-metrics.md
+                - main:
+                    - main Metrics: Metrics/jenetics/jenetics.tool/src/main/main-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics.tool/src/main/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics.tool/src/main/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics.tool/src/main/java/io/jenetics/jenetics-metrics.md
+                                - tool:
+                                    - tool Metrics: Metrics/jenetics/jenetics.tool/src/main/java/io/jenetics/tool/tool-metrics.md
+                                    - evaluation:
+                                        - evaluation Metrics: Metrics/jenetics/jenetics.tool/src/main/java/io/jenetics/tool/evaluation/evaluation-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.tool/src/main/java/io/jenetics/tool/evaluation/zzz-file-metrics.md
+                                    - moea:
+                                        - moea Metrics: Metrics/jenetics/jenetics.tool/src/main/java/io/jenetics/tool/moea/moea-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.tool/src/main/java/io/jenetics/tool/moea/zzz-file-metrics.md
+                                    - trial:
+                                        - trial Metrics: Metrics/jenetics/jenetics.tool/src/main/java/io/jenetics/tool/trial/trial-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.tool/src/main/java/io/jenetics/tool/trial/zzz-file-metrics.md
+                    - results:
+                        - results Metrics: Metrics/jenetics/jenetics.tool/src/main/results/results-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics.tool/src/main/results/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics.tool/src/main/results/io/jenetics/jenetics-metrics.md
+                                - tool:
+                                    - tool Metrics: Metrics/jenetics/jenetics.tool/src/main/results/io/jenetics/tool/tool-metrics.md
+                - test:
+                    - test Metrics: Metrics/jenetics/jenetics.tool/src/test/test-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics.tool/src/test/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics.tool/src/test/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics.tool/src/test/java/io/jenetics/jenetics-metrics.md
+                                - tool:
+                                    - tool Metrics: Metrics/jenetics/jenetics.tool/src/test/java/io/jenetics/tool/tool-metrics.md
+                                    - trial:
+                                        - trial Metrics: Metrics/jenetics/jenetics.tool/src/test/java/io/jenetics/tool/trial/trial-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.tool/src/test/java/io/jenetics/tool/trial/zzz-file-metrics.md
+        - jenetics.xml:
+            - jenetics.xml Metrics: Metrics/jenetics/jenetics.xml/jenetics.xml-metrics.md
+            - src:
+                - src Metrics: Metrics/jenetics/jenetics.xml/src/src-metrics.md
+                - jmh:
+                    - jmh Metrics: Metrics/jenetics/jenetics.xml/src/jmh/jmh-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics.xml/src/jmh/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics.xml/src/jmh/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics.xml/src/jmh/java/io/jenetics/jenetics-metrics.md
+                                - xml:
+                                    - xml Metrics: Metrics/jenetics/jenetics.xml/src/jmh/java/io/jenetics/xml/xml-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics.xml/src/jmh/java/io/jenetics/xml/zzz-file-metrics.md
+                - main:
+                    - main Metrics: Metrics/jenetics/jenetics.xml/src/main/main-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics.xml/src/main/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics.xml/src/main/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics.xml/src/main/java/io/jenetics/jenetics-metrics.md
+                                - xml:
+                                    - xml Metrics: Metrics/jenetics/jenetics.xml/src/main/java/io/jenetics/xml/xml-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics.xml/src/main/java/io/jenetics/xml/zzz-file-metrics.md
+                                    - stream:
+                                        - stream Metrics: Metrics/jenetics/jenetics.xml/src/main/java/io/jenetics/xml/stream/stream-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.xml/src/main/java/io/jenetics/xml/stream/zzz-file-metrics.md
+                - test:
+                    - test Metrics: Metrics/jenetics/jenetics.xml/src/test/test-metrics.md
+                    - java:
+                        - java Metrics: Metrics/jenetics/jenetics.xml/src/test/java/java-metrics.md
+                        - io:
+                            - io Metrics: Metrics/jenetics/jenetics.xml/src/test/java/io/io-metrics.md
+                            - jenetics:
+                                - jenetics Metrics: Metrics/jenetics/jenetics.xml/src/test/java/io/jenetics/jenetics-metrics.md
+                                - xml:
+                                    - xml Metrics: Metrics/jenetics/jenetics.xml/src/test/java/io/jenetics/xml/xml-metrics.md
+                                    - File Metrics and Dependencies: Metrics/jenetics/jenetics.xml/src/test/java/io/jenetics/xml/zzz-file-metrics.md
+                                    - stream:
+                                        - stream Metrics: Metrics/jenetics/jenetics.xml/src/test/java/io/jenetics/xml/stream/stream-metrics.md
+                                        - File Metrics and Dependencies: Metrics/jenetics/jenetics.xml/src/test/java/io/jenetics/xml/stream/zzz-file-metrics.md
+                    - resources:
+                        - resources Metrics: Metrics/jenetics/jenetics.xml/src/test/resources/resources-metrics.md
+- Reports:
+    - Direct Circular File References: Reports/circular_file_refs.md
+    - File List Indented: Reports/file_list_indented_sloc.md
+    - Red Metrics: Reports/red_metrics.md

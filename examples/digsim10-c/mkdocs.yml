@@ -1,0 +1,57 @@
+site_name: 'UDB Metrics Reporting for Digsim 10 in C'
+site_description: 'Metrics and Dependency report for a UDB.'
+site_author: 'Roy Crippen'
+
+use_directory_urls: false
+
+theme:
+  name: null
+  custom_dir: ../../mkdocs_ivory
+  # Copy settings from mkdocs_theme.yml, which is ignored by custom_dir themes.
+  static_templates:
+    - 404.html
+
+  include_search_page: true
+  search_index_only: false
+
+  highlightjs: true
+  hljs_languages: []
+
+
+markdown_extensions:
+  - toc:
+      permalink: '#'
+
+extra:
+  history_buttons: true
+  version: v0.0.1
+
+plugins:
+    - search:
+        lang: ['en']
+        prebuild_index: true
+
+nav:
+- Usage: index.md
+- Metrics:
+    - Application Metrics: Metrics/application-metrics.md
+    - common-sim:
+        - common-sim Metrics: Metrics/common-sim/common-sim-metrics.md
+        - include:
+            - include Metrics: Metrics/common-sim/include/include-metrics.md
+            - File Metrics and Dependencies: Metrics/common-sim/include/zzz-file-metrics.md
+        - src:
+            - src Metrics: Metrics/common-sim/src/src-metrics.md
+            - File Metrics and Dependencies: Metrics/common-sim/src/zzz-file-metrics.md
+    - task10:
+        - task10 Metrics: Metrics/task10/task10-metrics.md
+        - include:
+            - include Metrics: Metrics/task10/include/include-metrics.md
+            - File Metrics and Dependencies: Metrics/task10/include/zzz-file-metrics.md
+        - src:
+            - src Metrics: Metrics/task10/src/src-metrics.md
+            - File Metrics and Dependencies: Metrics/task10/src/zzz-file-metrics.md
+- Reports:
+    - Direct Circular File References: Reports/circular_file_refs.md
+    - File List Indented: Reports/file_list_indented_sloc.md
+    - Red Metrics: Reports/red_metrics.md

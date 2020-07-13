@@ -1,0 +1,604 @@
+<!DOCTYPE html><html><head><title>Macro Cross Reference [C]</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><script src="jquery-3.3.1.min.js" type="text/javascript"></script><script src="d3.js" type="text/javascript"></script><script src="d3pie.min.js" type="text/javascript"></script><script src="plotly.min.js" type="text/javascript"></script><link href="reportCSS.css" type="text/css" rel="stylesheet" /><script src="reportJS.js" type="text/javascript"></script><script src="table_of_contents.js" type="text/javascript"></script></head><body bgcolor="#ffffff" TEXT="#000000"><nav id="main-nav" class="nav"><div id="upper-nav"><img id=und-icon src="understand-logo.png" alt="Understand"></div><div class="navbar" style="position:relative;z-index:1003"><button onclick="pageToTop()" id="pagedesc" title="Return to top of page"><span id="descText">cppcheck - Macro Cross Reference</span></button></div><div id="lower-nav" class=navbar><div id="main-dropdown-html" class="dropdown" tabindex="0"><button id="dropdown-button" class="dropbtn">Contents <img id="dropdown-icon" src="ToCdropdown.png" style="height:12px"></button><div id="dropdown-buffer" class="dropdown-border" style="height:120px;width:300px;"></div><div id="nav-dropdown-content" class="dropdown-content"><a href="table_of_contents.html">Table of Contents</a><txt style="font-size: 12px; text-align: center">Enable javascript to use dropdown contents and other features.</txt></div></div><div class="rightspacer" id="rightspacer"><button id="buttonRight" onclick="scrollTableRight()"><img id="imgRight" src="ToCdropdown.png" /></button><button id="buttonLeft"  onclick="scrollTableLeft()" ><img id="imgLeft" src="ToCdropdown.png"  /></button></div><div class="navCenter">
+<a href="macro_xref_&.html">&</a><a href="macro_xref_A.html">A</a><a href="macro_xref_B.html">B</a><a href="macro_xref_C.html">C</a><a href="macro_xref_D.html">D</a><a href="macro_xref_E.html">E</a><a href="macro_xref_F.html">F</a><a href="macro_xref_G.html">G</a><a href="macro_xref_H.html">H</a><a href="macro_xref_I.html">I</a><a2>J</a2><a2>K</a2><a href="macro_xref_L.html">L</a><a href="macro_xref_M.html">M</a><a href="macro_xref_N.html">N</a><a href="macro_xref_O.html">O</a><a href="macro_xref_P.html">P</a><a href="macro_xref_Q.html">Q</a><a href="macro_xref_R.html">R</a><a href="macro_xref_S.html">S</a><a href="macro_xref_T.html">T</a><a href="macro_xref_U.html">U</a><a href="macro_xref_V.html">V</a><a href="macro_xref_W.html">W</a><a href="macro_xref_X.html">X</a><a2>Y</a2><a2>Z</a2></div></div></nav>
+<script type="text/javascript">navbar();</script><script type="text/javascript">if (typeof ToC === 'undefined') {document.getElementById("dropdown-button").remove();document.getElementById("dropdown-buffer").remove();document.getElementById("nav-dropdown-content").remove();}</script>
+<div id="main-content"><pre>
+<a href="dictionary_C.html#32205">C_KEYWORDS</a><a name="32205"> </a>
+  Declared as: "_Bool", "auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else", "enum", "extern", "float", "for", "goto", "if", "inline", "int", "long", "register", "restrict", "return", "short", "signed", "sizeof", "static", "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while"
+    Define   [<a href="31518.html#4866">symboldatabase.cpp, 4866</a>]   [unnamed]
+    Use   [<a href="31518.html#4873">symboldatabase.cpp, 4873</a>]   [unnamed]
+    Use   [<a href="31518.html#4875">symboldatabase.cpp, 4875</a>]   [unnamed]
+
+<a href="dictionary_C.html#18552">carg</a><a name="18552"> </a>
+  Declared as: __tg_carg(__tg_promote1((__x))(__x))
+    Use   [<a href="18397.html#1176">std.c, 1176</a>]                <a href="dictionary_U.html#19178">uninitvar_carg</a>
+
+<a href="dictionary_C.html#18553">cbrt</a><a name="18553"> </a>
+  Declared as: __tg_cbrt(__tg_promote1((__x))(__x))
+    Use   [<a href="18397.html#1042">std.c, 1042</a>]                <a href="dictionary_U.html#19198">uninitvar_cbrt</a>
+
+<a href="dictionary_C.html#18554">ceil</a><a name="18554"> </a>
+  Declared as: __tg_ceil(__tg_promote1((__x))(__x))
+    Use   [<a href="18397.html#1012">std.c, 1012</a>]                <a href="dictionary_U.html#19210">uninitvar_ceil</a>
+
+<a href="dictionary_C.html#34878">CHECK</a><a name="34878"> </a>
+  Declared as: code = "void f() {\n" "    x = sizeof(" A ");\n" "}"; values = tokenValues(code,"( " A " )"); ASSERT_EQUALS(1U, values.size()); ASSERT_EQUALS(B, values.back().intvalue);
+    Define   [<a href="34874.html#791">testvalueflow.cpp, 791</a>]   <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#800">testvalueflow.cpp, 800</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#801">testvalueflow.cpp, 801</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#802">testvalueflow.cpp, 802</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#803">testvalueflow.cpp, 803</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#804">testvalueflow.cpp, 804</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#805">testvalueflow.cpp, 805</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Define   [<a href="34874.html#817">testvalueflow.cpp, 817</a>]   <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#827">testvalueflow.cpp, 827</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#830">testvalueflow.cpp, 830</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#831">testvalueflow.cpp, 831</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#832">testvalueflow.cpp, 832</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#833">testvalueflow.cpp, 833</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#834">testvalueflow.cpp, 834</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#835">testvalueflow.cpp, 835</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#836">testvalueflow.cpp, 836</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#837">testvalueflow.cpp, 837</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#838">testvalueflow.cpp, 838</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#839">testvalueflow.cpp, 839</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#840">testvalueflow.cpp, 840</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#841">testvalueflow.cpp, 841</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#842">testvalueflow.cpp, 842</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#843">testvalueflow.cpp, 843</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#844">testvalueflow.cpp, 844</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#845">testvalueflow.cpp, 845</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#846">testvalueflow.cpp, 846</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#849">testvalueflow.cpp, 849</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#852">testvalueflow.cpp, 852</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#853">testvalueflow.cpp, 853</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#854">testvalueflow.cpp, 854</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#855">testvalueflow.cpp, 855</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#856">testvalueflow.cpp, 856</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#857">testvalueflow.cpp, 857</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#858">testvalueflow.cpp, 858</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#859">testvalueflow.cpp, 859</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#860">testvalueflow.cpp, 860</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#861">testvalueflow.cpp, 861</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#862">testvalueflow.cpp, 862</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#863">testvalueflow.cpp, 863</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#864">testvalueflow.cpp, 864</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#865">testvalueflow.cpp, 865</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#866">testvalueflow.cpp, 866</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#867">testvalueflow.cpp, 867</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#868">testvalueflow.cpp, 868</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#871">testvalueflow.cpp, 871</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#872">testvalueflow.cpp, 872</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#873">testvalueflow.cpp, 873</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#874">testvalueflow.cpp, 874</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#875">testvalueflow.cpp, 875</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#876">testvalueflow.cpp, 876</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#877">testvalueflow.cpp, 877</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#878">testvalueflow.cpp, 878</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#879">testvalueflow.cpp, 879</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#880">testvalueflow.cpp, 880</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#881">testvalueflow.cpp, 881</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#882">testvalueflow.cpp, 882</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#883">testvalueflow.cpp, 883</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#884">testvalueflow.cpp, 884</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#885">testvalueflow.cpp, 885</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#886">testvalueflow.cpp, 886</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#887">testvalueflow.cpp, 887</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Define   [<a href="34874.html#890">testvalueflow.cpp, 890</a>]   <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#901">testvalueflow.cpp, 901</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#904">testvalueflow.cpp, 904</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#905">testvalueflow.cpp, 905</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#906">testvalueflow.cpp, 906</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#907">testvalueflow.cpp, 907</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#908">testvalueflow.cpp, 908</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#909">testvalueflow.cpp, 909</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#910">testvalueflow.cpp, 910</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#911">testvalueflow.cpp, 911</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#912">testvalueflow.cpp, 912</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#913">testvalueflow.cpp, 913</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#914">testvalueflow.cpp, 914</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#915">testvalueflow.cpp, 915</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#916">testvalueflow.cpp, 916</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#917">testvalueflow.cpp, 917</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#918">testvalueflow.cpp, 918</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#919">testvalueflow.cpp, 919</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#920">testvalueflow.cpp, 920</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Define   [<a href="34874.html#923">testvalueflow.cpp, 923</a>]   <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#934">testvalueflow.cpp, 934</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#937">testvalueflow.cpp, 937</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#938">testvalueflow.cpp, 938</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#939">testvalueflow.cpp, 939</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#940">testvalueflow.cpp, 940</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#941">testvalueflow.cpp, 941</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#942">testvalueflow.cpp, 942</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#943">testvalueflow.cpp, 943</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#944">testvalueflow.cpp, 944</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#945">testvalueflow.cpp, 945</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#946">testvalueflow.cpp, 946</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#947">testvalueflow.cpp, 947</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#948">testvalueflow.cpp, 948</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#949">testvalueflow.cpp, 949</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#950">testvalueflow.cpp, 950</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#951">testvalueflow.cpp, 951</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#952">testvalueflow.cpp, 952</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+    Use   [<a href="34874.html#953">testvalueflow.cpp, 953</a>]     <a href="dictionary_T.html#35107">TestValueFlow::valueFlowSizeof</a>
+
+<a href="dictionary_C.html#25581">check64bitH</a><a name="25581"> </a>
+    Use   [<a href="4066.html#21">check64bit.h, 21</a>]           check64bit.h
+    Define   [<a href="4066.html#22">check64bit.h, 22</a>]        check64bit.h
+
+<a href="dictionary_C.html#1487">CHECK_INTERNAL</a><a name="1487"> </a>
+    Use   [<a href="1374.html#104">settings.cpp, 104</a>]          <a href="dictionary_S.html#1406">Settings::addEnabled</a>
+
+<a href="dictionary_C.html#11978">CHECK_INTERNAL</a><a name="11978"> </a>
+    Use   [<a href="11966.html#533">testcmdlineparser.cpp, 533</a>]   <a href="dictionary_T.html#11979">TestCmdlineParser</a>
+    Use   [<a href="11966.html#84">testcmdlineparser.cpp, 84</a>]   <a href="dictionary_T.html#12191">TestCmdlineParser::run</a>
+
+<a href="dictionary_C.html#14980">CHECK_INTERNAL</a><a name="14980"> </a>
+    Use   [<a href="14979.html#19">testinternal.cpp, 19</a>]       testinternal.cpp
+
+<a href="dictionary_C.html#27262">CHECK_INTERNAL</a><a name="27262"> </a>
+    Use   [<a href="27261.html#19">checkinternal.cpp, 19</a>]      checkinternal.cpp
+
+<a href="dictionary_C.html#34245">checkassertH</a><a name="34245"> </a>
+    Use   [<a href="29679.html#21">checkassert.h, 21</a>]          checkassert.h
+    Define   [<a href="29679.html#22">checkassert.h, 22</a>]       checkassert.h
+
+<a href="dictionary_C.html#11965">checkautovariablesH</a><a name="11965"> </a>
+    Use   [<a href="11897.html#21">checkautovariables.h, 21</a>]   checkautovariables.h
+    Define   [<a href="11897.html#22">checkautovariables.h, 22</a>]   checkautovariables.h
+
+<a href="dictionary_C.html#30876">checkboolH</a><a name="30876"> </a>
+    Use   [<a href="4198.html#21">checkbool.h, 21</a>]            checkbool.h
+    Define   [<a href="4198.html#22">checkbool.h, 22</a>]         checkbool.h
+
+<a href="dictionary_C.html#24559">checkboostH</a><a name="24559"> </a>
+    Use   [<a href="4276.html#21">checkboost.h, 21</a>]           checkboost.h
+    Define   [<a href="4276.html#22">checkboost.h, 22</a>]        checkboost.h
+
+<a href="dictionary_C.html#9896">checkbufferoverrunH</a><a name="9896"> </a>
+    Use   [<a href="9794.html#21">checkbufferoverrun.h, 21</a>]   checkbufferoverrun.h
+    Define   [<a href="9794.html#22">checkbufferoverrun.h, 22</a>]   checkbufferoverrun.h
+
+<a href="dictionary_C.html#33743">checkclassH</a><a name="33743"> </a>
+    Use   [<a href="7869.html#20">checkclass.h, 20</a>]           checkclass.h
+    Define   [<a href="7869.html#21">checkclass.h, 21</a>]        checkclass.h
+
+<a href="dictionary_C.html#35214">checkconditionH</a><a name="35214"> </a>
+    Use   [<a href="30906.html#21">checkcondition.h, 21</a>]       checkcondition.h
+    Define   [<a href="30906.html#22">checkcondition.h, 22</a>]    checkcondition.h
+
+<a href="dictionary_C.html#17898">checkexceptionsafetyH</a><a name="17898"> </a>
+    Use   [<a href="17852.html#20">checkexceptionsafety.h, 20</a>]   checkexceptionsafety.h
+    Define   [<a href="17852.html#21">checkexceptionsafety.h, 21</a>]   checkexceptionsafety.h
+
+<a href="dictionary_C.html#27320">checkfunctionsH</a><a name="27320"> </a>
+    Use   [<a href="4107.html#21">checkfunctions.h, 21</a>]       checkfunctions.h
+    Define   [<a href="4107.html#22">checkfunctions.h, 22</a>]    checkfunctions.h
+
+<a href="dictionary_C.html#2130">checkH</a><a name="2130"> </a>
+    Use   [<a href="2.html#20">check.h, 20</a>]                check.h
+    Define   [<a href="2.html#21">check.h, 21</a>]             check.h
+
+<a href="dictionary_C.html#18396">checkinternalH</a><a name="18396"> </a>
+    Use   [<a href="18336.html#21">checkinternal.h, 21</a>]        checkinternal.h
+    Define   [<a href="18336.html#22">checkinternal.h, 22</a>]     checkinternal.h
+
+<a href="dictionary_C.html#35993">checkioH</a><a name="35993"> </a>
+    Use   [<a href="15794.html#20">checkio.h, 20</a>]              checkio.h
+    Define   [<a href="15794.html#21">checkio.h, 21</a>]           checkio.h
+
+<a href="dictionary_C.html#26122">checkleakautovarH</a><a name="26122"> </a>
+    Use   [<a href="3678.html#21">checkleakautovar.h, 21</a>]     checkleakautovar.h
+    Define   [<a href="3678.html#22">checkleakautovar.h, 22</a>]   checkleakautovar.h
+
+<a href="dictionary_C.html#241">checkmemoryleakH</a><a name="241"> </a>
+    Use   [<a href="1.html#20">checkmemoryleak.h, 20</a>]      checkmemoryleak.h
+    Define   [<a href="1.html#21">checkmemoryleak.h, 21</a>]   checkmemoryleak.h
+
+<a href="dictionary_C.html#27951">checknullpointerH</a><a name="27951"> </a>
+    Use   [<a href="2720.html#21">checknullpointer.h, 21</a>]     checknullpointer.h
+    Define   [<a href="2720.html#22">checknullpointer.h, 22</a>]   checknullpointer.h
+
+<a href="dictionary_C.html#35235">checkotherH</a><a name="35235"> </a>
+    Use   [<a href="5954.html#21">checkother.h, 21</a>]           checkother.h
+    Define   [<a href="5954.html#22">checkother.h, 22</a>]        checkother.h
+
+<a href="dictionary_C.html#4319">checkpostfixoperatorH</a><a name="4319"> </a>
+    Use   [<a href="4296.html#21">checkpostfixoperator.h, 21</a>]   checkpostfixoperator.h
+    Define   [<a href="4296.html#22">checkpostfixoperator.h, 22</a>]   checkpostfixoperator.h
+
+<a href="dictionary_C.html#6441">checksizeofH</a><a name="6441"> </a>
+    Use   [<a href="6384.html#21">checksizeof.h, 21</a>]          checksizeof.h
+    Define   [<a href="6384.html#22">checksizeof.h, 22</a>]       checksizeof.h
+
+<a href="dictionary_C.html#555">CHECKSTATISTICS_H</a><a name="555"> </a>
+    Use   [<a href="553.html#19">checkstatistics.h, 19</a>]      checkstatistics.h
+    Define   [<a href="553.html#20">checkstatistics.h, 20</a>]   checkstatistics.h
+
+<a href="dictionary_C.html#22807">checkstlH</a><a name="22807"> </a>
+    Use   [<a href="22642.html#21">checkstl.h, 21</a>]             checkstl.h
+    Define   [<a href="22642.html#22">checkstl.h, 22</a>]          checkstl.h
+
+<a href="dictionary_C.html#15763">checkstringH</a><a name="15763"> </a>
+    Use   [<a href="15703.html#21">checkstring.h, 21</a>]          checkstring.h
+    Define   [<a href="15703.html#22">checkstring.h, 22</a>]       checkstring.h
+
+<a href="dictionary_C.html#9065">CHECKTHREAD_H</a><a name="9065"> </a>
+    Use   [<a href="7849.html#20">checkthread.h, 20</a>]          checkthread.h
+    Define   [<a href="7849.html#21">checkthread.h, 21</a>]       checkthread.h
+
+<a href="dictionary_C.html#10119">checktypeH</a><a name="10119"> </a>
+    Use   [<a href="8800.html#21">checktype.h, 21</a>]            checktype.h
+    Define   [<a href="8800.html#22">checktype.h, 22</a>]         checktype.h
+
+<a href="dictionary_C.html#27813">checkuninitvarH</a><a name="27813"> </a>
+    Use   [<a href="2741.html#21">checkuninitvar.h, 21</a>]       checkuninitvar.h
+    Define   [<a href="2741.html#22">checkuninitvar.h, 22</a>]    checkuninitvar.h
+
+<a href="dictionary_C.html#34391">checkunusedfunctionsH</a><a name="34391"> </a>
+    Use   [<a href="9443.html#21">checkunusedfunctions.h, 21</a>]   checkunusedfunctions.h
+    Define   [<a href="9443.html#22">checkunusedfunctions.h, 22</a>]   checkunusedfunctions.h
+
+<a href="dictionary_C.html#9781">checkunusedvarH</a><a name="9781"> </a>
+    Use   [<a href="9731.html#20">checkunusedvar.h, 20</a>]       checkunusedvar.h
+    Define   [<a href="9731.html#21">checkunusedvar.h, 21</a>]    checkunusedvar.h
+
+<a href="dictionary_C.html#41420">checkvaargtH</a><a name="41420"> </a>
+    Use   [<a href="25294.html#21">checkvaarg.h, 21</a>]           checkvaarg.h
+    Define   [<a href="25294.html#22">checkvaarg.h, 22</a>]        checkvaarg.h
+
+<a href="dictionary_C.html#18555">cimag</a><a name="18555"> </a>
+  Declared as: __tg_cimag(__tg_promote1((__x))(__x))
+    Use   [<a href="18397.html#1221">std.c, 1221</a>]                <a href="dictionary_U.html#19218">uninitvar_cimag</a>
+
+<a href="dictionary_C.html#544">CLANG_ANALYZER</a><a name="544"> </a>
+  Declared as: "clang-analyzer"
+    Define   [<a href="543.html#28">common.h, 28</a>]            common.h
+    Use   [<a href="542.html#167">projectfile.cpp, 167</a>]       projectfile.cpp
+    Use   [<a href="542.html#758">projectfile.cpp, 758</a>]       projectfile.cpp
+    Use   [<a href="542.html#799">projectfile.cpp, 799</a>]       projectfile.cpp
+    Use   [<a href="29659.html#117">checkthread.cpp, 117</a>]       checkthread.cpp
+    Use   [<a href="29659.html#220">checkthread.cpp, 220</a>]       checkthread.cpp
+    Use   [<a href="29659.html#437">checkthread.cpp, 437</a>]       checkthread.cpp
+    Use   [<a href="29979.html#60">erroritem.cpp, 60</a>]          erroritem.cpp
+    Use   [<a href="29979.html#61">erroritem.cpp, 61</a>]          erroritem.cpp
+
+<a href="dictionary_C.html#545">CLANG_TIDY</a><a name="545"> </a>
+  Declared as: "clang-tidy"
+    Define   [<a href="543.html#29">common.h, 29</a>]            common.h
+    Use   [<a href="542.html#168">projectfile.cpp, 168</a>]       projectfile.cpp
+    Use   [<a href="542.html#760">projectfile.cpp, 760</a>]       projectfile.cpp
+    Use   [<a href="542.html#801">projectfile.cpp, 801</a>]       projectfile.cpp
+    Use   [<a href="29659.html#117">checkthread.cpp, 117</a>]       checkthread.cpp
+    Use   [<a href="29659.html#425">checkthread.cpp, 425</a>]       checkthread.cpp
+    Use   [<a href="29979.html#62">erroritem.cpp, 62</a>]          erroritem.cpp
+    Use   [<a href="29979.html#63">erroritem.cpp, 63</a>]          erroritem.cpp
+
+<a href="dictionary_C.html#39557">CLASS_FUNC</a><a name="39557"> </a>
+  Declared as: const Function *x = findFunctionByName(#x, y); ASSERT_EQUALS(true, x != nullptr); if (x) ASSERT_EQUALS(z, x->isNoExcept());
+    Define   [<a href="39552.html#5656">testsymboldatabase.cpp, 5656</a>]   <a href="dictionary_T.html#2380">TestSymbolDatabase</a>
+    Use   [<a href="39552.html#5683">testsymboldatabase.cpp, 5683</a>]   <a href="dictionary_T.html#40292">TestSymbolDatabase::noexceptFunction3</a>
+    Use   [<a href="39552.html#5684">testsymboldatabase.cpp, 5684</a>]   <a href="dictionary_T.html#40292">TestSymbolDatabase::noexceptFunction3</a>
+    Use   [<a href="39552.html#5685">testsymboldatabase.cpp, 5685</a>]   <a href="dictionary_T.html#40292">TestSymbolDatabase::noexceptFunction3</a>
+    Use   [<a href="39552.html#5686">testsymboldatabase.cpp, 5686</a>]   <a href="dictionary_T.html#40292">TestSymbolDatabase::noexceptFunction3</a>
+    Use   [<a href="39552.html#5687">testsymboldatabase.cpp, 5687</a>]   <a href="dictionary_T.html#40292">TestSymbolDatabase::noexceptFunction3</a>
+    Use   [<a href="39552.html#5688">testsymboldatabase.cpp, 5688</a>]   <a href="dictionary_T.html#40292">TestSymbolDatabase::noexceptFunction3</a>
+    Use   [<a href="39552.html#5689">testsymboldatabase.cpp, 5689</a>]   <a href="dictionary_T.html#40292">TestSymbolDatabase::noexceptFunction3</a>
+    Use   [<a href="39552.html#5690">testsymboldatabase.cpp, 5690</a>]   <a href="dictionary_T.html#40292">TestSymbolDatabase::noexceptFunction3</a>
+    Use   [<a href="39552.html#5691">testsymboldatabase.cpp, 5691</a>]   <a href="dictionary_T.html#40292">TestSymbolDatabase::noexceptFunction3</a>
+    Use   [<a href="39552.html#5692">testsymboldatabase.cpp, 5692</a>]   <a href="dictionary_T.html#40292">TestSymbolDatabase::noexceptFunction3</a>
+    Use   [<a href="39552.html#5693">testsymboldatabase.cpp, 5693</a>]   <a href="dictionary_T.html#40292">TestSymbolDatabase::noexceptFunction3</a>
+    Use   [<a href="39552.html#5694">testsymboldatabase.cpp, 5694</a>]   <a href="dictionary_T.html#40292">TestSymbolDatabase::noexceptFunction3</a>
+    Use   [<a href="39552.html#5695">testsymboldatabase.cpp, 5695</a>]   <a href="dictionary_T.html#40292">TestSymbolDatabase::noexceptFunction3</a>
+    Use   [<a href="39552.html#5719">testsymboldatabase.cpp, 5719</a>]   <a href="dictionary_T.html#40309">TestSymbolDatabase::noexceptFunction4</a>
+
+<a href="dictionary_C.html#39558">CLASS_FUNC_THROW</a><a name="39558"> </a>
+  Declared as: const Function *x = findFunctionByName(#x, y); ASSERT_EQUALS(true, x != nullptr); if (x) ASSERT_EQUALS(true, x->isThrow());
+    Define   [<a href="39552.html#5744">testsymboldatabase.cpp, 5744</a>]   <a href="dictionary_T.html#2380">TestSymbolDatabase</a>
+    Use   [<a href="39552.html#5769">testsymboldatabase.cpp, 5769</a>]   <a href="dictionary_T.html#40753">TestSymbolDatabase::throwFunction2</a>
+    Use   [<a href="39552.html#5770">testsymboldatabase.cpp, 5770</a>]   <a href="dictionary_T.html#40753">TestSymbolDatabase::throwFunction2</a>
+    Use   [<a href="39552.html#5771">testsymboldatabase.cpp, 5771</a>]   <a href="dictionary_T.html#40753">TestSymbolDatabase::throwFunction2</a>
+    Use   [<a href="39552.html#5772">testsymboldatabase.cpp, 5772</a>]   <a href="dictionary_T.html#40753">TestSymbolDatabase::throwFunction2</a>
+    Use   [<a href="39552.html#5773">testsymboldatabase.cpp, 5773</a>]   <a href="dictionary_T.html#40753">TestSymbolDatabase::throwFunction2</a>
+    Use   [<a href="39552.html#5774">testsymboldatabase.cpp, 5774</a>]   <a href="dictionary_T.html#40753">TestSymbolDatabase::throwFunction2</a>
+    Use   [<a href="39552.html#5775">testsymboldatabase.cpp, 5775</a>]   <a href="dictionary_T.html#40753">TestSymbolDatabase::throwFunction2</a>
+    Use   [<a href="39552.html#5776">testsymboldatabase.cpp, 5776</a>]   <a href="dictionary_T.html#40753">TestSymbolDatabase::throwFunction2</a>
+    Use   [<a href="39552.html#5777">testsymboldatabase.cpp, 5777</a>]   <a href="dictionary_T.html#40753">TestSymbolDatabase::throwFunction2</a>
+    Use   [<a href="39552.html#5778">testsymboldatabase.cpp, 5778</a>]   <a href="dictionary_T.html#40753">TestSymbolDatabase::throwFunction2</a>
+    Use   [<a href="39552.html#5779">testsymboldatabase.cpp, 5779</a>]   <a href="dictionary_T.html#40753">TestSymbolDatabase::throwFunction2</a>
+    Use   [<a href="39552.html#5780">testsymboldatabase.cpp, 5780</a>]   <a href="dictionary_T.html#40753">TestSymbolDatabase::throwFunction2</a>
+
+<a href="dictionary_C.html#9043">CLEAR_REDIRECT_ERROUT</a><a name="9043"> </a>
+  Declared as: redir.clearErrout()
+    Define   [<a href="9035.html#88">redirect.h, 88</a>]          redirect.h
+    Use   [<a href="27166.html#131">testsamples.cpp, 131</a>]       <a href="dictionary_T.html#27180">TestSamples::runConsoleCodePageTranslationOnWindows</a>
+    Use   [<a href="27166.html#156">testsamples.cpp, 156</a>]       <a href="dictionary_T.html#27180">TestSamples::runConsoleCodePageTranslationOnWindows</a>
+    Use   [<a href="27166.html#66">testsamples.cpp, 66</a>]        <a href="dictionary_T.html#27194">TestSamples::runSamples</a>
+
+<a href="dictionary_C.html#9044">CLEAR_REDIRECT_OUTPUT</a><a name="9044"> </a>
+  Declared as: redir.clearOutput()
+    Define   [<a href="9035.html#86">redirect.h, 86</a>]          redirect.h
+    Use   [<a href="11966.html#737">testcmdlineparser.cpp, 737</a>]   <a href="dictionary_T.html#12221">TestCmdlineParser::suppressionsNoFile</a>
+    Use   [<a href="11966.html#744">testcmdlineparser.cpp, 744</a>]   <a href="dictionary_T.html#12221">TestCmdlineParser::suppressionsNoFile</a>
+    Use   [<a href="11966.html#751">testcmdlineparser.cpp, 751</a>]   <a href="dictionary_T.html#12221">TestCmdlineParser::suppressionsNoFile</a>
+    Use   [<a href="27166.html#130">testsamples.cpp, 130</a>]       <a href="dictionary_T.html#27180">TestSamples::runConsoleCodePageTranslationOnWindows</a>
+
+<a href="dictionary_C.html#2479">CLOCK_REALTIME</a><a name="2479"> </a>
+  Declared as: 0
+    Define   [<a href="2478.html#29">y2038-inc.h, 29</a>]         y2038-inc.h
+    Use   [<a href="2477.html#11">y2038-test-4-good.c, 11</a>]    <a href="dictionary_M.html#41750">main</a>
+    Use   [<a href="27969.html#14">y2038-test-1-bad-time-bits.c, 14</a>]   <a href="dictionary_M.html#41774">main</a>
+    Use   [<a href="37254.html#12">y2038-test-2-no-time-bits.c, 12</a>]   <a href="dictionary_M.html#9791">main</a>
+
+<a href="dictionary_C.html#6672">CLOCK_REALTIME</a><a name="6672"> </a>
+  Declared as: 0
+    Use   [<a href="6546.html#394">posix.c, 394</a>]               <a href="dictionary_T.html#6794">timet_h</a>
+    Use   [<a href="6546.html#402">posix.c, 402</a>]               <a href="dictionary_T.html#6794">timet_h</a>
+
+<a href="dictionary_C.html#2413">CLOCKS_PER_SEC</a><a name="2413"> </a>
+  Declared as: ((__clock_t) 1000000)
+    Use   [<a href="1478.html#53">timer.h, 53</a>]                <a href="dictionary_T.html#2463">TimerResultsData::seconds</a>
+    Use   [<a href="10033.html#97">timer.cpp, 97</a>]              <a href="dictionary_T.html#2423">Timer::Stop</a>
+    Use   [<a href="33988.html#41">testtimer.cpp, 41</a>]          <a href="dictionary_T.html#33991">TestTimer::result</a>
+
+<a href="dictionary_C.html#21259">CMDLINE_PARSER_H</a><a name="21259"> </a>
+    Use   [<a href="2492.html#19">cmdlineparser.h, 19</a>]        cmdlineparser.h
+    Define   [<a href="2492.html#20">cmdlineparser.h, 20</a>]     cmdlineparser.h
+
+<a href="dictionary_C.html#31408">CODEEDITOR_H</a><a name="31408"> </a>
+    Use   [<a href="31407.html#1">codeeditor.h, 1</a>]            codeeditor.h
+    Define   [<a href="31407.html#2">codeeditor.h, 2</a>]         codeeditor.h
+
+<a href="dictionary_C.html#33744">CODEEDITORSTYLE_H</a><a name="33744"> </a>
+    Use   [<a href="20988.html#19">codeeditorstyle.h, 19</a>]      codeeditorstyle.h
+    Define   [<a href="20988.html#20">codeeditorstyle.h, 20</a>]   codeeditorstyle.h
+
+<a href="dictionary_C.html#27128">CODEEDITORSTYLECONTROLS_H</a><a name="27128"> </a>
+    Use   [<a href="27127.html#22">codeeditstylecontrols.h, 22</a>]   codeeditstylecontrols.h
+    Define   [<a href="27127.html#23">codeeditstylecontrols.h, 23</a>]   codeeditstylecontrols.h
+
+<a href="dictionary_C.html#32601">CODEEDITSTYLEDIALOG_H</a><a name="32601"> </a>
+    Use   [<a href="20996.html#19">codeeditstyledialog.h, 19</a>]   codeeditstyledialog.h
+    Define   [<a href="20996.html#20">codeeditstyledialog.h, 20</a>]   codeeditstyledialog.h
+
+<a href="dictionary_C.html#31496">COMMON_H</a><a name="31496"> </a>
+    Use   [<a href="543.html#19">common.h, 19</a>]               common.h
+    Define   [<a href="543.html#20">common.h, 20</a>]            common.h
+
+<a href="dictionary_C.html#18608">complex</a><a name="18608"> </a>
+  Declared as: _Complex
+    Use   [<a href="18397.html#1941">std.c, 1941</a>]                <a href="dictionary_U.html#19162">uninitvar_cabs</a>
+    Use   [<a href="18397.html#1945">std.c, 1945</a>]                <a href="dictionary_U.html#19162">uninitvar_cabs</a>
+    Use   [<a href="18397.html#1949">std.c, 1949</a>]                <a href="dictionary_U.html#19162">uninitvar_cabs</a>
+    Use   [<a href="18397.html#1956">std.c, 1956</a>]                <a href="dictionary_U.html#19166">uninitvar_cacos</a>
+    Use   [<a href="18397.html#1960">std.c, 1960</a>]                <a href="dictionary_U.html#19166">uninitvar_cacos</a>
+    Use   [<a href="18397.html#1964">std.c, 1964</a>]                <a href="dictionary_U.html#19166">uninitvar_cacos</a>
+    Use   [<a href="18397.html#1971">std.c, 1971</a>]                <a href="dictionary_U.html#19170">uninitvar_cacosh</a>
+    Use   [<a href="18397.html#1975">std.c, 1975</a>]                <a href="dictionary_U.html#19170">uninitvar_cacosh</a>
+    Use   [<a href="18397.html#1979">std.c, 1979</a>]                <a href="dictionary_U.html#19170">uninitvar_cacosh</a>
+    Use   [<a href="18397.html#1170">std.c, 1170</a>]                <a href="dictionary_U.html#19178">uninitvar_carg</a>
+    Use   [<a href="18397.html#1174">std.c, 1174</a>]                <a href="dictionary_U.html#19178">uninitvar_carg</a>
+    Use   [<a href="18397.html#1178">std.c, 1178</a>]                <a href="dictionary_U.html#19178">uninitvar_carg</a>
+    Use   [<a href="18397.html#709">std.c, 709</a>]                 <a href="dictionary_U.html#19182">uninitvar_casin</a>
+    Use   [<a href="18397.html#713">std.c, 713</a>]                 <a href="dictionary_U.html#19182">uninitvar_casin</a>
+    Use   [<a href="18397.html#717">std.c, 717</a>]                 <a href="dictionary_U.html#19182">uninitvar_casin</a>
+    Use   [<a href="18397.html#739">std.c, 739</a>]                 <a href="dictionary_U.html#19186">uninitvar_casinh</a>
+    Use   [<a href="18397.html#743">std.c, 743</a>]                 <a href="dictionary_U.html#19186">uninitvar_casinh</a>
+    Use   [<a href="18397.html#747">std.c, 747</a>]                 <a href="dictionary_U.html#19186">uninitvar_casinh</a>
+    Use   [<a href="18397.html#887">std.c, 887</a>]                 <a href="dictionary_U.html#19190">uninitvar_catan</a>
+    Use   [<a href="18397.html#891">std.c, 891</a>]                 <a href="dictionary_U.html#19190">uninitvar_catan</a>
+    Use   [<a href="18397.html#895">std.c, 895</a>]                 <a href="dictionary_U.html#19190">uninitvar_catan</a>
+    Use   [<a href="18397.html#947">std.c, 947</a>]                 <a href="dictionary_U.html#19194">uninitvar_catanh</a>
+    Use   [<a href="18397.html#951">std.c, 951</a>]                 <a href="dictionary_U.html#19194">uninitvar_catanh</a>
+    Use   [<a href="18397.html#955">std.c, 955</a>]                 <a href="dictionary_U.html#19194">uninitvar_catanh</a>
+    Use   [<a href="18397.html#1066">std.c, 1066</a>]                <a href="dictionary_U.html#19202">uninitvar_ccos</a>
+    Use   [<a href="18397.html#1070">std.c, 1070</a>]                <a href="dictionary_U.html#19202">uninitvar_ccos</a>
+    Use   [<a href="18397.html#1074">std.c, 1074</a>]                <a href="dictionary_U.html#19202">uninitvar_ccos</a>
+    Use   [<a href="18397.html#1096">std.c, 1096</a>]                <a href="dictionary_U.html#19206">uninitvar_ccosh</a>
+    Use   [<a href="18397.html#1100">std.c, 1100</a>]                <a href="dictionary_U.html#19206">uninitvar_ccosh</a>
+    Use   [<a href="18397.html#1104">std.c, 1104</a>]                <a href="dictionary_U.html#19206">uninitvar_ccosh</a>
+    Use   [<a href="18397.html#1200">std.c, 1200</a>]                <a href="dictionary_U.html#19214">uninitvar_cexp</a>
+    Use   [<a href="18397.html#1204">std.c, 1204</a>]                <a href="dictionary_U.html#19214">uninitvar_cexp</a>
+    Use   [<a href="18397.html#1208">std.c, 1208</a>]                <a href="dictionary_U.html#19214">uninitvar_cexp</a>
+    Use   [<a href="18397.html#1215">std.c, 1215</a>]                <a href="dictionary_U.html#19218">uninitvar_cimag</a>
+    Use   [<a href="18397.html#1219">std.c, 1219</a>]                <a href="dictionary_U.html#19218">uninitvar_cimag</a>
+    Use   [<a href="18397.html#1223">std.c, 1223</a>]                <a href="dictionary_U.html#19218">uninitvar_cimag</a>
+    Use   [<a href="18397.html#2147">std.c, 2147</a>]                <a href="dictionary_U.html#19224">uninitvar_clog</a>
+    Use   [<a href="18397.html#2151">std.c, 2151</a>]                <a href="dictionary_U.html#19224">uninitvar_clog</a>
+    Use   [<a href="18397.html#2155">std.c, 2155</a>]                <a href="dictionary_U.html#19224">uninitvar_clog</a>
+    Use   [<a href="18397.html#2162">std.c, 2162</a>]                <a href="dictionary_U.html#19228">uninitvar_conj</a>
+    Use   [<a href="18397.html#2166">std.c, 2166</a>]                <a href="dictionary_U.html#19228">uninitvar_conj</a>
+    Use   [<a href="18397.html#2170">std.c, 2170</a>]                <a href="dictionary_U.html#19228">uninitvar_conj</a>
+    Use   [<a href="18397.html#2614">std.c, 2614</a>]                <a href="dictionary_U.html#19247">uninitvar_cpow</a>
+    Use   [<a href="18397.html#2618">std.c, 2618</a>]                <a href="dictionary_U.html#19247">uninitvar_cpow</a>
+    Use   [<a href="18397.html#2622">std.c, 2622</a>]                <a href="dictionary_U.html#19247">uninitvar_cpow</a>
+    Use   [<a href="18397.html#519">std.c, 519</a>]                 <a href="dictionary_U.html#19254">uninitvar_cproj</a>
+    Use   [<a href="18397.html#523">std.c, 523</a>]                 <a href="dictionary_U.html#19254">uninitvar_cproj</a>
+    Use   [<a href="18397.html#527">std.c, 527</a>]                 <a href="dictionary_U.html#19254">uninitvar_cproj</a>
+    Use   [<a href="18397.html#534">std.c, 534</a>]                 <a href="dictionary_U.html#19258">uninitvar_creal</a>
+    Use   [<a href="18397.html#538">std.c, 538</a>]                 <a href="dictionary_U.html#19258">uninitvar_creal</a>
+    Use   [<a href="18397.html#542">std.c, 542</a>]                 <a href="dictionary_U.html#19258">uninitvar_creal</a>
+    Use   [<a href="18397.html#664">std.c, 664</a>]                 <a href="dictionary_U.html#19262">uninitvar_csin</a>
+    Use   [<a href="18397.html#668">std.c, 668</a>]                 <a href="dictionary_U.html#19262">uninitvar_csin</a>
+    Use   [<a href="18397.html#672">std.c, 672</a>]                 <a href="dictionary_U.html#19262">uninitvar_csin</a>
+    Use   [<a href="18397.html#679">std.c, 679</a>]                 <a href="dictionary_U.html#19266">uninitvar_csinh</a>
+    Use   [<a href="18397.html#683">std.c, 683</a>]                 <a href="dictionary_U.html#19266">uninitvar_csinh</a>
+    Use   [<a href="18397.html#687">std.c, 687</a>]                 <a href="dictionary_U.html#19266">uninitvar_csinh</a>
+    Use   [<a href="18397.html#619">std.c, 619</a>]                 <a href="dictionary_U.html#19270">uninitvar_csqrt</a>
+    Use   [<a href="18397.html#623">std.c, 623</a>]                 <a href="dictionary_U.html#19270">uninitvar_csqrt</a>
+    Use   [<a href="18397.html#627">std.c, 627</a>]                 <a href="dictionary_U.html#19270">uninitvar_csqrt</a>
+    Use   [<a href="18397.html#778">std.c, 778</a>]                 <a href="dictionary_U.html#19274">uninitvar_ctan</a>
+    Use   [<a href="18397.html#782">std.c, 782</a>]                 <a href="dictionary_U.html#19274">uninitvar_ctan</a>
+    Use   [<a href="18397.html#786">std.c, 786</a>]                 <a href="dictionary_U.html#19274">uninitvar_ctan</a>
+    Use   [<a href="18397.html#808">std.c, 808</a>]                 <a href="dictionary_U.html#19278">uninitvar_ctanh</a>
+    Use   [<a href="18397.html#812">std.c, 812</a>]                 <a href="dictionary_U.html#19278">uninitvar_ctanh</a>
+    Use   [<a href="18397.html#816">std.c, 816</a>]                 <a href="dictionary_U.html#19278">uninitvar_ctanh</a>
+
+<a href="dictionary_C.html#33024">configH</a><a name="33024"> </a>
+    Use   [<a href="13.html#1">config.h, 1</a>]                config.h
+    Define   [<a href="13.html#2">config.h, 2</a>]             config.h
+
+<a href="dictionary_C.html#18556">conj</a><a name="18556"> </a>
+  Declared as: __tg_conj(__tg_promote1((__x))(__x))
+    Use   [<a href="18397.html#2168">std.c, 2168</a>]                <a href="dictionary_U.html#19228">uninitvar_conj</a>
+
+<a href="dictionary_C.html#18557">copysign</a><a name="18557"> </a>
+  Declared as: __tg_copysign(__tg_promote2((__x), (__y))(__x), __tg_promote2((__x), (__y))(__y))
+    Use   [<a href="18397.html#1027">std.c, 1027</a>]                <a href="dictionary_U.html#19232">uninitvar_copysign</a>
+
+<a href="dictionary_C.html#18558">cos</a><a name="18558"> </a>
+  Declared as: __tg_cos(__tg_promote1((__x))(__x))
+    Use   [<a href="18397.html#1057">std.c, 1057</a>]                <a href="dictionary_U.html#19239">uninitvar_cos</a>
+
+<a href="dictionary_C.html#18559">cosh</a><a name="18559"> </a>
+  Declared as: __tg_cosh(__tg_promote1((__x))(__x))
+    Use   [<a href="18397.html#1087">std.c, 1087</a>]                <a href="dictionary_U.html#19243">uninitvar_cosh</a>
+
+<a href="dictionary_C.html#9079">CPPCHECK_DEVMINOR</a><a name="9079"> </a>
+  Declared as: 90
+    Define   [<a href="9078.html#3">version.h, 3</a>]            version.h
+    Use   [<a href="9078.html#7">version.h, 7</a>]               version.h
+    Macro   [<a href="9078.html#11">version.h, 11</a>]            <a href="dictionary_C.html#9081">CPPCHECK_VERSION_STRING</a>
+    Use   [<a href="9075.html#101">democlient.cpp, 101</a>]        <a href="dictionary_M.html#41758">main</a>
+    Use   [<a href="20294.html#55">cppcheck.cpp, 55</a>]           cppcheck.cpp
+    Use   [<a href="20294.html#361">cppcheck.cpp, 361</a>]          <a href="dictionary_C.html#20389">CppCheck::checkFile</a>
+
+<a href="dictionary_C.html#9080">CPPCHECK_MAJOR</a><a name="9080"> </a>
+  Declared as: 1
+    Define   [<a href="9078.html#1">version.h, 1</a>]            version.h
+    Macro   [<a href="9078.html#12">version.h, 12</a>]            <a href="dictionary_C.html#31494">CPPCHECK_VERSION</a>
+    Macro   [<a href="9078.html#11">version.h, 11</a>]            <a href="dictionary_C.html#9081">CPPCHECK_VERSION_STRING</a>
+    Use   [<a href="9075.html#101">democlient.cpp, 101</a>]        <a href="dictionary_M.html#41758">main</a>
+    Use   [<a href="20294.html#55">cppcheck.cpp, 55</a>]           cppcheck.cpp
+    Use   [<a href="20294.html#361">cppcheck.cpp, 361</a>]          <a href="dictionary_C.html#20389">CppCheck::checkFile</a>
+
+<a href="dictionary_C.html#31493">CPPCHECK_MINOR</a><a name="31493"> </a>
+  Declared as: 89
+    Define   [<a href="9078.html#2">version.h, 2</a>]            version.h
+    Use   [<a href="9078.html#7">version.h, 7</a>]               version.h
+    Macro   [<a href="9078.html#12">version.h, 12</a>]            <a href="dictionary_C.html#31494">CPPCHECK_VERSION</a>
+
+<a href="dictionary_C.html#31494">CPPCHECK_VERSION</a><a name="31494"> </a>
+  Declared as: CPPCHECK_MAJOR,CPPCHECK_MINOR,99,0
+    Define   [<a href="9078.html#12">version.h, 12</a>]           version.h
+
+<a href="dictionary_C.html#9081">CPPCHECK_VERSION_STRING</a><a name="9081"> </a>
+  Declared as: STRINGIFY(CPPCHECK_MAJOR) "." STRINGIFY(CPPCHECK_DEVMINOR) " dev"
+    Define   [<a href="9078.html#11">version.h, 11</a>]           version.h
+    Use   [<a href="9075.html#101">democlient.cpp, 101</a>]        <a href="dictionary_M.html#41758">main</a>
+    Use   [<a href="20294.html#55">cppcheck.cpp, 55</a>]           cppcheck.cpp
+    Use   [<a href="20294.html#361">cppcheck.cpp, 361</a>]          <a href="dictionary_C.html#20389">CppCheck::checkFile</a>
+
+<a href="dictionary_C.html#3617">CPPCHECKEXECUTOR_H</a><a name="3617"> </a>
+    Use   [<a href="2573.html#19">cppcheckexecutor.h, 19</a>]     cppcheckexecutor.h
+    Define   [<a href="2573.html#20">cppcheckexecutor.h, 20</a>]   cppcheckexecutor.h
+
+<a href="dictionary_C.html#35976">cppcheckH</a><a name="35976"> </a>
+    Use   [<a href="2401.html#20">cppcheck.h, 20</a>]             cppcheck.h
+    Define   [<a href="2401.html#21">cppcheck.h, 21</a>]          cppcheck.h
+
+<a href="dictionary_C.html#14">CPPCHECKLIB</a><a name="14"> </a>
+    Define   [<a href="13.html#13">config.h, 13</a>]            config.h
+    Use   [<a href="1.html#54">checkmemoryleak.h, 54</a>]      <a href="dictionary_C.html#38">CheckMemoryLeak</a>
+    Use   [<a href="1.html#235">checkmemoryleak.h, 235</a>]     <a href="dictionary_C.html#120">CheckMemoryLeakInClass</a>
+    Use   [<a href="1.html#172">checkmemoryleak.h, 172</a>]     <a href="dictionary_C.html#152">CheckMemoryLeakInFunction</a>
+    Use   [<a href="1.html#321">checkmemoryleak.h, 321</a>]     <a href="dictionary_C.html#176">CheckMemoryLeakNoVar</a>
+    Use   [<a href="1.html#282">checkmemoryleak.h, 282</a>]     <a href="dictionary_C.html#213">CheckMemoryLeakStructMember</a>
+    Use   [<a href="556.html#1379">library.cpp, 1379</a>]          library.cpp
+    Use   [<a href="2.html#52">check.h, 52</a>]                <a href="dictionary_C.html#3">Check</a>
+    Use   [<a href="2.html#92">check.h, 92</a>]                <a href="dictionary_C.html#2044">Check::FileInfo</a>
+    Use   [<a href="581.html#569">library.h, 569</a>]             library.h
+    Use   [<a href="581.html#49">library.h, 49</a>]              <a href="dictionary_L.html#582">Library</a>
+    Use   [<a href="1478.html#70">timer.h, 70</a>]                <a href="dictionary_T.html#2422">Timer</a>
+    Use   [<a href="1478.html#58">timer.h, 58</a>]                <a href="dictionary_T.html#2438">TimerResults</a>
+    Use   [<a href="1478.html#36">timer.h, 36</a>]                <a href="dictionary_T.html#2466">TimerResultsIntf</a>
+    Use   [<a href="4296.html#42">checkpostfixoperator.h, 42</a>]   <a href="dictionary_C.html#4298">CheckPostfixOperator</a>
+    Use   [<a href="6384.html#41">checksizeof.h, 41</a>]          <a href="dictionary_C.html#6385">CheckSizeof</a>
+    Use   [<a href="1475.html#34">suppressions.h, 34</a>]         <a href="dictionary_S.html#1476">Suppressions</a>
+    Use   [<a href="1475.html#37">suppressions.h, 37</a>]         <a href="dictionary_S.html#9338">Suppressions::ErrorMessage</a>
+    Use   [<a href="1475.html#50">suppressions.h, 50</a>]         <a href="dictionary_S.html#9354">Suppressions::Suppression</a>
+    Use   [<a href="258.html#48">analyzerinfo.h, 48</a>]         <a href="dictionary_A.html#259">AnalyzerInformation</a>
+    Use   [<a href="9731.html#44">checkunusedvar.h, 44</a>]       <a href="dictionary_C.html#9733">CheckUnusedVar</a>
+    Use   [<a href="9794.html#52">checkbufferoverrun.h, 52</a>]   <a href="dictionary_C.html#9798">CheckBufferOverrun</a>
+    Use   [<a href="8800.html#40">checktype.h, 40</a>]            <a href="dictionary_C.html#8801">CheckType</a>
+    Use   [<a href="11897.html#40">checkautovariables.h, 40</a>]   <a href="dictionary_C.html#11898">CheckAutoVariables</a>
+    Use   [<a href="2.html#124">ctu.h, 124</a>]                 CTU
+    Use   [<a href="2.html#126">ctu.h, 126</a>]                 CTU
+    Use   [<a href="2.html#129">ctu.h, 129</a>]                 CTU
+    Use   [<a href="2.html#131">ctu.h, 131</a>]                 CTU
+    Use   [<a href="2.html#133">ctu.h, 133</a>]                 CTU
+    Use   [<a href="2742.html#34">ctu.h, 34</a>]                  <a href="dictionary_C.html#2039">CTU::FileInfo</a>
+    Use   [<a href="1153.html#165">symboldatabase.h, 165</a>]      <a href="dictionary_E.html#15030">Enumerator</a>
+    Use   [<a href="1153.html#664">symboldatabase.h, 664</a>]      <a href="dictionary_F.html#235">Function</a>
+    Use   [<a href="1153.html#949">symboldatabase.h, 949</a>]      <a href="dictionary_S.html#236">Scope</a>
+    Use   [<a href="1153.html#1229">symboldatabase.h, 1229</a>]     <a href="dictionary_S.html#238">SymbolDatabase</a>
+    Use   [<a href="1153.html#63">symboldatabase.h, 63</a>]       <a href="dictionary_T.html#1163">Type</a>
+    Use   [<a href="1153.html#1122">symboldatabase.h, 1122</a>]     <a href="dictionary_V.html#1167">ValueType</a>
+    Use   [<a href="1153.html#177">symboldatabase.h, 177</a>]      <a href="dictionary_V.html#240">Variable</a>
+    Use   [<a href="15703.html#41">checkstring.h, 41</a>]          <a href="dictionary_C.html#15704">CheckString</a>
+    Use   [<a href="17852.html#53">checkexceptionsafety.h, 53</a>]   <a href="dictionary_C.html#17855">CheckExceptionSafety</a>
+    Use   [<a href="1169.html#164">token.h, 164</a>]               <a href="dictionary_T.html#239">Token</a>
+    Use   [<a href="18336.html#35">checkinternal.h, 35</a>]        <a href="dictionary_C.html#18337">CheckInternal</a>
+    Use   [<a href="22642.html#45">checkstl.h, 45</a>]             <a href="dictionary_C.html#22643">CheckStl</a>
+    Use   [<a href="21.html#48">tokenize.h, 48</a>]             <a href="dictionary_T.html#22">Tokenizer</a>
+    Use   [<a href="4276.html#40">checkboost.h, 40</a>]           <a href="dictionary_C.html#4277">CheckBoost</a>
+    Use   [<a href="4066.html#43">check64bit.h, 43</a>]           <a href="dictionary_C.html#4067">Check64BitPortability</a>
+    Use   [<a href="3678.html#96">checkleakautovar.h, 96</a>]     <a href="dictionary_C.html#3679">CheckLeakAutoVar</a>
+    Use   [<a href="3678.html#39">checkleakautovar.h, 39</a>]     <a href="dictionary_V.html#26112">VarInfo</a>
+    Use   [<a href="311.html#40">path.h, 40</a>]                 <a href="dictionary_P.html#312">Path</a>
+    Use   [<a href="1197.html#40">tokenlist.h, 40</a>]            <a href="dictionary_T.html#1198">TokenList</a>
+    Use   [<a href="4107.html#49">checkfunctions.h, 49</a>]       <a href="dictionary_C.html#4108">CheckFunctions</a>
+    Use   [<a href="1131.html#160">mathlib.h, 160</a>]             mathlib.h
+    Use   [<a href="1131.html#34">mathlib.h, 34</a>]              <a href="dictionary_M.html#1132">MathLib</a>
+    Use   [<a href="2741.html#52">checkuninitvar.h, 52</a>]       <a href="dictionary_C.html#6206">CheckUninitVar</a>
+    Use   [<a href="2720.html#46">checknullpointer.h, 46</a>]     <a href="dictionary_C.html#2721">CheckNullPointer</a>
+    Use   [<a href="1384.html#42">platform.h, 42</a>]             <a href="dictionary_C.html#1386">cppcheck::Platform</a>
+    Use   [<a href="4198.html#41">checkbool.h, 41</a>]            <a href="dictionary_C.html#4199">CheckBool</a>
+    Use   [<a href="1204.html#52">valueflow.h, 52</a>]            <a href="dictionary_V.html#1206">ValueFlow::Value</a>
+    Use   [<a href="306.html#50">importproject.h, 50</a>]        <a href="dictionary_I.html#307">ImportProject</a>
+    Use   [<a href="306.html#63">importproject.h, 63</a>]        <a href="dictionary_I.html#308">ImportProject::FileSettings</a>
+    Use   [<a href="7869.html#46">checkclass.h, 46</a>]           <a href="dictionary_C.html#7870">CheckClass</a>
+    Use   [<a href="2985.html#45">templatesimplifier.h, 45</a>]   <a href="dictionary_T.html#2986">TemplateSimplifier</a>
+    Use   [<a href="29679.html#43">checkassert.h, 43</a>]          <a href="dictionary_C.html#29680">CheckAssert</a>
+    Use   [<a href="9443.html#42">checkunusedfunctions.h, 42</a>]   <a href="dictionary_C.html#9444">CheckUnusedFunctions</a>
+    Use   [<a href="9443.html#115">checkunusedfunctions.h, 115</a>]   <a href="dictionary_C.html#9446">CheckUnusedFunctions::FunctionDecl</a>
+    Use   [<a href="9443.html#102">checkunusedfunctions.h, 102</a>]   <a href="dictionary_C.html#9451">CheckUnusedFunctions::FunctionUsage</a>
+    Use   [<a href="30906.html#43">checkcondition.h, 43</a>]       <a href="dictionary_C.html#30907">CheckCondition</a>
+    Use   [<a href="428.html#33">pathmatch.h, 33</a>]            <a href="dictionary_P.html#429">PathMatch</a>
+    Use   [<a href="5954.html#45">checkother.h, 45</a>]           <a href="dictionary_C.html#5955">CheckOther</a>
+    Use   [<a href="547.html#50">settings.h, 50</a>]             <a href="dictionary_S.html#237">Settings</a>
+    Use   [<a href="547.html#253">settings.h, 253</a>]            <a href="dictionary_S.html#20625">Settings::Rule</a>
+    Use   [<a href="547.html#150">settings.h, 150</a>]            <a href="dictionary_S.html#1398">Settings::SafeChecks</a>
+    Use   [<a href="2401.html#48">cppcheck.h, 48</a>]             <a href="dictionary_C.html#3618">CppCheck</a>
+    Use   [<a href="15794.html#41">checkio.h, 41</a>]              <a href="dictionary_C.html#15795">CheckIO</a>
+    Use   [<a href="6309.html#46">preprocessor.h, 46</a>]         <a href="dictionary_D.html#20606">Directive</a>
+    Use   [<a href="6309.html#69">preprocessor.h, 69</a>]         <a href="dictionary_P.html#6310">Preprocessor</a>
+    Use   [<a href="16.html#175">errorlogger.h, 175</a>]         <a href="dictionary_E.html#18">ErrorLogger</a>
+    Use   [<a href="16.html#183">errorlogger.h, 183</a>]         <a href="dictionary_E.html#304">ErrorLogger::ErrorMessage</a>
+    Use   [<a href="16.html#190">errorlogger.h, 190</a>]         <a href="dictionary_E.html#9555">ErrorLogger::ErrorMessage::FileLocation</a>
+    Use   [<a href="16.html#66">errorlogger.h, 66</a>]          <a href="dictionary_S.html#19">Severity</a>
+    Use   [<a href="25294.html#42">checkvaarg.h, 42</a>]           <a href="dictionary_C.html#25295">CheckVaarg</a>
+    Use   [<a href="17087.html#304">exprengine.h, 304</a>]          ExprEngine
+
+<a href="dictionary_C.html#29829">CPPCHECKLIBRARYDATA_H</a><a name="29829"> </a>
+    Use   [<a href="4161.html#19">cppchecklibrarydata.h, 19</a>]   cppchecklibrarydata.h
+    Define   [<a href="4161.html#20">cppchecklibrarydata.h, 20</a>]   cppchecklibrarydata.h
+
+<a href="dictionary_C.html#18560">cproj</a><a name="18560"> </a>
+  Declared as: __tg_cproj(__tg_promote1((__x))(__x))
+    Use   [<a href="18397.html#525">std.c, 525</a>]                 <a href="dictionary_U.html#19254">uninitvar_cproj</a>
+
+<a href="dictionary_C.html#18561">creal</a><a name="18561"> </a>
+  Declared as: __tg_creal(__tg_promote1((__x))(__x))
+    Use   [<a href="18397.html#540">std.c, 540</a>]                 <a href="dictionary_U.html#19258">uninitvar_creal</a>
+
+<a href="dictionary_C.html#34204">CSV_REPORT_H</a><a name="34204"> </a>
+    Use   [<a href="25568.html#19">csvreport.h, 19</a>]            csvreport.h
+    Define   [<a href="25568.html#20">csvreport.h, 20</a>]         csvreport.h
+
+<a href="dictionary_C.html#12433">ctuH</a><a name="12433"> </a>
+    Use   [<a href="2742.html#21">ctu.h, 21</a>]                  ctu.h
+    Define   [<a href="2742.html#22">ctu.h, 22</a>]               ctu.h
+</pre>
+<p>
+<div class="footer"><b>Generated:</b> Wednesday, March 18, 2020 1:22:55 PM CDT</div><center><p><div class="scitools-tag">Scientific Toolworks, Inc.<br></div><div class="scitools-link"><A target="_blank" href="mailto:support@scitools.com">support@scitools.com</A><br><A href="http://www.scitools.com">www.scitools.com</A></div></center></div></body></html>

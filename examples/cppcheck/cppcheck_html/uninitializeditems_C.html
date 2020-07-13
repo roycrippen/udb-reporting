@@ -1,0 +1,310 @@
+<!DOCTYPE html><html><head><title>Uninitialized Items [C]</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><script src="jquery-3.3.1.min.js" type="text/javascript"></script><script src="d3.js" type="text/javascript"></script><script src="d3pie.min.js" type="text/javascript"></script><script src="plotly.min.js" type="text/javascript"></script><link href="reportCSS.css" type="text/css" rel="stylesheet" /><script src="reportJS.js" type="text/javascript"></script><script src="table_of_contents.js" type="text/javascript"></script></head><body bgcolor="#ffffff" TEXT="#000000"><nav id="main-nav" class="nav"><div id="upper-nav"><img id=und-icon src="understand-logo.png" alt="Understand"></div><div class="navbar" style="position:relative;z-index:1003"><button onclick="pageToTop()" id="pagedesc" title="Return to top of page"><span id="descText">cppcheck - Uninitialized Items</span></button></div><div id="lower-nav" class=navbar><div id="main-dropdown-html" class="dropdown" tabindex="0"><button id="dropdown-button" class="dropbtn">Contents <img id="dropdown-icon" src="ToCdropdown.png" style="height:12px"></button><div id="dropdown-buffer" class="dropdown-border" style="height:120px;width:300px;"></div><div id="nav-dropdown-content" class="dropdown-content"><a href="table_of_contents.html">Table of Contents</a><txt style="font-size: 12px; text-align: center">Enable javascript to use dropdown contents and other features.</txt></div></div><div class="rightspacer" id="rightspacer"><button id="buttonRight" onclick="scrollTableRight()"><img id="imgRight" src="ToCdropdown.png" /></button><button id="buttonLeft"  onclick="scrollTableLeft()" ><img id="imgLeft" src="ToCdropdown.png"  /></button></div><div class="navCenter">
+<a href="uninitializeditems_&.html">&</a><a href="uninitializeditems_A.html">A</a><a href="uninitializeditems_B.html">B</a><a href="uninitializeditems_C.html">C</a><a href="uninitializeditems_D.html">D</a><a href="uninitializeditems_E.html">E</a><a href="uninitializeditems_F.html">F</a><a href="uninitializeditems_G.html">G</a><a2>H</a2><a href="uninitializeditems_I.html">I</a><a2>J</a2><a2>K</a2><a href="uninitializeditems_L.html">L</a><a href="uninitializeditems_M.html">M</a><a href="uninitializeditems_N.html">N</a><a href="uninitializeditems_O.html">O</a><a href="uninitializeditems_P.html">P</a><a href="uninitializeditems_Q.html">Q</a><a href="uninitializeditems_R.html">R</a><a href="uninitializeditems_S.html">S</a><a href="uninitializeditems_T.html">T</a><a href="uninitializeditems_U.html">U</a><a href="uninitializeditems_V.html">V</a><a href="uninitializeditems_W.html">W</a><a2>X</a2><a href="uninitializeditems_Y.html">Y</a><a2>Z</a2></div></div></nav>
+<script type="text/javascript">navbar();</script><script type="text/javascript">if (typeof ToC === 'undefined') {document.getElementById("dropdown-button").remove();document.getElementById("dropdown-buffer").remove();document.getElementById("nav-dropdown-content").remove();}</script>
+<div id="main-content"><pre>
+<a href="30764.html"><b>cert-test.c</b></a>
+       [<a href="30764.html#144">a, 144</a>]
+       [<a href="30764.html#86">buffer, 86</a>]
+       [<a href="30764.html#145">d, 145</a>]
+       [<a href="30764.html#87">i, 87</a>]
+       [<a href="30764.html#88">li, 88</a>]
+       [<a href="30764.html#89">lli, 89</a>]
+       [<a href="30764.html#41">p, 41</a>]
+       [<a href="30764.html#125">rand, 125</a>]
+       [<a href="30764.html#83">s, 83</a>]
+       [<a href="30764.html#16">String_Size, 16</a>]
+       [<a href="30764.html#85">timeinfo, 85</a>]
+       [<a href="30764.html#174">x, 174</a>]
+
+<a href="15567.html"><b>checkbool.cpp</b></a>
+       [<a href="15567.html#319">numInRhs, 319</a>]
+
+<a href="32785.html"><b>checkbufferoverrun.cpp</b></a>
+       [<a href="32785.html#437">arrayToken, 437</a>]
+       [<a href="32785.html#437">indexToken, 437</a>]
+
+<a href="9794.html"><b>checkbufferoverrun.h</b></a>
+       [<a href="9794.html#120">unsafeArrayIndex, 120</a>]
+       [<a href="9794.html#123">unsafePointerArith, 123</a>]
+
+<a href="7862.html"><b>checkclass.cpp</b></a>
+       [<a href="7862.html#1574">var, 1574</a>]
+
+<a href="30905.html"><b>checkcondition.cpp</b></a>
+       [<a href="30905.html#1472">calcToken, 1472</a>]
+       [<a href="30905.html#1538">calcToken, 1538</a>]
+       [<a href="30905.html#999">expr, 999</a>]
+       [<a href="30905.html#1472">exprToken, 1472</a>]
+       [<a href="30905.html#1538">exprToken, 1538</a>]
+       [<a href="30905.html#123">ftok, 123</a>]
+       [<a href="30905.html#1222">modulo, 1222</a>]
+       [<a href="30905.html#1081">not1, 1081</a>]
+       [<a href="30905.html#1087">not2, 1087</a>]
+       [<a href="30905.html#997">not_, 997</a>]
+       [<a href="30905.html#1222">num, 1222</a>]
+       [<a href="30905.html#1473">result, 1473</a>]
+       [<a href="30905.html#1139">result1, 1139</a>]
+       [<a href="30905.html#1139">result2, 1139</a>]
+       [<a href="30905.html#1491">termToken, 1491</a>]
+       [<a href="30905.html#632">tok, 632</a>]
+       [<a href="30905.html#723">tok2, 723</a>]
+
+<a href="30906.html"><b>checkcondition.h</b></a>
+       [<a href="30906.html#123">mCondDiags, 123</a>]
+
+<a href="3678.html"><b>checkleakautovar.h</b></a>
+       [<a href="3678.html#56">alloctype, 56</a>]
+       [<a href="3678.html#58">conditionalAlloc, 58</a>]
+       [<a href="3678.html#57">possibleUsage, 57</a>]
+       [<a href="3678.html#59">referenced, 59</a>]
+
+<a href="26123.html"><b>checknullpointer.cpp</b></a>
+       [<a href="26123.html#536">numericOperand, 536</a>]
+       [<a href="26123.html#535">pointerOperand, 535</a>]
+
+<a href="2720.html"><b>checknullpointer.h</b></a>
+       [<a href="2720.html#105">unsafeUsage, 105</a>]
+
+<a href="22836.html"><b>checkother.cpp</b></a>
+       [<a href="22836.html#391">dim, 391</a>]
+       [<a href="22836.html#486">start, 486</a>]
+       [<a href="22836.html#274">tok, 274</a>]
+
+<a href="23861.html"><b>checksizeof.cpp</b></a>
+       [<a href="23861.html#118">tokFunc, 118</a>]
+       [<a href="23861.html#117">tokSize, 117</a>]
+
+<a href="36189.html"><b>checkstl.cpp</b></a>
+       [<a href="36189.html#1329">containerTok, 1329</a>]
+       [<a href="36189.html#943">containerToken, 943</a>]
+       [<a href="36189.html#1626">j, 1626</a>]
+       [<a href="36189.html#1330">keyTok, 1330</a>]
+       [<a href="36189.html#187">mul, 187</a>]
+       [<a href="36189.html#197">op, 197</a>]
+       [<a href="36189.html#572">operandPosition, 572</a>]
+       [<a href="36189.html#2178">useLoopVarInAssign, 2178</a>]
+       [<a href="36189.html#2227">useLoopVarInIncrement, 2227</a>]
+       [<a href="36189.html#2206">useLoopVarInMemCall, 2206</a>]
+       [<a href="36189.html#942">vartok, 942</a>]
+
+<a href="8798.html"><b>checktype.cpp</b></a>
+       [<a href="8798.html#172">bits, 172</a>]
+       [<a href="8798.html#388">floatValues, 388</a>]
+       [<a href="8798.html#78">lhsbits, 78</a>]
+       [<a href="8798.html#387">vtfloat, 387</a>]
+       [<a href="8798.html#387">vtint, 387</a>]
+
+<a href="33075.html"><b>checkuninitvar.cpp</b></a>
+       [<a href="33075.html#266">numtok, 266</a>]
+       [<a href="33075.html#1360">unknown, 1360</a>]
+       [<a href="33075.html#266">vartok, 266</a>]
+
+<a href="2741.html"><b>checkuninitvar.h</b></a>
+       [<a href="2741.html#91">unsafeUsage, 91</a>]
+
+<a href="9443.html"><b>checkunusedfunctions.h</b></a>
+       [<a href="9443.html#107">filename, 107</a>]
+       [<a href="9443.html#122">mFunctionCalls, 122</a>]
+       [<a href="9443.html#121">mFunctionDecl, 121</a>]
+       [<a href="9443.html#113">mFunctions, 113</a>]
+
+<a href="36714.html"><b>checkunusedvar.cpp</b></a>
+       [<a href="36714.html#717">tok, 717</a>]
+       [<a href="36714.html#124">mVarUsage, 124</a>]
+       [<a href="36714.html#85">_aliases, 85</a>]
+       [<a href="36714.html#86">_assignments, 86</a>]
+
+<a href="9731.html"><b>checkunusedvar.h</b></a>
+       [<a href="9731.html#110">mIsEmptyTypeMap, 110</a>]
+       [<a href="9731.html#108">mIsRecordTypeWithoutSideEffectsMap, 108</a>]
+
+<a href="516.html"><b>clang-ast.cpp</b></a>
+       [<a href="516.html#40">cursor, 40</a>]
+       [<a href="516.html#26">index, 26</a>]
+       [<a href="516.html#27">unit, 27</a>]
+
+<a href="2491.html"><b>cmdlineparser.cpp</b></a>
+       [<a href="2491.html#50">Files, 50</a>]
+
+<a href="2492.html"><b>cmdlineparser.h</b></a>
+       [<a href="2492.html#111">mIgnoredPaths, 111</a>]
+       [<a href="2492.html#110">mPathNames, 110</a>]
+
+<a href="33026.html"><b>codeeditor.cpp</b></a>
+       [<a href="33026.html#204">allText, 204</a>]
+       [<a href="33026.html#342">bgcolor, 342</a>]
+       [<a href="33026.html#320">block, 320</a>]
+       [<a href="33026.html#321">blockNumber, 321</a>]
+       [<a href="33026.html#323">bottom, 323</a>]
+       [<a href="33026.html#203">copyText, 203</a>]
+       [<a href="33026.html#291">cr, 291</a>]
+       [<a href="33026.html#151">endIndex, 151</a>]
+       [<a href="33026.html#290">event, 290</a>]
+       [<a href="33026.html#346">fgcolor, 346</a>]
+       [<a href="33026.html#194">font, 194</a>]
+       [<a href="33026.html#15">keywordPatterns, 15</a>]
+       [<a href="33026.html#150">match, 150</a>]
+       [<a href="33026.html#262">max, 262</a>]
+       [<a href="33026.html#327">number, 327</a>]
+       [<a href="33026.html#317">painter, 317</a>]
+       [<a href="33026.html#124">rule, 124</a>]
+       [<a href="33026.html#128">rule, 128</a>]
+       [<a href="33026.html#299">selection, 299</a>]
+       [<a href="33026.html#268">space, 268</a>]
+       [<a href="33026.html#350">style, 350</a>]
+       [<a href="33026.html#251">tc, 251</a>]
+       [<a href="33026.html#322">top, 322</a>]
+
+<a href="31407.html"><b>codeeditor.h</b></a>
+       [<a href="31407.html#100">mErrorPosition, 100</a>]
+       [<a href="31407.html#98">mHighlighter, 98</a>]
+       [<a href="31407.html#97">mLineNumberArea, 97</a>]
+       [<a href="31407.html#120">mCodeEditor, 120</a>]
+
+<a href="41285.html"><b>codeeditorstyle.cpp</b></a>
+       [<a href="41285.html#134">defClsWt, 134</a>]
+       [<a href="41285.html#146">defCmtWt, 146</a>]
+       [<a href="41285.html#128">defKeyWWt, 128</a>]
+       [<a href="41285.html#140">defQteWt, 140</a>]
+       [<a href="41285.html#155">defSymWt, 155</a>]
+       [<a href="41285.html#96">type, 96</a>]
+
+<a href="20988.html"><b>codeeditorstyle.h</b></a>
+       [<a href="20988.html#108">defaultStyleDark, 108</a>]
+       [<a href="20988.html#95">defaultStyleLight, 95</a>]
+       [<a href="20988.html#38">SETTINGS_STYLE_CLASSFG, 38</a>]
+       [<a href="20988.html#39">SETTINGS_STYLE_CLASSWT, 39</a>]
+       [<a href="20988.html#42">SETTINGS_STYLE_COMMENTFG, 42</a>]
+       [<a href="20988.html#43">SETTINGS_STYLE_COMMENTWT, 43</a>]
+       [<a href="20988.html#26">SETTINGS_STYLE_GROUP, 26</a>]
+       [<a href="20988.html#33">SETTINGS_STYLE_HILIFG, 33</a>]
+       [<a href="20988.html#36">SETTINGS_STYLE_KEYWORDFG, 36</a>]
+       [<a href="20988.html#37">SETTINGS_STYLE_KEYWORDWT, 37</a>]
+       [<a href="20988.html#35">SETTINGS_STYLE_LINENUMBG, 35</a>]
+       [<a href="20988.html#34">SETTINGS_STYLE_LINENUMFG, 34</a>]
+       [<a href="20988.html#40">SETTINGS_STYLE_QUOTEFG, 40</a>]
+       [<a href="20988.html#41">SETTINGS_STYLE_QUOTEWT, 41</a>]
+       [<a href="20988.html#45">SETTINGS_STYLE_SYMBOLBG, 45</a>]
+       [<a href="20988.html#44">SETTINGS_STYLE_SYMBOLFG, 44</a>]
+       [<a href="20988.html#46">SETTINGS_STYLE_SYMBOLWT, 46</a>]
+       [<a href="20988.html#27">SETTINGS_STYLE_TYPE, 27</a>]
+       [<a href="20988.html#30">SETTINGS_STYLE_TYPE_CUSTOM, 30</a>]
+       [<a href="20988.html#29">SETTINGS_STYLE_TYPE_DARK, 29</a>]
+       [<a href="20988.html#28">SETTINGS_STYLE_TYPE_LIGHT, 28</a>]
+       [<a href="20988.html#32">SETTINGS_STYLE_WIDGETBG, 32</a>]
+       [<a href="20988.html#31">SETTINGS_STYLE_WIDGETFG, 31</a>]
+
+<a href="29645.html"><b>codeeditstylecontrols.cpp</b></a>
+       [<a href="29645.html#32">btnColorStyle, 32</a>]
+       [<a href="29645.html#50">colorChanged, 50</a>]
+       [<a href="29645.html#47">nResult, 47</a>]
+       [<a href="29645.html#94">nResult, 94</a>]
+       [<a href="29645.html#45">pDlg, 45</a>]
+       [<a href="29645.html#107">weightChanged, 107</a>]
+
+<a href="32544.html"><b>codeeditstyledialog.cpp</b></a>
+       [<a href="32544.html#141">dBtnBox, 141</a>]
+       [<a href="32544.html#67">flEditControls, 67</a>]
+       [<a href="32544.html#120">fm, 120</a>]
+       [<a href="32544.html#129">hboxDefaultControls, 129</a>]
+       [<a href="32544.html#65">hboxEdit, 65</a>]
+       [<a href="32544.html#119">sampleFont, 119</a>]
+       [<a href="32544.html#64">vboxMain, 64</a>]
+
+<a href="20996.html"><b>codeeditstyledialog.h</b></a>
+       [<a href="20996.html#75">mBtnClassFG, 75</a>]
+       [<a href="20996.html#79">mBtnCommentFG, 79</a>]
+       [<a href="20996.html#70">mBtnHighlightBG, 70</a>]
+       [<a href="20996.html#73">mBtnKeywordFG, 73</a>]
+       [<a href="20996.html#72">mBtnLineNumBG, 72</a>]
+       [<a href="20996.html#71">mBtnLineNumFG, 71</a>]
+       [<a href="20996.html#77">mBtnQuoteFG, 77</a>]
+       [<a href="20996.html#82">mBtnSymbolBG, 82</a>]
+       [<a href="20996.html#81">mBtnSymbolFG, 81</a>]
+       [<a href="20996.html#69">mBtnWidgetColorBG, 69</a>]
+       [<a href="20996.html#68">mBtnWidgetColorFG, 68</a>]
+       [<a href="20996.html#76">mCBClassWeight, 76</a>]
+       [<a href="20996.html#80">mCBCommentWeight, 80</a>]
+       [<a href="20996.html#74">mCBKeywordWeight, 74</a>]
+       [<a href="20996.html#78">mCBQuoteWeight, 78</a>]
+       [<a href="20996.html#83">mCBSymbolWeight, 83</a>]
+       [<a href="20996.html#66">mSampleEditor, 66</a>]
+
+<a href="28220.html"><b>common.cpp</b></a>
+       [<a href="28220.html#49">entries, 49</a>]
+       [<a href="28220.html#63">k, 63</a>]
+       [<a href="28220.html#30">path, 30</a>]
+       [<a href="28220.html#29">settings, 29</a>]
+       [<a href="28220.html#43">settings, 43</a>]
+
+<a href="4253.html"><b>controlflow.c</b></a>
+       [<a href="4253.html#6">buf, 6</a>]
+       [<a href="4253.html#31">x, 31</a>]
+       [<a href="4253.html#24">x, 24</a>]
+
+<a href="20294.html"><b>cppcheck.cpp</b></a>
+       [<a href="20294.html#144">buffer, 144</a>]
+       [<a href="20294.html#562">e, 562</a>]
+       [<a href="20294.html#657">e, 657</a>]
+       [<a href="20294.html#659">e, 659</a>]
+       [<a href="20294.html#661">e, 661</a>]
+       [<a href="20294.html#268">err, 268</a>]
+       [<a href="20294.html#556">o, 556</a>]
+       [<a href="20294.html#480">result, 480</a>]
+
+<a href="2401.html"><b>cppcheck.h</b></a>
+       [<a href="2401.html#228">mAnalyzerInformation, 228</a>]
+       [<a href="2401.html#211">mCurrentConfig, 211</a>]
+       [<a href="2401.html#198">mErrorList, 198</a>]
+       [<a href="2401.html#226">mFileInfo, 226</a>]
+       [<a href="2401.html#199">mSettings, 199</a>]
+
+<a href="40869.html"><b>cppcheckexecutor.cpp</b></a>
+       [<a href="40869.html#309">a, 309</a>]
+       [<a href="40869.html#348">killid, 348</a>]
+       [<a href="40869.html#210">size, 210</a>]
+       [<a href="40869.html#780">stackVariable, 780</a>]
+
+<a href="2573.html"><b>cppcheckexecutor.h</b></a>
+       [<a href="2573.html#173">mFiles, 173</a>]
+       [<a href="2573.html#168">mShownErrors, 168</a>]
+
+<a href="37193.html"><b>cppchecklibrarydata.cpp</b></a>
+       [<a href="37193.html#102">argnr, 102</a>]
+       [<a href="37193.html#226">comments, 226</a>]
+       [<a href="37193.html#322">comments, 322</a>]
+       [<a href="37193.html#167">container, 167</a>]
+       [<a href="37193.html#255">e, 255</a>]
+       [<a href="37193.html#238">elementName, 238</a>]
+       [<a href="37193.html#51">elementName, 51</a>]
+       [<a href="37193.html#155">elementName, 155</a>]
+       [<a href="37193.html#116">elementName, 116</a>]
+       [<a href="37193.html#198">elementName, 198</a>]
+       [<a href="37193.html#56">indexOperator, 56</a>]
+       [<a href="37193.html#454">outputString, 454</a>]
+       [<a href="37193.html#229">t, 229</a>]
+       [<a href="37193.html#59">templateParameter, 59</a>]
+       [<a href="37193.html#46">type, 46</a>]
+       [<a href="37193.html#150">type, 150</a>]
+       [<a href="37193.html#111">type, 111</a>]
+       [<a href="37193.html#193">type, 193</a>]
+       [<a href="37193.html#227">xmlReader, 227</a>]
+       [<a href="37193.html#455">xmlWriter, 455</a>]
+
+<a href="26427.html"><b>ctu.cpp</b></a>
+       [<a href="26427.html#399">tok, 399</a>]
+
+<a href="2742.html"><b>ctu.h</b></a>
+       [<a href="2742.html#79">callArgumentExpression, 79</a>]
+       [<a href="2742.html#80">callArgValue, 80</a>]
+       [<a href="2742.html#82">callValuePath, 82</a>]
+       [<a href="2742.html#81">callValueType, 81</a>]
+       [<a href="2742.html#83">warning, 83</a>]
+       [<a href="2742.html#108">functionCalls, 108</a>]
+       [<a href="2742.html#109">nestedCalls, 109</a>]
+
+<a href="21181.html"><b>cve-2018-1000618.cpp</b></a>
+       [<a href="21181.html#9">typedefs, 9</a>]
+</pre>
+<p>
+<div class="footer"><b>Generated:</b> Wednesday, March 18, 2020 1:22:58 PM CDT</div><center><p><div class="scitools-tag">Scientific Toolworks, Inc.<br></div><div class="scitools-link"><A target="_blank" href="mailto:support@scitools.com">support@scitools.com</A><br><A href="http://www.scitools.com">www.scitools.com</A></div></center></div></body></html>
